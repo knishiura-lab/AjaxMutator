@@ -1,5 +1,6 @@
 package jp.gr.java_conf.daisy.ajax_mutator;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
@@ -13,6 +14,8 @@ import com.google.common.collect.ImmutableSet;
 
 public class MutateVisitor implements NodeVisitor {
 	private final ImmutableSet<EventAttacherDetector> eventAttacherDetectors;
+	private Set<EventAttachment> eventAttachmentExpressions
+		= new HashSet<EventAttachment>();
 	
 	public MutateVisitor(Set<EventAttacherDetector> eventAttacherDetectors) {
 		this.eventAttacherDetectors
@@ -31,10 +34,14 @@ public class MutateVisitor implements NodeVisitor {
 		for (EventAttacherDetector detector: eventAttacherDetectors) {
 			EventAttachment attachment = detector.detect(call);
 			if (attachment != null) {
-				System.out.println(attachment);
+				eventAttachmentExpressions.add(attachment);
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	public Set<EventAttachment> getEventAttachments() {
+		return eventAttachmentExpressions;
 	}
 }
