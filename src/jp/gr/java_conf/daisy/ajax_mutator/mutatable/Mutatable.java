@@ -14,6 +14,8 @@ import org.mozilla.javascript.ast.PropertyGet;
  */
 public abstract class Mutatable {
 	protected final AstNode astNode;
+	private AstNode lastReplacedFrom;
+	private AstNode lastReplacedTo;
 	
 	public Mutatable(AstNode astNode) {
 		this.astNode = astNode;
@@ -24,10 +26,16 @@ public abstract class Mutatable {
 	}
 	
 	protected void replace(AstNode from, AstNode to) {
-		AstNode parent = from.getParent();
-		boolean replaced = false;
+		AstNode _lastReplacedFrom = from;
+		AstNode _lastReplacedTo = to;
+		replace(from.getParent(), from, to);
 		
-		// Note: from.getParent.replaceChild(from, to) do not work well in some situations...
+		lastReplacedFrom = _lastReplacedFrom;
+		lastReplacedTo = _lastReplacedTo;
+	}
+	
+	private void replace(AstNode parent, AstNode from, AstNode to) {
+		boolean replaced = false;
 		if (parent instanceof PropertyGet) {
 			replaced = applyReplaceTo((PropertyGet) parent, from, to);
 		} else if (parent instanceof FunctionCall) {
@@ -36,10 +44,16 @@ public abstract class Mutatable {
 			parent.replaceChild(from, to);
 			replaced = true;
 		}
-		
 		if (!replaced) {
-			throw new IllegalArgumentException("Cannot replace " + from + " to " + to);
+			throw new IllegalArgumentException(
+					"Cannot replace " + from.toSource() + "(" 
+					+ from.getParent().toSource() +  ") to " + to.toSource() 
+					+ "(" + to.getParent().toSource() + ")");
 		}
+	}
+	
+	public void undoLastReplace() {
+		replace(lastReplacedFrom.getParent(), lastReplacedTo, lastReplacedFrom);
 	}
 	
 	private boolean applyReplaceTo(PropertyGet propertyGet, AstNode from, AstNode to) {
@@ -58,11 +72,21 @@ public abstract class Mutatable {
 			functionCall.setTarget(to);
 			return true;
 		} else {
+			
 			List<AstNode> arguments = functionCall.getArguments();
 			if (arguments.contains(from)) {
 				arguments.set(arguments.indexOf(from), to);
 				return true;
 			} else {
+				StringBuilder builder = new StringBuilder();
+				builder.append("[");
+				for (AstNode node: arguments) {
+					builder.append(node.toSource() + ",");
+				}
+				builder.setCharAt(builder.length() - 1, ']');
+				builder.append(" do not contain ");
+				builder.append(from.toSource());
+				System.err.println(builder.toString());
 				return false;
 			}
 		}

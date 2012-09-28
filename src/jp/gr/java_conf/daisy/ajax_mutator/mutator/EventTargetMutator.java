@@ -11,7 +11,6 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 public class EventTargetMutator implements Mutator {
 	private List<EventAttachment> eventAttachments;
 	private List<AstNode> eventTargets;
-	private AstNode originalTarget;
 	private int targetIndex = 0;
 	
 	public EventTargetMutator(Collection<EventAttachment> eventAttachments) {
@@ -26,14 +25,13 @@ public class EventTargetMutator implements Mutator {
 	public void applyMutation() {
 		EventAttachment mutationTarget = eventAttachments.get(targetIndex);
 		AstNode newTarget = eventTargets.get((int) Math.floor(Math.random() * eventTargets.size()));
-		originalTarget = mutationTarget.getTarget();
 		mutationTarget.replaceTarget(newTarget);
 	}
 
 	@Override
 	public void undoMutation() {
 		EventAttachment mutationTarget = eventAttachments.get(targetIndex);
-		mutationTarget.replaceTarget(originalTarget);
+		mutationTarget.undoLastReplace();
 		targetIndex++;
 	}
 
