@@ -1,6 +1,5 @@
 package jp.gr.java_conf.daisy.ajax_mutator;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
@@ -10,11 +9,14 @@ import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.FunctionCall;
 import org.mozilla.javascript.ast.NodeVisitor;
 
+import com.google.common.collect.ImmutableSet;
+
 public class MutateVisitor implements NodeVisitor {
-	Set<EventAttacherDetector> eventAttacherDetectors;
+	private final ImmutableSet<EventAttacherDetector> eventAttacherDetectors;
+	
 	public MutateVisitor(Set<EventAttacherDetector> eventAttacherDetectors) {
-		this.eventAttacherDetectors 
-			= new HashSet<EventAttacherDetector>(eventAttacherDetectors);
+		this.eventAttacherDetectors
+			= ImmutableSet.copyOf(eventAttacherDetectors);
 	}
 	
 	@Override
