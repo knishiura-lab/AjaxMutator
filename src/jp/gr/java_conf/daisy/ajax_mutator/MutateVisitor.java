@@ -12,6 +12,11 @@ import org.mozilla.javascript.ast.NodeVisitor;
 
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * Visitor for JavaScript's AST to get information needed to apply mutation operations.
+ *
+ * @author Kazuki Nishiura
+ */
 public class MutateVisitor implements NodeVisitor {
 	private final ImmutableSet<EventAttacherDetector> eventAttacherDetectors;
 	private Set<EventAttachment> eventAttachmentExpressions
