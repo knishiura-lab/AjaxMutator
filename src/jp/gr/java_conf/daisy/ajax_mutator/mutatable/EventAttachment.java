@@ -44,13 +44,16 @@ public class EventAttachment extends Mutatable {
 	
 	public void replaceTarget(AstNode newTarget) {
 		replace(target, newTarget);
+		this.target = newTarget;
 	}
 	
 	public void replaceEvent(AstNode newEvent) {
 		replace(event, newEvent);
+		this.event = newEvent;
 	}
 	
 	public void replaceCallback(AstNode newCallback) {
 		replace(callback, newCallback);
+		this.callback = newCallback;
 	}
 }
