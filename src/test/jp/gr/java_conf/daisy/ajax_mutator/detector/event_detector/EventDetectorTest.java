@@ -6,22 +6,27 @@ import jp.gr.java_conf.daisy.ajax_mutator.ParserWithBrowser;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventListenerDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AttachEventDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 
 import org.junit.Test;
 import org.mozilla.javascript.ast.AstRoot;
 import org.mozilla.javascript.ast.ExpressionStatement;
 import org.mozilla.javascript.ast.FunctionCall;
+import org.mozilla.javascript.ast.Name;
 
 public class EventDetectorTest {
 	@Test
-	public void testAttachEventListnerDetector() {
+	public void testAddEventListnerDetector() {
 		EventAttacherDetector detector = new AddEventListenerDetector();
 
-		assertTrue(detector.detect(stringToFunctionCall(
-				"target.addEventListener('click', func);")) != null);
-
-		assertTrue(detector.detect(stringToFunctionCall(
-				"target.addEventListenr('click', func);")) == null);
+		EventAttachment result = detector.detect(stringToFunctionCall(
+				"target.addEventListener('click', func);"));
+		assertTrue(result != null);
+		assertEquals("target", ((Name) result.getTarget()).getIdentifier());
+		
+		result =detector.detect(stringToFunctionCall(
+				"target.addEventListenr('click', func);")); 
+		assertTrue(result == null);
 	}
 	
 	@Test

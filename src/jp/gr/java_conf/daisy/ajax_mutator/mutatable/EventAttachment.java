@@ -29,4 +29,16 @@ public class EventAttachment extends Mutatable {
 		buffer.append("]");
 		return buffer.toString();
 	}
+
+	public AstNode getTarget() {
+		return target;
+	}
+
+	public AstNode getEvent() {
+		return event;
+	}
+
+	public AstNode getCallback() {
+		return callback;
+	}
 }

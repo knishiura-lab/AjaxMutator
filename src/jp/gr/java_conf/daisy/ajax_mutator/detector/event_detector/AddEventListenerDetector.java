@@ -24,7 +24,8 @@ public class AddEventListenerDetector extends EventAttacherDetector {
 		if (target instanceof PropertyGet) {
 			PropertyGet propertyGet = (PropertyGet) target;
 			if (targetString.equals(propertyGet.getProperty().getIdentifier())) {
-				return new EventAttachment(functionCall, target, arguments.get(0), arguments.get(1));
+				return new EventAttachment(functionCall, propertyGet.getTarget(),
+						arguments.get(0), arguments.get(1));
 			}
 		}
 		return null;
