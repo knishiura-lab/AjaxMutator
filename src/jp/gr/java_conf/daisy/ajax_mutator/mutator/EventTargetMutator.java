@@ -2,7 +2,9 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.mozilla.javascript.ast.AstNode;
 
@@ -22,10 +24,22 @@ public class EventTargetMutator implements Mutator {
 	}
 	
 	@Override
-	public void applyMutation() {
+	public boolean applyMutation() {
 		EventAttachment mutationTarget = eventAttachments.get(targetIndex);
-		AstNode newTarget = eventTargets.get((int) Math.floor(Math.random() * eventTargets.size()));
+		Set<AstNode> equivalents = new HashSet<AstNode>();
+		equivalents.add(mutationTarget.getTarget());
+		AstNode newTarget = null;
+		while (equivalents.size() < eventTargets.size()) {
+			newTarget = eventTargets.get((int) Math.floor(Math.random() * eventTargets.size()));
+			if (!newTarget.equals(mutationTarget.getTarget()))
+				break;
+			else
+				equivalents.add(newTarget);
+		}
+		if (newTarget == null)
+			return false;
 		mutationTarget.replaceTarget(newTarget);
+		return true;
 	}
 
 	@Override

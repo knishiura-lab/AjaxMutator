@@ -6,7 +6,10 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
  * @author Kazuki Nishiura
  */
 public interface Mutator {
-	public void applyMutation();
+	/**
+	 * @return if mutation operation is successfully applied or not.
+	 */
+	public boolean applyMutation();
 	public void undoMutation();
 	public boolean isFinished();
 }
