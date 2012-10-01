@@ -8,8 +8,6 @@ import org.mozilla.javascript.ast.Name;
 import org.mozilla.javascript.ast.PropertyGet;
 
 import jp.gr.java_conf.daisy.ajax_mutator.detector.MutationPointDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Mutatable;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.TimerEventAttachment;
 
 /**
