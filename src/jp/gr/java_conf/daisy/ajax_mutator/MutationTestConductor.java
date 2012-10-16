@@ -1,8 +1,10 @@
 package jp.gr.java_conf.daisy.ajax_mutator;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,6 +34,7 @@ public class MutationTestConductor {
 	private AstRoot astRoot;
 	private Set<EventAttachment> eventAttachments;
 	private List<Mutator> mutators;
+	private boolean conducting;
 
 	public MutationTestConductor() {
 		this(System.out);
@@ -89,15 +92,27 @@ public class MutationTestConductor {
 	 */
 	public void conduct(TestExecutor testExecutor) {
 		checkIfSetuped();
+		conducting = true;
+		Thread commandReceiver = new Thread(new CommandReceiver());
+		commandReceiver.start();
 		for (Mutator mutator: mutators) {
-			while (!mutator.isFinished()) {
+			while (!mutator.isFinished() && conducting) {
 				mutator.applyMutation();
 				Util.writeToFile(pathToJSFile, astRoot.toSource());
 				String result = testExecutor.execute();
 				outputStream.println(result);
 				mutator.undoMutation();
 			}
+			if (!conducting)
+				break;
 		}
+		conducting = false;
+		try {
+			commandReceiver.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("finished!");
 	}
 	
 	public void conductWithJunit4(Class<?>... classes) {
@@ -107,5 +122,27 @@ public class MutationTestConductor {
 	private void checkIfSetuped() {
 		if (!setup)
 			throw new IllegalStateException("You 'must' call setup method before you use.");
+	}
+	
+	private class CommandReceiver implements Runnable {
+		@Override
+		public void run() {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+			while (conducting) {
+				try {
+					String command = reader.readLine();
+					if (null == command)
+						break;
+					else if ("q".equals(command))
+						break;
+					
+					System.out.println(command);
+				} catch (IOException e) {
+					break;
+				}
+			}
+			conducting = false;
+			System.out.println("thread finish");
+		}
 	}
 }
