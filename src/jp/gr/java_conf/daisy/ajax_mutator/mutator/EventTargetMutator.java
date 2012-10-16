@@ -1,5 +1,6 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -10,12 +11,14 @@ import org.mozilla.javascript.ast.AstNode;
 
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 
-public class EventTargetMutator implements Mutator {
+public class EventTargetMutator extends AbstractMutator {
 	private List<EventAttachment> eventAttachments;
 	private List<AstNode> eventTargets;
 	private int targetIndex = 0;
 	
-	public EventTargetMutator(Collection<EventAttachment> eventAttachments) {
+	public EventTargetMutator(
+			PrintStream printStream, Collection<EventAttachment> eventAttachments) {
+		super(printStream);
 		this.eventAttachments = new ArrayList<EventAttachment>(eventAttachments);
 		eventTargets = new ArrayList<AstNode>(this.eventAttachments.size());
 		for (EventAttachment attachment: this.eventAttachments) {
@@ -31,13 +34,14 @@ public class EventTargetMutator implements Mutator {
 		AstNode newTarget = null;
 		while (equivalents.size() < eventTargets.size()) {
 			newTarget = eventTargets.get((int) Math.floor(Math.random() * eventTargets.size()));
-			if (!newTarget.equals(mutationTarget.getTarget()))
-				break;
-			else
+			if (ifEquals(mutationTarget.getTarget(), newTarget))
 				equivalents.add(newTarget);
+			else
+				break;
 		}
 		if (newTarget == null)
 			return false;
+		printMutationInformation(mutationTarget.getTarget(), newTarget);
 		mutationTarget.replaceTarget(newTarget);
 		return true;
 	}
