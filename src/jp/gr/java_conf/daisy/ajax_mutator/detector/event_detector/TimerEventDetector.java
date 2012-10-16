@@ -15,7 +15,7 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutatable.TimerEventAttachment;
  * 
  * @author Kazuki Nishiura
  */
-public class TimerEventDetector implements MutationPointDetector {
+public class TimerEventDetector implements MutationPointDetector<TimerEventAttachment> {
 	private static String SET_TIMEOUT_IDENTIFIIER = "setTimeout";
 	private static String SET_INTERVAL_IDENTIFIER = "setInterval";
 	
