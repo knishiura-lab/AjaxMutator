@@ -9,10 +9,10 @@ import org.mozilla.javascript.ast.AstNode;
  * 
  * @author Kazuki Nishiura
  */
-public interface MutationPointDetector {
+public interface MutationPointDetector<T extends Mutatable> {
 	/**
 	 * @param node
-	 * @return mutatable instance if node is what we want to focus, otherwise return null
+	 * @return T instance if node is what we want to focus, otherwise return null
 	 */
-	public Mutatable detect(AstNode node);
+	public T detect(AstNode node);
 }

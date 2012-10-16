@@ -3,7 +3,8 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutatable;
 import org.mozilla.javascript.ast.AstNode;
 
 /**
- * Event attachment statement
+ * Event attachment statement such as element.addEventListner or 
+ * element.attachEvent
  * 
  * @author Kazuki Nishiura
  */

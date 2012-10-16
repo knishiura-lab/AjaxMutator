@@ -12,7 +12,7 @@ import org.mozilla.javascript.ast.FunctionCall;
  * 
  * @author Kazuki Nishiura
  */
-public abstract class EventAttacherDetector implements MutationPointDetector {
+public abstract class EventAttacherDetector implements MutationPointDetector<EventAttachment> {
 	/**
 	 * detect event attachment from passed function call
 	 */
