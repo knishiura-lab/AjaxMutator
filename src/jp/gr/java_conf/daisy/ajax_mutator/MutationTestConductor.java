@@ -2,8 +2,8 @@ package jp.gr.java_conf.daisy.ajax_mutator;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -11,10 +11,9 @@ import java.util.Set;
 
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventListenerDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AttachEventDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventTargetMutator;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventTypeMutator;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 
 import org.mozilla.javascript.ast.AstRoot;
@@ -26,21 +25,30 @@ import org.mozilla.javascript.ast.AstRoot;
  * @author Kazuki Nishiura
  */
 public class MutationTestConductor {
-	private boolean setup;
+	private boolean setup = false;
+	private PrintStream outputStream;
 	private ParserWithBrowser parser;
 	private String pathToJSFile;
 	private AstRoot astRoot;
 	private Set<EventAttachment> eventAttachments;
 	private List<Mutator> mutators;
-	
+
 	public MutationTestConductor() {
-		setup = false;
+		this(System.out);
+	}
+	
+	public MutationTestConductor(PrintStream output) {
+		this.outputStream = output;
 	}
 	
 	/**
+	 * Setting information required for mutation testing. This method MUST
+	 * be called before conducting mutation testing.
+	 * 
 	 * @return if setup is successfully finished.
 	 */
 	public boolean setup(String pathToJSFile, String targetURL) {
+		setup = false;
 		this.pathToJSFile = pathToJSFile;
 		parser = ParserWithBrowser.getParser();
 		try {
@@ -50,6 +58,7 @@ public class MutationTestConductor {
 			System.err.println("IOException: cannot parse AST.");
 			return false;
 		}
+		
 		if (astRoot != null) {
 			EventAttacherDetector[] attahcerDetectorArray 
 				= {new AddEventDetector()};
@@ -58,47 +67,34 @@ public class MutationTestConductor {
 			MutateVisitor visitor = new MutateVisitor(attacherDetector);
 			astRoot.visit(visitor);
 			eventAttachments = visitor.getEventAttachments();
-			Mutator[] mutatorsArray = {new EventTargetMutator(eventAttachments)};
+			Mutator[] mutatorsArray 
+				= {new EventTargetMutator(outputStream, eventAttachments), 
+				   new EventTypeMutator(outputStream, eventAttachments)};
 			mutators = Arrays.asList(mutatorsArray);
 			setup = true;
-			return true;
 		} else {
 			System.err.println("Cannot parse AST.");
-			return false;
 		}
+		return setup;
 	}
 	
 	/**
 	 * Apply next mutation testing. 
-	 * <ul>
-	 * <li>1. Apply mutation operator to target applications</li>
-	 * <li>2. Execute test by using testExecutor passed in arguments</li>
-	 * <li>3. Repair last applied mutation</li>
-	 * <li>4. Repeat until all possible mutation operation executed</li>
-	 * </ul>
+	 * <ol>
+	 * <li>Apply mutation operator to target applications</li>
+	 * <li>Execute test by using testExecutor passed in arguments</li>
+	 * <li>Repair last applied mutation</li>
+	 * <li>Repeat until all possible mutation operation executed</li>
+	 * </ol>
 	 */
 	public void conduct(TestExecutor testExecutor) {
 		checkIfSetuped();
-		for (int i = 0; i < mutators.size(); i++) {
-			Mutator mutator = mutators.get(i);
+		for (Mutator mutator: mutators) {
 			while (!mutator.isFinished()) {
 				mutator.applyMutation();
-				FileWriter writer = null;
-				try {
-					writer = new FileWriter(new File(pathToJSFile));
-					writer.write(astRoot.toSource());
-				} catch (IOException e) {
-					System.err.println("IOException" + e.getMessage());
-				} finally {
-					try {
-						writer.close();
-					} catch (IOException e) {
-						System.err.println("Fail to close source file" + e.getMessage());
-					}
-				}
-				
+				Util.writeToFile(pathToJSFile, astRoot.toSource());
 				String result = testExecutor.execute();
-				System.out.println(result);
+				outputStream.println(result);
 				mutator.undoMutation();
 			}
 		}
