@@ -2,20 +2,20 @@ package jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector;
 
 import java.util.List;
 
+import jp.gr.java_conf.daisy.ajax_mutator.detector.AbstractDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.TimerEventAttachment;
+
 import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.FunctionCall;
 import org.mozilla.javascript.ast.Name;
 import org.mozilla.javascript.ast.PropertyGet;
-
-import jp.gr.java_conf.daisy.ajax_mutator.detector.MutationPointDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.TimerEventAttachment;
 
 /**
  * Detect timer event registration call, which is, setTimeout or setInterval
  * 
  * @author Kazuki Nishiura
  */
-public class TimerEventDetector implements MutationPointDetector<TimerEventAttachment> {
+public class TimerEventDetector extends AbstractDetector<TimerEventAttachment> {
 	private static String SET_TIMEOUT_IDENTIFIIER = "setTimeout";
 	private static String SET_INTERVAL_IDENTIFIER = "setInterval";
 	
@@ -24,12 +24,7 @@ public class TimerEventDetector implements MutationPointDetector<TimerEventAttac
 	 */
 	@Override
 	public TimerEventAttachment detect(AstNode node) {
-		if (node instanceof FunctionCall) {
-			FunctionCall call = (FunctionCall) node;
-			return detectFromFunctionCall(call, call.getTarget(), call.getArguments());
-		}
-		throw new IllegalArgumentException(this.getClass() + ".detect()"
-				+ " must receive any function call, but called for " + node.getClass());
+		return detectFromFunctionCall(node, true);
 	}
 
 	/**
@@ -48,6 +43,7 @@ public class TimerEventDetector implements MutationPointDetector<TimerEventAttac
 	 * @param arguments argument for function call (e.g. [callback, 100])
 	 * @return TimerEventAttachment instance or null
 	 */
+	@Override
 	public TimerEventAttachment detectFromFunctionCall(
 			FunctionCall functionCall, AstNode target, List<AstNode> arguments) {
 		TimerEventAttachment.TimerEventType timerEventType = null;
