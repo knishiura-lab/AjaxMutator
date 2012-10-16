@@ -1,4 +1,4 @@
-package test.jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.dom_manipulation_detector;
+package test.jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
