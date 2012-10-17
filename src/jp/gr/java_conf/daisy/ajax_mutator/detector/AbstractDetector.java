@@ -2,9 +2,9 @@ package jp.gr.java_conf.daisy.ajax_mutator.detector;
 
 import java.util.List;
 
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Mutatable;
 
+import org.mozilla.javascript.ast.Assignment;
 import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.FunctionCall;
 
@@ -52,10 +52,43 @@ public abstract class AbstractDetector<T extends Mutatable> implements MutationP
 	 * @param functionCall whole function call (e.g. hoge.attachEvent('onclick', callback))
 	 * @param target target for function call (e.g. hoge.attachEvent)
 	 * @param arguments argument for function call (e.g. ['onclick', callback])
-	 * @return EventAttachment instance or null
+	 * @return T instance or null
 	 */
 	protected T detectFromFunctionCall(
 			FunctionCall functionCall, AstNode target, List<AstNode> arguments) {
+		return null;
+	}
+	
+	/**
+	 * Assuming node is Assignment and detect if node is desired element.
+	 * 
+	 * @return T if node is Assignment instance and what we want to focus,
+	 * otherwise, return null
+	 * @throws IllegalStatementException if strict is true and node is not an
+	 * instance of Assignment
+	 */
+	protected T detectFromAssignment(AstNode node, boolean strict) {
+		if (node instanceof Assignment) {
+			Assignment assignment = (Assignment) node;
+			return detectFromAssignment(
+					assignment, assignment.getLeft(), assignment.getRight());
+		} else if (strict) {
+			throw new IllegalArgumentException(this.getClass() + ".detect()"
+					+ " must receive any assignment, but called for " + node.getClass());
+		}
+		return null;
+	}
+	
+	/**
+	 * detect Mutatable from passed assignment (e.g., obj.mem = 100)
+	 * 
+	 * @param Assignment whole function call (e.g., obj.mem = 100)
+	 * @param left left node of assignment
+	 * @param right right node of assignment
+	 * @return T instance or null
+	 */
+	protected T detectFromAssignment(
+			Assignment assignment, AstNode left, AstNode right) {
 		return null;
 	}
 }

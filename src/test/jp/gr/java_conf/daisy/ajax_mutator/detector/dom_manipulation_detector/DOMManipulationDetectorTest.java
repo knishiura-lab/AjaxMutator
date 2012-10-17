@@ -2,14 +2,21 @@ package test.jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detect
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static test.jp.gr.java_conf.daisy.ajax_mutator.ASTUtil.stringToAssignment;
 import static test.jp.gr.java_conf.daisy.ajax_mutator.ASTUtil.stringToFunctionCall;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.AppendChildDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.AttributeAssignmentDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.CreateElementDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.RemoveChildDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DomAppending;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DomCreation;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DomRemoval;
 
 import org.junit.Test;
+import org.mozilla.javascript.ast.KeywordLiteral;
 import org.mozilla.javascript.ast.Name;
+import org.mozilla.javascript.ast.StringLiteral;
 
 public class DOMManipulationDetectorTest {
 	@Test
@@ -24,7 +31,7 @@ public class DOMManipulationDetectorTest {
 	}
 
 	@Test
-	public void testRemoveChildDetector() {
+	public void removeChildDetectorTest() {
 		RemoveChildDetector detector = new RemoveChildDetector();
 
 		DomRemoval result = detector.detect(
@@ -32,5 +39,30 @@ public class DOMManipulationDetectorTest {
 		assertTrue(result != null);
 		assertEquals("hoge", ((Name) result.getFrom()).getIdentifier());
 		assertEquals("fuga", ((Name) result.getTarget()).getIdentifier());
+	}
+	
+	@Test
+	public void craeteElementDetectorTest() {
+		CreateElementDetector detector = new CreateElementDetector();
+		DomCreation result = detector.detect(
+				stringToFunctionCall("document.createElement('div')"));
+		assertTrue(result != null);
+		assertEquals("div", ((StringLiteral) result.getTagName()).getValue());
+		
+	}
+	
+	@Test
+	public void attributeAssignmentDetectorTest() {
+		AttributeAssignmentDetector detector = new AttributeAssignmentDetector();
+		AttributeModification result = detector.detect(
+				stringToAssignment("hoge.hidden = true;"));
+		assertTrue(result != null);
+		assertEquals("true", result.getAttributeValue().toSource());
+		assertEquals("hoge", result.getTargetDom().toSource());
+		assertEquals("hidden", result.getTargetAttribute().toSource());
+		result = detector.detect(stringToAssignment("hoge.hige = true;"));
+		assertTrue(result == null);
+		result = detector.detect(stringToAssignment("document.findElementById('hoge')['hidden'] = true;"));
+		assertTrue(result != null);
 	}
 }
