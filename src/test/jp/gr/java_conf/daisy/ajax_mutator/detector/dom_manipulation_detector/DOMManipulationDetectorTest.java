@@ -9,9 +9,9 @@ import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.Att
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.CreateElementDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.RemoveChildDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DomAppending;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DomCreation;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DomRemoval;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMAppending;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMCreation;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMRemoval;
 
 import org.junit.Test;
 import org.mozilla.javascript.ast.KeywordLiteral;
@@ -23,7 +23,7 @@ public class DOMManipulationDetectorTest {
 	public void testAppendChildDetector() {
 		AppendChildDetector detector = new AppendChildDetector();
 
-		DomAppending result = detector.detect(
+		DOMAppending result = detector.detect(
 				stringToFunctionCall("hoge.appendChild(fuga);"));
 		assertTrue(result != null);
 		assertEquals("hoge", ((Name) result.getAppendTarget()).getIdentifier());
@@ -34,7 +34,7 @@ public class DOMManipulationDetectorTest {
 	public void removeChildDetectorTest() {
 		RemoveChildDetector detector = new RemoveChildDetector();
 
-		DomRemoval result = detector.detect(
+		DOMRemoval result = detector.detect(
 				stringToFunctionCall("hoge.removeChild(fuga);"));
 		assertTrue(result != null);
 		assertEquals("hoge", ((Name) result.getFrom()).getIdentifier());
@@ -44,7 +44,7 @@ public class DOMManipulationDetectorTest {
 	@Test
 	public void craeteElementDetectorTest() {
 		CreateElementDetector detector = new CreateElementDetector();
-		DomCreation result = detector.detect(
+		DOMCreation result = detector.detect(
 				stringToFunctionCall("document.createElement('div')"));
 		assertTrue(result != null);
 		assertEquals("div", ((StringLiteral) result.getTagName()).getValue());

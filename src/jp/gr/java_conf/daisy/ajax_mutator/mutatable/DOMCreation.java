@@ -7,10 +7,10 @@ import org.mozilla.javascript.ast.AstNode;
  * 
  * @author Kazuki Nishiura
  */
-public class DomCreation extends Mutatable {
+public class DOMCreation extends Mutatable {
 	private final AstNode tagName;
 	
-	public DomCreation(AstNode node, AstNode tagName) {
+	public DOMCreation(AstNode node, AstNode tagName) {
 		super(node);
 		this.tagName = tagName;
 	}

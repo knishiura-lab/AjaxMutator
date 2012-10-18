@@ -7,11 +7,11 @@ import org.mozilla.javascript.ast.AstNode;
  * 
  * @author Kazuki Nishiura
  */
-public class DomRemoval extends Mutatable {
+public class DOMRemoval extends Mutatable {
 	private final AstNode from;
 	private final AstNode target;
 	
-	public DomRemoval(AstNode node, AstNode from, AstNode target) {
+	public DOMRemoval(AstNode node, AstNode from, AstNode target) {
 		super(node);
 		this.from = from;
 		this.target = target;

@@ -7,11 +7,11 @@ import org.mozilla.javascript.ast.AstNode;
  * 
  * @author Kazuki Nishiura
  */
-public class DomAppending extends Mutatable {
+public class DOMAppending extends Mutatable {
 	private AstNode appendTarget;
 	private AstNode appendedDom;
 	
-	public DomAppending(AstNode astNode, AstNode appendTarget, AstNode appendedDom) {
+	public DOMAppending(AstNode astNode, AstNode appendTarget, AstNode appendedDom) {
 		super(astNode);
 		this.appendTarget = appendTarget;
 		this.appendedDom = appendedDom;
