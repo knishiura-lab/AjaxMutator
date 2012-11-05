@@ -8,6 +8,7 @@ import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.App
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.AttributeAssignmentDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.CreateElementDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.DOMSelectionDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.JQueryDOMSelectionDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.RemoveChildDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMAppending;
@@ -64,6 +65,16 @@ public class DOMManipulationDetectorTest {
 		assertTrue(result.getRange() != null);
 		AstNode selector = result.getSelector();
 		assertEquals("'aaa'", selector.toSource());
+	}
+	
+	@Test
+	public void jQueryDomSelectionDetectorTest() {
+		JQueryDOMSelectionDetector detector = new JQueryDOMSelectionDetector();
+		DOMSelection result = detector.detect(
+				stringToFunctionCall("$('.aaa')"));
+		assertTrue(result != null);
+		assertEquals(DOMSelection.SelectionMethod.JQUERY, result.getSelectionMethod());
+		assertEquals("'.aaa'", result.getSelector().toSource());
 	}
 	
 	@Test

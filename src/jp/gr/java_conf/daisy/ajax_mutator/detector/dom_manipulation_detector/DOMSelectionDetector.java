@@ -21,8 +21,8 @@ public class DOMSelectionDetector extends AbstractDetector<DOMSelection> {
 		AstNode range = null;
 		String selectionMethod = null;
 		
-		if (functionCall.getTarget() instanceof PropertyGet) {
-			PropertyGet propertyGet = (PropertyGet) functionCall.getTarget();
+		if (target instanceof PropertyGet) {
+			PropertyGet propertyGet = (PropertyGet) target;
 			range = propertyGet.getTarget();
 			selectionMethod = propertyGet.getProperty().getIdentifier();
 		

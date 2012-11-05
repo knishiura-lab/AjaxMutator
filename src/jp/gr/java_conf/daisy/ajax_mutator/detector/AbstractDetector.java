@@ -29,6 +29,8 @@ public abstract class AbstractDetector<T extends Mutatable> implements MutationP
 	/**
 	 * Assuming node is FunctionCall and detect if node is desired element.
 	 * 
+	 * @param strict if passed argument node do not have type FunctionCall,
+	 *  throw exception.
 	 * @return T if node is FunctionCall instance and what we want to focus,
 	 * otherwise, return null
 	 * @throws IllegalStatementException if strict is true and node is not an
