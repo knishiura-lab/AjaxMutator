@@ -23,6 +23,7 @@ public class EventAttachment extends Mutatable {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
+		buffer.append(astNode.getLineno() + " ");
 		buffer.append("Event attachment: ");
 		buffer.append("[target: " + target.toSource());
 		buffer.append(", event:" + event.toSource());

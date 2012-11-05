@@ -12,7 +12,7 @@ import org.mozilla.javascript.ast.PropertyGet;
  * 
  * @author Kazuki Nishiura
  */
-public abstract class Mutatable {
+public abstract class Mutatable implements Comparable<Mutatable> {
 	protected final AstNode astNode;
 	private AstNode lastReplacedFrom;
 	private AstNode lastReplacedTo;
@@ -90,5 +90,20 @@ public abstract class Mutatable {
 				return false;
 			}
 		}
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(astNode.getLineno()).append(' ');
+		builder.append(astNode.toSource());
+		return builder.toString();
+	}
+
+	@Override
+	public int compareTo(Mutatable opponent) {
+		int lineNo = astNode.getLineno();
+		int opponentLineNo = opponent.astNode.getLineno();
+		return lineNo - opponentLineNo;
 	}
 }

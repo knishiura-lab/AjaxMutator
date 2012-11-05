@@ -67,7 +67,7 @@ public class MutationTestConductor {
 				= {new AddEventDetector()};
 			Set<EventAttacherDetector> attacherDetector 
 				= new HashSet<EventAttacherDetector>(Arrays.asList(attahcerDetectorArray));
-			MutateVisitor visitor = new MutateVisitor(attacherDetector);
+			MutateVisitor visitor = new MutateVisitor(attacherDetector, null, null, null, null, null, null);
 			astRoot.visit(visitor);
 			eventAttachments = visitor.getEventAttachments();
 			Mutator[] mutatorsArray 
