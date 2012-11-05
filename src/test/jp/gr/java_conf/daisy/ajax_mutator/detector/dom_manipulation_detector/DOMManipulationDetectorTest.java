@@ -7,13 +7,16 @@ import static test.jp.gr.java_conf.daisy.ajax_mutator.ASTUtil.stringToFunctionCa
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.AppendChildDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.AttributeAssignmentDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.CreateElementDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.DOMSelectionDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.RemoveChildDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMAppending;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMCreation;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMRemoval;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection;
 
 import org.junit.Test;
+import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.KeywordLiteral;
 import org.mozilla.javascript.ast.Name;
 import org.mozilla.javascript.ast.StringLiteral;
@@ -49,6 +52,18 @@ public class DOMManipulationDetectorTest {
 		assertTrue(result != null);
 		assertEquals("div", ((StringLiteral) result.getTagName()).getValue());
 		
+	}
+	
+	@Test
+	public void domSelectionDetectorTest() {
+		DOMSelectionDetector detector = new DOMSelectionDetector();
+		DOMSelection result = detector.detect(
+				stringToFunctionCall("document.getElementById('aaa')"));
+		assertTrue(result != null);
+		assertEquals(DOMSelection.SelectionMethod.ID, result.getSelectionMethod());
+		assertTrue(result.getRange() != null);
+		AstNode selector = result.getSelector();
+		assertEquals("'aaa'", selector.toSource());
 	}
 	
 	@Test
