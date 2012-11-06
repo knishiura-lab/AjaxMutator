@@ -34,7 +34,7 @@ public class JQueryEventAttachmentDetector extends EventAttacherDetector {
 		if (target instanceof PropertyGet) {
 			PropertyGet propertyGet = (PropertyGet) target;
 			String methodName = propertyGet.getProperty().getIdentifier();
-			if (jQueryEvents.contains(methodName)) {
+			if (jQueryEvents.contains(methodName) && arguments.size() > 0) {
 				return new EventAttachment(functionCall, propertyGet.getTarget(), 
 						propertyGet.getProperty(), arguments.get(0));
 			} else if (jQueryEventAttachers.contains(methodName)) {
