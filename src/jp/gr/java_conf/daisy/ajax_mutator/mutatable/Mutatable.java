@@ -18,6 +18,7 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 	protected final AstNode astNode;
 	private AstNode lastReplacedFrom;
 	private AstNode lastReplacedTo;
+	private AstNode parentOfLastReplacedTo;
 	
 	public Mutatable(AstNode astNode) {
 		this.astNode = astNode;
@@ -28,12 +29,11 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 	}
 	
 	protected void replace(AstNode from, AstNode to) {
-		AstNode _lastReplacedFrom = from;
-		AstNode _lastReplacedTo = to;
+		lastReplacedFrom = from;
+		lastReplacedTo = to;
+		parentOfLastReplacedTo = lastReplacedTo.getParent();
+
 		replace(from.getParent(), from, to);
-		
-		lastReplacedFrom = _lastReplacedFrom;
-		lastReplacedTo = _lastReplacedTo;
 	}
 	
 	private void replace(AstNode parent, AstNode from, AstNode to) {
@@ -56,6 +56,7 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 	
 	public void undoLastReplace() {
 		replace(lastReplacedFrom.getParent(), lastReplacedTo, lastReplacedFrom);
+		lastReplacedTo.setParent(parentOfLastReplacedTo);
 	}
 	
 	private boolean applyReplaceTo(PropertyGet propertyGet, AstNode from, AstNode to) {
