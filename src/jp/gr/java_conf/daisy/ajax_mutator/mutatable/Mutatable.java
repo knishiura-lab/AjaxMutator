@@ -104,8 +104,14 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 
 	@Override
 	public int compareTo(Mutatable opponent) {
-		int lineNo = astNode.getLineno();
-		int opponentLineNo = opponent.astNode.getLineno();
-		return lineNo - opponentLineNo;
+		int lineDiff = astNode.getLineno() - opponent.astNode.getLineno();
+		if (lineDiff != 0)
+			return lineDiff;
+		int posDiff =  astNode.getPosition() - opponent.astNode.getPosition();
+		if (posDiff != 0) 
+			return posDiff;
+		// In same case, it seems all position is 0, so I need workaround like
+		// bellow to distinguish another program element.
+		return this.equals(opponent) ? 0 : 1;
 	}
 }
