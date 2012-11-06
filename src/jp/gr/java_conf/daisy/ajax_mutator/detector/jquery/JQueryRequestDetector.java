@@ -1,4 +1,4 @@
-package jp.gr.java_conf.daisy.ajax_mutator.detector.request_detector;
+package jp.gr.java_conf.daisy.ajax_mutator.detector.jquery;
 
 import java.util.List;
 import java.util.Set;

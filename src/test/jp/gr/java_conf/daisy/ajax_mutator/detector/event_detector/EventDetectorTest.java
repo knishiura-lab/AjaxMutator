@@ -8,7 +8,6 @@ import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventListenerDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AttachEventDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.JQueryEventAttachmentDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.TimerEventDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.TimerEventAttachment;
@@ -52,17 +51,6 @@ public class EventDetectorTest {
 
 		assertTrue(detector.detect(stringToFunctionCall(
 				"target.addEventListener('click', func);")) == null);
-	}
-	
-	@Test
-	public void testJQueryEventDetector() {
-		EventAttacherDetector detector = new JQueryEventAttachmentDetector();
-
-		assertTrue(detector.detect(stringToFunctionCall(
-				"$('#elm').on('click', func);")) != null);
-
-		assertTrue(detector.detect(stringToFunctionCall(
-				"target.click(func);")) != null);
 	}
 	
 	@Test

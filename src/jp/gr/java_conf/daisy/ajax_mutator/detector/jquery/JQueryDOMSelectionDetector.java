@@ -1,4 +1,4 @@
-package jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector;
+package jp.gr.java_conf.daisy.ajax_mutator.detector.jquery;
 
 import java.util.List;
 
