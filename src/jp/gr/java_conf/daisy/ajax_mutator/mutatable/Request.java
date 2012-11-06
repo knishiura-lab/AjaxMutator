@@ -1,5 +1,7 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutatable;
 
+import jp.gr.java_conf.daisy.ajax_mutator.Util;
+
 import org.mozilla.javascript.ast.AstNode;
 
 public class Request extends Mutatable {
@@ -38,7 +40,16 @@ public class Request extends Mutatable {
 	public AstNode getParameters() {
 		return parameters;
 	}
-
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(super.toString()).append('\n');
+		builder.append("  Request: [url:").append(url).append(", onSuccess:");
+		builder.append(Util.oneLineStringOf(successHanlder)).append("]");
+		return builder.toString();
+	}
+	
 	public enum ResponseType {
 		JSON, TEXT, HTML
 	}

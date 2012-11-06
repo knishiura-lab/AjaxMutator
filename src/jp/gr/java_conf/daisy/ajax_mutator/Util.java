@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.mozilla.javascript.ast.AstNode;
+
 public class Util {
 	public static boolean writeToFile(String pathToFile, String content) {
 		FileWriter writer = null;
@@ -22,5 +24,15 @@ public class Util {
 			}
 		}
 		return true;
+	}
+	
+	public static String oneLineStringOf(AstNode node) {
+		if (node == null)
+			return "";
+		String[] str = node.toSource().split("\n", 2);
+		if (str.length == 1)
+			return str[0];
+		else
+			return str[0] + "... ";
 	}
 }

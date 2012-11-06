@@ -30,4 +30,15 @@ public class AttributeModification extends Mutatable {
 	public AstNode getAttributeValue() {
 		return attributeValue;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(super.toString()).append('\n');
+		builder.append("  DOM attribute modification: [dom:");
+		builder.append(targetDom.toSource()).append(", attr:");
+		builder.append(targetAttribute.toSource()).append(", val:");
+		builder.append(attributeValue.toSource()).append("]");
+		return builder.toString();
+	}
 }

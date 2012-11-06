@@ -136,8 +136,12 @@ public class MutateVisitor implements NodeVisitor {
 	
 	private <T> void appendSet(String title, StringBuilder builder, Set<T> set) {
 		builder.append("  --- ").append(title).append(" (").append(set.size()).append(") ---\n");
-		for (T element: set)
-			builder.append("    ").append(element).append('\n');
+		for (T element: set) {
+			String str = element.toString();
+			String spaceBeforeContent = "    ";
+			builder.append(spaceBeforeContent)
+				.append(str.replaceAll("\n", "\n" + spaceBeforeContent)).append('\n');
+		}
 	}
 	
 	public String MutatablesInfo() {

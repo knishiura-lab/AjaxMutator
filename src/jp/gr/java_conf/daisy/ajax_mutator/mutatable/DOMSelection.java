@@ -1,5 +1,7 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutatable;
 
+import jp.gr.java_conf.daisy.ajax_mutator.Util;
+
 import org.mozilla.javascript.ast.AstNode;
 
 /**
@@ -33,5 +35,14 @@ public class DOMSelection extends Mutatable {
 	
 	public AstNode getSelector() {
 		return selector;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(super.toString()).append('\n');
+		builder.append("  DOM selection: [from:").append(Util.oneLineStringOf(range))
+			.append(", by ").append(method).append(": ").append(Util.oneLineStringOf(selector)).append("]");
+		return builder.toString();
 	}
 }

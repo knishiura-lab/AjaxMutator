@@ -18,4 +18,13 @@ public class DOMCreation extends Mutatable {
 	public AstNode getTagName()	{
 		return tagName;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(super.toString()).append('\n');
+		builder.append("  DOM creation: [tag:");
+		builder.append(tagName.toSource()).append("]");
+		return builder.toString();
+	}
 }

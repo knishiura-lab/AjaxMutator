@@ -1,5 +1,7 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutatable;
 
+import jp.gr.java_conf.daisy.ajax_mutator.Util;
+
 import org.mozilla.javascript.ast.AstNode;
 
 /**
@@ -38,6 +40,17 @@ public class TimerEventAttachment extends Mutatable {
 	
 	public void replaceDuration(AstNode newDuration) {
 		replace(duration, newDuration);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(super.toString()).append('\n');
+		builder.append("  ").append("Timer event attachment: [callback:");
+		builder.append(Util.oneLineStringOf(callback));
+		builder.append(", duration:").append(duration.toSource());
+		builder.append("]");
+		return builder.toString();
 	}
 	
 	public enum TimerEventType {

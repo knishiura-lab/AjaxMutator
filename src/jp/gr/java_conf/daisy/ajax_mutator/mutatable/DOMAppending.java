@@ -24,4 +24,13 @@ public class DOMAppending extends Mutatable {
 	public AstNode getAppendTarget() {
 		return appendTarget;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(super.toString()).append('\n');
+		builder.append("  DOM appending: [appened:").append(appendedDom.toSource())
+			.append(", to:").append(appendTarget.toSource()).append("]");
+		return builder.toString();
+	}
 }

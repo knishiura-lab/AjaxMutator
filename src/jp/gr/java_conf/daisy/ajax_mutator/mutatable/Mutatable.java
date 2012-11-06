@@ -2,6 +2,8 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutatable;
 
 import java.util.List;
 
+import jp.gr.java_conf.daisy.ajax_mutator.Util;
+
 import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.FunctionCall;
 import org.mozilla.javascript.ast.Name;
@@ -96,7 +98,7 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(astNode.getLineno()).append(' ');
-		builder.append(astNode.toSource());
+		builder.append(Util.oneLineStringOf(astNode));
 		return builder.toString();
 	}
 

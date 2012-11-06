@@ -1,5 +1,7 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutatable;
 
+import jp.gr.java_conf.daisy.ajax_mutator.Util;
+
 import org.mozilla.javascript.ast.AstNode;
 
 /**
@@ -22,14 +24,14 @@ public class EventAttachment extends Mutatable {
 	
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(astNode.getLineno() + " ");
-		buffer.append("Event attachment: ");
-		buffer.append("[target: " + target.toSource());
-		buffer.append(", event:" + event.toSource());
-		buffer.append(", callback: " + callback.toSource());
-		buffer.append("]");
-		return buffer.toString();
+		StringBuilder builder = new StringBuilder();
+		builder.append(super.toString()).append('\n');
+		builder.append("  ").append("Event attachment: ");
+		builder.append("[target: " + target.toSource());
+		builder.append(", event:" + event.toSource());
+		builder.append(", callback: " + Util.oneLineStringOf(callback));
+		builder.append("]");
+		return builder.toString();
 	}
 
 	public AstNode getTarget() {
