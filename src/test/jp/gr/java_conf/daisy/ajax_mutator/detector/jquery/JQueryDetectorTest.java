@@ -3,10 +3,13 @@ package test.jp.gr.java_conf.daisy.ajax_mutator.detector.jquery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static test.jp.gr.java_conf.daisy.ajax_mutator.ASTUtil.stringToFunctionCall;
+
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryAttributeModificationDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryDOMSelectionDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryEventAttachmentDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryRequestDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request.ResponseType;
@@ -57,5 +60,17 @@ public class JQueryDetectorTest {
 		assertEquals(ResponseType.HTML, result.getResponseType());
 		assertEquals("func1", result.getSuccessHanlder().toSource());
 		assertEquals("func2", result.getFailureHandler().toSource());
+	}
+	
+	@Test
+	public void testJQueryAttributeModificationDetector() {
+		JQueryAttributeModificationDetector detector
+			= new JQueryAttributeModificationDetector();
+		AttributeModification result = detector.detect(stringToFunctionCall(
+				"$(this).attr('disabled', true)"));
+		assertTrue(result != null);
+		assertEquals("$(this)", result.getTargetDom().toSource());
+		assertEquals("'disabled'", result.getTargetAttribute().toSource());
+		assertEquals("true", result.getAttributeValue().toSource());
 	}
 }

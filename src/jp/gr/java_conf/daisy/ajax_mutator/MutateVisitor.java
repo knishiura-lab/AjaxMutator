@@ -1,6 +1,5 @@
 package jp.gr.java_conf.daisy.ajax_mutator;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -103,6 +102,8 @@ public class MutateVisitor implements NodeVisitor {
 			detectAndAdd(detector, call, domSelections);
 		for (AbstractDetector<Request> detector: requestDetectors)
 			detectAndAdd(detector, call, requests);
+		for (AbstractDetector<AttributeModification> detector: attributeModificationDetectors)
+			detectAndAdd(detector, call, attributeModifications);
 		return true;
 	}
 	

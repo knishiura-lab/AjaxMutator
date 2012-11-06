@@ -60,7 +60,7 @@ public class AttributeAssignmentDetector
 	
 	@Override
 	public AttributeModification detect(AstNode node) {
-		return detectFromAssignment(node, true);
+		return detectFromAssignment(node, false);
 	}
 	
 	@Override
