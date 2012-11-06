@@ -148,7 +148,7 @@ public class MutateVisitor implements NodeVisitor {
 		builder.append("=== DOM ===\n");
 		appendSet("DOM creation", builder, domCreations);
 		appendSet("Attribute modification", builder, attributeModifications);
-		appendSet("DOM modification", builder, domRemovals);
+		appendSet("DOM removal", builder, domRemovals);
 		appendSet("DOM Selection", builder, domSelections);
 		builder.append("=== Asynchrous communications ===\n");
 		appendSet("Requests", builder, requests);
