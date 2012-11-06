@@ -25,7 +25,7 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request.ResponseType;
  *
  * @author Kazuki Nishiura
  */
-public class jQueryRequestDetector extends AbstractDetector<Request> {
+public class JQueryRequestDetector extends AbstractDetector<Request> {
 	private static final String AJAX_METHOD = "ajax";
 	private static final Set<String> AJAX_SHORTCUT_METHODS 
 		= ImmutableSet.of("get", "post", "getJSON");

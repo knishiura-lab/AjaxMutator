@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static test.jp.gr.java_conf.daisy.ajax_mutator.ASTUtil.stringToFunctionCall;
 
-import jp.gr.java_conf.daisy.ajax_mutator.detector.request_detector.jQueryRequestDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.request_detector.JQueryRequestDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request.ResponseType;
 
@@ -13,7 +13,7 @@ import org.junit.Test;
 public class RequestDetectorTest {
 	@Test
 	public void testJQueryRequestDetector() {
-		jQueryRequestDetector detector = new jQueryRequestDetector();
+		JQueryRequestDetector detector = new JQueryRequestDetector();
 		String data = "{index: 1, value: 'fuga'}";
 		Request result = detector.detect(stringToFunctionCall(
 				"$.get('hogehoge.php', " + data + ", function(data){var d = data.member; func(d);});"));
