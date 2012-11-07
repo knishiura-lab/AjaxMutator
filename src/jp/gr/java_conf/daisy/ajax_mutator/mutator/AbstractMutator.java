@@ -48,28 +48,36 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
 	 */
 	abstract protected void replaceFocusedNodeOf(T parent, AstNode newPart);
 	
+	/**
+	 * @return node that can replace mutation target. When appropriate node
+	 * do not exist or cannot be found, returns null.
+	 */
+	protected AstNode selectReplacingCandidate(T mutationTarget) {
+		Set<AstNode> equivalents = new HashSet<AstNode>();
+		equivalents.add(getFocusedNode(mutationTarget));
+		while (equivalents.size() < mutatedElements.size()) {
+			AstNode candidate = mutatedElements.get((int) Math.floor(Math.random() * mutatedElements.size()));
+			if (ifEquals(getFocusedNode(mutationTarget), candidate))
+				equivalents.add(candidate);
+			else
+				return candidate;
+		}
+		return null;
+	}
+	
 	@Override
 	public boolean applyMutation() {
 		T mutationTarget = mutationTargets.get(targetIndex);
-		Set<AstNode> equivalents = new HashSet<AstNode>();
-		equivalents.add(getFocusedNode(mutationTarget));
-		AstNode newtype = null;
-		while (equivalents.size() < mutatedElements.size()) {
-			newtype = mutatedElements.get((int) Math.floor(Math.random() * mutatedElements.size()));
-			if (ifEquals(getFocusedNode(mutationTarget), newtype))
-				equivalents.add(newtype);
-			else
-				break;
-		}
-		if (newtype == null) {
+		AstNode replacingNode = selectReplacingCandidate(mutationTarget);
+		if (replacingNode == null) {
 			System.out.println(mutationTarget.toString());
 			System.out.println(mutatedElements.get(0).toSource());
 			System.out.println(mutatedElements.size());
 			System.out.println("not applied");
 			return false;
 		}
-		printMutationInformation(getFocusedNode(mutationTarget), newtype);
-		replaceFocusedNodeOf(mutationTarget, newtype);
+		printMutationInformation(getFocusedNode(mutationTarget), replacingNode);
+		replaceFocusedNodeOf(mutationTarget, replacingNode);
 		return true;
 	}
 
@@ -102,6 +110,10 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
 		}
 	}
 	
+	/**
+	 * Determine the equality of given to AstNodes in the context of mutator.
+	 * Subclass may want to override this method to create only meaningful mutants.
+	 */
 	protected boolean ifEquals(AstNode node1, AstNode node2) {
 		return node1.toSource().equals(node2.toSource());
 	}
