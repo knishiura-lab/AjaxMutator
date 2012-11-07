@@ -41,6 +41,14 @@ public class Request extends Mutatable {
 		return parameters;
 	}
 	
+	public void replaceUrl(AstNode newUrl) {
+		replace(url, newUrl);
+	}
+
+	public void replaceOnSuccessCallback(AstNode newCallback) {
+		replace(successHanlder, newCallback);
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
