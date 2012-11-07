@@ -35,4 +35,18 @@ public class Util {
 		else
 			return str[0] + "... ";
 	}
+	
+	public static String join(String[] arrayOfString) {
+		return join(arrayOfString, null);
+	}
+	
+	public static String join(String[] arrayOfString, String separator) {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < arrayOfString.length; i++) {
+			builder.append(arrayOfString[i]);
+			if (separator != null && i == arrayOfString.length - 1)
+				builder.append(separator);
+		}
+		return builder.toString();
+	}
 }
