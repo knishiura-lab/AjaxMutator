@@ -115,6 +115,10 @@ public class MutateVisitor implements NodeVisitor {
 		return eventAttachmentExpressions;
 	}
 
+	public Set<TimerEventAttachment> getTimerEventAttachmentExpressions() {
+		return timerEventAttachmentExpressions;
+	}
+	
 	public Set<DOMCreation> getDomCreations() {
 		return domCreations;
 	}
