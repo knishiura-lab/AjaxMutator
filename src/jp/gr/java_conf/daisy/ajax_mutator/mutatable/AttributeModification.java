@@ -31,6 +31,18 @@ public class AttributeModification extends Mutatable {
 		return attributeValue;
 	}
 	
+	public void replaceAttributeValue(AstNode newValue) {
+		replace(attributeValue, newValue);
+	}
+	
+	public void replaceAttribute(AstNode newAttribute) {
+		replace(targetAttribute, newAttribute);
+	}
+	
+	public void replaceTargetDOM(AstNode newTarget) {
+		replace(targetDom, newTarget);
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

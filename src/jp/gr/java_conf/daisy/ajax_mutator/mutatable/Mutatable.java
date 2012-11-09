@@ -6,6 +6,7 @@ import jp.gr.java_conf.daisy.ajax_mutator.Util;
 
 import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.FunctionCall;
+import org.mozilla.javascript.ast.InfixExpression;
 import org.mozilla.javascript.ast.Name;
 import org.mozilla.javascript.ast.PropertyGet;
 
@@ -38,10 +39,17 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 	
 	private void replace(AstNode parent, AstNode from, AstNode to) {
 		boolean replaced = false;
+		// parent node do not always have replace target as its child node.
+		// For instance, assignment node that models "element = val", do not
+		// have Variable node 'val' as its child.
+		// Therefore, here we have a branch to provide node-specific replace 
+		// operations.
 		if (parent instanceof PropertyGet) {
 			replaced = applyReplaceTo((PropertyGet) parent, from, to);
 		} else if (parent instanceof FunctionCall) {
 			replaced = applyReplaceTo((FunctionCall) parent, from, to);
+		} else if (parent instanceof InfixExpression){
+			replaced = applyReplaceTo((InfixExpression) parent, from, to);
 		} else {
 			parent.replaceChild(from, to);
 			replaced = true;
@@ -94,7 +102,20 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 			}
 		}
 	}
-	
+
+	private boolean applyReplaceTo(
+			InfixExpression expression, AstNode from, AstNode to) {
+		System.out.println("hoge");
+		if (expression.getLeft().equals(from)) {
+			expression.setLeft(to);
+			return true;
+		} else if (expression.getRight().equals(from)) {
+			expression.setRight(to);
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
