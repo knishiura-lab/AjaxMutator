@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jp.gr.java_conf.daisy.ajax_mutator.Randomizer;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Mutatable;
 
 import org.mozilla.javascript.ast.AstNode;
@@ -46,7 +47,8 @@ public abstract class AbstractReplacingAmongMutator<T extends Mutatable>
 		Set<AstNode> equivalents = new HashSet<AstNode>();
 		equivalents.add(getFocusedNode(mutationTarget));
 		while (equivalents.size() < mutatedElements.size()) {
-			AstNode candidate = mutatedElements.get((int) Math.floor(Math.random() * mutatedElements.size()));
+			AstNode candidate = mutatedElements.get(
+					Randomizer.getInt(mutatedElements.size()));
 			if (ifEquals(getFocusedNode(mutationTarget), candidate))
 				equivalents.add(candidate);
 			else
