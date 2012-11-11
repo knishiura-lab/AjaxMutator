@@ -2,7 +2,6 @@ package test.jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import static jp.gr.java_conf.daisy.ajax_mutator.ASTUtil.stringToAstRoot;
 import static org.junit.Assert.assertEquals;
-
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.Util;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
@@ -25,16 +24,16 @@ public abstract class MutatorTestBase {
 	 * visitor instance which can detect mutation targets from given inputs.
 	 */
 	protected MutateVisitor visitor;
-	
+
 	/**
 	 * Prepare for test execution. Subclasses MUST initialize visitor and inputs
 	 * fields. <br>
 	 * Note that this method is called in the Constructor.
 	 */
 	abstract void prepare();
-	
+
 	/**
-	 * @throws IllegalStateException when either inputs or visitor is not 
+	 * @throws IllegalStateException when either inputs or visitor is not
 	 * initialized by {@code prepare} method.
 	 */
 	public MutatorTestBase() {
@@ -43,13 +42,13 @@ public abstract class MutatorTestBase {
 			throw new IllegalStateException(
 					"field both inputs and visitor MUST be initialized.");
 	}
-	
+
 	@Before
 	public void before() {
 		ast = stringToAstRoot(Util.join(inputs));
 		ast.visit(visitor);
 	}
-	
+
 	protected void undoAndAssert(Mutator mutator) {
 		mutator.undoMutation();
 		String[] outputs = ast.toSource().split("\n");

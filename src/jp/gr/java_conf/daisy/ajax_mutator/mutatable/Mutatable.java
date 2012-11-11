@@ -12,7 +12,7 @@ import org.mozilla.javascript.ast.PropertyGet;
 
 /**
  * Mutatable object, which means mutation operator can be applied to astnode held by this instance.
- * 
+ *
  * @author Kazuki Nishiura
  */
 public abstract class Mutatable implements Comparable<Mutatable> {
@@ -20,29 +20,29 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 	private AstNode lastReplacedFrom;
 	private AstNode lastReplacedTo;
 	private AstNode parentOfLastReplacedTo;
-	
+
 	public Mutatable(AstNode astNode) {
 		this.astNode = astNode;
 	}
-	
+
 	public AstNode getAstNode() {
 		return astNode;
 	}
-	
-	protected void replace(AstNode from, AstNode to) {
+
+	public void replace(AstNode from, AstNode to) {
 		lastReplacedFrom = from;
 		lastReplacedTo = to;
 		parentOfLastReplacedTo = lastReplacedTo.getParent();
 
 		replace(from.getParent(), from, to);
 	}
-	
+
 	private void replace(AstNode parent, AstNode from, AstNode to) {
 		boolean replaced = false;
 		// parent node do not always have replace target as its child node.
 		// For instance, assignment node that models "element = val", do not
 		// have Variable node 'val' as its child.
-		// Therefore, here we have a branch to provide node-specific replace 
+		// Therefore, here we have a branch to provide node-specific replace
 		// operations.
 		if (parent instanceof PropertyGet) {
 			replaced = applyReplaceTo((PropertyGet) parent, from, to);
@@ -56,17 +56,17 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 		}
 		if (!replaced) {
 			throw new IllegalArgumentException(
-					"Cannot replace " + from.toSource() + "(" 
-					+ from.getParent().toSource() +  ") to " + to.toSource() 
+					"Cannot replace " + from.toSource() + "("
+					+ from.getParent().toSource() +  ") to " + to.toSource()
 					+ "(" + to.getParent().toSource() + ")");
 		}
 	}
-	
+
 	public void undoLastReplace() {
 		replace(lastReplacedFrom.getParent(), lastReplacedTo, lastReplacedFrom);
 		lastReplacedTo.setParent(parentOfLastReplacedTo);
 	}
-	
+
 	private boolean applyReplaceTo(PropertyGet propertyGet, AstNode from, AstNode to) {
 		if (propertyGet.getProperty().equals(from)) {
 			propertyGet.setProperty((Name) to);
@@ -77,13 +77,13 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 		}
 		return false;
 	}
-	
+
 	private boolean applyReplaceTo(FunctionCall functionCall, AstNode from, AstNode to) {
 		if (functionCall.getTarget().equals(from)) {
 			functionCall.setTarget(to);
 			return true;
 		} else {
-			
+
 			List<AstNode> arguments = functionCall.getArguments();
 			if (arguments.contains(from)) {
 				arguments.set(arguments.indexOf(from), to);
@@ -130,7 +130,7 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 		if (lineDiff != 0)
 			return lineDiff;
 		int posDiff =  astNode.getPosition() - opponent.astNode.getPosition();
-		if (posDiff != 0) 
+		if (posDiff != 0)
 			return posDiff;
 		// In same case, it seems all position is 0, so I need workaround like
 		// bellow to distinguish another program element.
