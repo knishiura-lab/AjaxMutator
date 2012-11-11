@@ -1,8 +1,8 @@
 package test.jp.gr.java_conf.daisy.ajax_mutator.detector.jquery;
 
+import static jp.gr.java_conf.daisy.ajax_mutator.ASTUtil.stringToFunctionCall;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static test.jp.gr.java_conf.daisy.ajax_mutator.ASTUtil.stringToFunctionCall;
 
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryAttributeModificationDetector;
