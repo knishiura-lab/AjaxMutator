@@ -8,7 +8,7 @@ import org.mozilla.javascript.ast.AstNode;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
 
 public class AttributeModificationTargetAttributeMutator 
-		extends AbstractMutator<AttributeModification> {
+		extends AbstractReplacingAmongMutator<AttributeModification> {
 	public AttributeModificationTargetAttributeMutator(
 			PrintStream printStream,
 			Collection<AttributeModification> mutationTargets) {

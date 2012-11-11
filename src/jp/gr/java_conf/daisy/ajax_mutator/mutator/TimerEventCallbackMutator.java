@@ -7,7 +7,7 @@ import org.mozilla.javascript.ast.AstNode;
 
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.TimerEventAttachment;
 
-public class TimerEventCallbackMutator extends AbstractMutator<TimerEventAttachment>{
+public class TimerEventCallbackMutator extends AbstractReplacingAmongMutator<TimerEventAttachment>{
 	public TimerEventCallbackMutator(PrintStream printStream,
 			Collection<TimerEventAttachment> mutationTargets) {
 		super(printStream, mutationTargets);

@@ -3,80 +3,51 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Mutatable;
 
 import org.mozilla.javascript.ast.AstNode;
 
 /**
- * Provide utility methods to implement Mutator
- *  
+ * Abstract implementation of {@code Mutator} which replacing part of
+ * Mutatable by something.
+ *
  * @author Kazuki Nishiura
  */
 public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
 	protected PrintStream stream;
 	protected List<T> mutationTargets;
-	protected List<AstNode> mutatedElements;
 	protected int targetIndex = 0;
-	
+
 	protected AbstractMutator(
 			PrintStream printStream, Collection<T> mutationTargets) {
 		this.stream = printStream;
 		this.mutationTargets = new ArrayList<T>(mutationTargets);
-		mutatedElements = new ArrayList<AstNode>(this.mutationTargets.size());
-		for (T attachment: this.mutationTargets) {
-			mutatedElements.add(getFocusedNode(attachment));
-		}
 	}
-	
+
 	/**
-	 * @return focus of Mutator object. If the class try to mutate event kind
-	 * from event attachment statement like 
-	 * 'element.addEventListener('click', func);', this method must return
-	 * something like 'click'.
+	 * @param parent Mutatable part of which to be mutated
+	 * @param replacingNode node that replace part of {@code parent}
 	 */
-	abstract protected AstNode getFocusedNode(T node);
-	
+	abstract protected void replaceFocusedNodeOf(T parent, AstNode replacingNodwe);
+
 	/**
-	 * e.g., 
-	 * In case of event kind mutator, 'parant' param would be
-	 * 'element.addEventListener('click', func);' and 'newPart' param would be
-	 * 'mouseover'.
+	 * @return node that can replace a part of mutation target. When appropriate
+	 * node do not exist or cannot be found, returns null.
 	 */
-	abstract protected void replaceFocusedNodeOf(T parent, AstNode newPart);
-	
-	/**
-	 * @return node that can replace mutation target. When appropriate node
-	 * do not exist or cannot be found, returns null.
-	 */
-	protected AstNode selectReplacingCandidate(T mutationTarget) {
-		Set<AstNode> equivalents = new HashSet<AstNode>();
-		equivalents.add(getFocusedNode(mutationTarget));
-		while (equivalents.size() < mutatedElements.size()) {
-			AstNode candidate = mutatedElements.get((int) Math.floor(Math.random() * mutatedElements.size()));
-			if (ifEquals(getFocusedNode(mutationTarget), candidate))
-				equivalents.add(candidate);
-			else
-				return candidate;
-		}
-		return null;
-	}
-	
+	abstract protected AstNode selectReplacingCandidate(T mutationTarget);
+
 	@Override
 	public boolean applyMutation() {
 		T mutationTarget = mutationTargets.get(targetIndex);
 		AstNode replacingNode = selectReplacingCandidate(mutationTarget);
 		if (replacingNode == null) {
+			System.out.println("mutation is not applied to: ");
 			System.out.println(mutationTarget.toString());
-			System.out.println(mutatedElements.get(0).toSource());
-			System.out.println(mutatedElements.size());
-			System.out.println("not applied");
 			return false;
 		}
-		printMutationInformation(getFocusedNode(mutationTarget), replacingNode);
+		printMutationInformation(mutationTarget, replacingNode);
 		replaceFocusedNodeOf(mutationTarget, replacingNode);
 		return true;
 	}
@@ -92,24 +63,24 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
 	public boolean isFinished() {
 		return mutationTargets.size() <= targetIndex;
 	}
-	
-	protected void printMutationInformation(AstNode from, AstNode to) {
+
+	/**
+	 * output mutation information to PrintStream pointed by {@code stream}.
+	 */
+	protected void printMutationInformation(T target, AstNode replacingNode) {
 		if (stream != null) {
 			StringBuilder builder = new StringBuilder();
-			AstNode parent = from.getParent();
 			builder.append("mutate '");
-			builder.append(from.toSource());
-			builder.append("' in \"");
-			builder.append(parent.toSource());
+			builder.append(target);
 			builder.append("\" (at line ");
-			builder.append(parent.getLineno());
-			builder.append(") -> '");
-			builder.append(to.toSource());
+			builder.append(target.getAstNode().getLineno());
+			builder.append(") by using '");
+			builder.append(replacingNode.toSource());
 			builder.append("'");
 			stream.println(builder);
 		}
 	}
-	
+
 	/**
 	 * Determine the equality of given to AstNodes in the context of mutator.
 	 * Subclass may want to override this method to create only meaningful mutants.

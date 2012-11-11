@@ -7,7 +7,7 @@ import org.mozilla.javascript.ast.AstNode;
 
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 
-public class EventCallbackMutator extends AbstractMutator<EventAttachment> {
+public class EventCallbackMutator extends AbstractReplacingAmongMutator<EventAttachment> {
 	public EventCallbackMutator(
 			PrintStream stream, Collection<EventAttachment> eventAttachments) {
 		super(stream, eventAttachments);

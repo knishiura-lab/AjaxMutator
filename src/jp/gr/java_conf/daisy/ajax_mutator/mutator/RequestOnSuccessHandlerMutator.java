@@ -7,7 +7,7 @@ import org.mozilla.javascript.ast.AstNode;
 
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
 
-public class RequestOnSuccessHandlerMutator extends AbstractMutator<Request> {
+public class RequestOnSuccessHandlerMutator extends AbstractReplacingAmongMutator<Request> {
 	public RequestOnSuccessHandlerMutator(PrintStream printStream,
 			Collection<Request> mutationTargets) {
 		super(printStream, mutationTargets);

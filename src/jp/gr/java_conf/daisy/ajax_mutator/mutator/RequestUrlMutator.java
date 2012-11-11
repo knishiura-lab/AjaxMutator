@@ -7,7 +7,7 @@ import org.mozilla.javascript.ast.AstNode;
 
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
 
-public class RequestUrlMutator extends AbstractMutator<Request> {
+public class RequestUrlMutator extends AbstractReplacingAmongMutator<Request> {
 	public RequestUrlMutator(PrintStream printStream,
 			Collection<Request> mutationTargets) {
 		super(printStream, mutationTargets);
