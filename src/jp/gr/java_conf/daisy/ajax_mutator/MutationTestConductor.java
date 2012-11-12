@@ -23,12 +23,12 @@ import org.mozilla.javascript.ast.AstRoot;
 /**
  * Executor to apply mutation testing to target applications.
  * Note: Currently we assume that mutation target is single JavaScript file.
- * 
+ *
  * @author Kazuki Nishiura
  */
 public class MutationTestConductor {
 	private boolean setup = false;
-	private PrintStream outputStream;
+	private final PrintStream outputStream;
 	private ParserWithBrowser parser;
 	private String pathToJSFile;
 	private AstRoot astRoot;
@@ -39,15 +39,15 @@ public class MutationTestConductor {
 	public MutationTestConductor() {
 		this(System.out);
 	}
-	
+
 	public MutationTestConductor(PrintStream output) {
 		this.outputStream = output;
 	}
-	
+
 	/**
 	 * Setting information required for mutation testing. This method MUST
 	 * be called before conducting mutation testing.
-	 * 
+	 *
 	 * @return if setup is successfully finished.
 	 */
 	public boolean setup(String pathToJSFile, String targetURL) {
@@ -61,17 +61,17 @@ public class MutationTestConductor {
 			System.err.println("IOException: cannot parse AST.");
 			return false;
 		}
-		
+
 		if (astRoot != null) {
-			EventAttacherDetector[] attahcerDetectorArray 
+			EventAttacherDetector[] attahcerDetectorArray
 				= {new AddEventDetector()};
-			Set<EventAttacherDetector> attacherDetector 
+			Set<EventAttacherDetector> attacherDetector
 				= new HashSet<EventAttacherDetector>(Arrays.asList(attahcerDetectorArray));
 			MutateVisitor visitor = new MutateVisitor(attacherDetector, null, null, null, null, null, null);
 			astRoot.visit(visitor);
 			eventAttachments = visitor.getEventAttachments();
-			Mutator[] mutatorsArray 
-				= {new EventTargetMutator(outputStream, eventAttachments), 
+			Mutator[] mutatorsArray
+				= {new EventTargetMutator(outputStream, eventAttachments),
 				   new EventTypeMutator(outputStream, eventAttachments)};
 			mutators = Arrays.asList(mutatorsArray);
 			setup = true;
@@ -80,9 +80,9 @@ public class MutationTestConductor {
 		}
 		return setup;
 	}
-	
+
 	/**
-	 * Apply next mutation testing. 
+	 * Apply next mutation testing.
 	 * <ol>
 	 * <li>Apply mutation operator to target applications</li>
 	 * <li>Execute test by using testExecutor passed in arguments</li>
@@ -106,38 +106,39 @@ public class MutationTestConductor {
 			if (!conducting)
 				break;
 		}
-		conducting = false;
-		try {
-			commandReceiver.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		if (conducting)
+			commandReceiver.interrupt();
 		System.out.println("finished!");
 	}
-	
+
 	public void conductWithJunit4(Class<?>... classes) {
 		conduct(new JUnitExecutor(classes));
 	}
-	
+
 	private void checkIfSetuped() {
 		if (!setup)
 			throw new IllegalStateException("You 'must' call setup method before you use.");
 	}
-	
+
 	private class CommandReceiver implements Runnable {
 		@Override
 		public void run() {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 			while (conducting) {
 				try {
+					while (!reader.ready()) {
+						Thread.sleep(200);
+					}
 					String command = reader.readLine();
 					if (null == command)
 						break;
 					else if ("q".equals(command))
 						break;
-					
+
 					System.out.println(command);
 				} catch (IOException e) {
+					break;
+				} catch (InterruptedException e) {
 					break;
 				}
 			}
