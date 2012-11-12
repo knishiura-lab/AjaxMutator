@@ -1,0 +1,6 @@
+Files in this folder are samples using AjaxMutator.
+
+### This sample program is 
+- example project to apply mutation analysis to test set for  [AjaxLogin](http://www.jamesdam.com/ajax_login/login.html)
+- using Selenium WebDriver and JUnit.
+- required [Selenium server 2.26](http://selenium.googlecode.com/files/selenium-server-2.26.0.zip) to be built
