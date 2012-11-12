@@ -7,16 +7,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventTargetMutator;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventTypeMutator;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 
 import org.mozilla.javascript.ast.AstRoot;
@@ -33,8 +26,6 @@ public class MutationTestConductor {
 	private ParserWithBrowser parser;
 	private String pathToJSFile;
 	private AstRoot astRoot;
-	private Set<EventAttachment> eventAttachments;
-	private List<Mutator> mutators;
 	private boolean conducting;
 
 	public MutationTestConductor() {
@@ -51,7 +42,7 @@ public class MutationTestConductor {
 	 *
 	 * @return if setup is successfully finished.
 	 */
-	public boolean setup(String pathToJSFile, String targetURL) {
+	public boolean setup(String pathToJSFile, String targetURL, MutateVisitor visitor) {
 		setup = false;
 		this.pathToJSFile = pathToJSFile;
 		parser = ParserWithBrowser.getParser();
@@ -64,17 +55,7 @@ public class MutationTestConductor {
 		}
 
 		if (astRoot != null) {
-			EventAttacherDetector[] attahcerDetectorArray
-				= {new AddEventDetector()};
-			Set<EventAttacherDetector> attacherDetector
-				= new HashSet<EventAttacherDetector>(Arrays.asList(attahcerDetectorArray));
-			MutateVisitor visitor = new MutateVisitor(attacherDetector, null, null, null, null, null, null);
 			astRoot.visit(visitor);
-			eventAttachments = visitor.getEventAttachments();
-			Mutator[] mutatorsArray
-				= {new EventTargetMutator(outputStream, eventAttachments),
-				   new EventTypeMutator(outputStream, eventAttachments)};
-			mutators = Arrays.asList(mutatorsArray);
 			setup = true;
 		} else {
 			System.err.println("Cannot parse AST.");
@@ -91,9 +72,10 @@ public class MutationTestConductor {
 	 * <li>Repeat until all possible mutation operation executed</li>
 	 * </ol>
 	 */
-	public void conduct(TestExecutor testExecutor) {
+	public void conduct(TestExecutor testExecutor, Set<Mutator> mutators) {
 		List<String> unkilledMutatns = new ArrayList<String>();
 		checkIfSetuped();
+		int numberOfMutants = 0;
 		conducting = true;
 		Thread commandReceiver = new Thread(new CommandReceiver());
 		commandReceiver.start();
@@ -109,6 +91,7 @@ public class MutationTestConductor {
 				if (message != null)
 					outputStream.println(message);
 				mutator.undoMutation();
+				numberOfMutants++;
 			}
 			// execution can be canceled from outside.
 			if (!conducting)
@@ -118,15 +101,16 @@ public class MutationTestConductor {
 			commandReceiver.interrupt();
 			conducting = false;
 		}
-		outputStream.println("unkilled mutants:");
+		outputStream.println("unkilled mutants (" + unkilledMutatns.size()
+				+ " among " + numberOfMutants + "):");
 		for (String line: unkilledMutatns)
 			outputStream.println(line);
 
 		System.out.println("finished!");
 	}
 
-	public void conductWithJunit4(Class<?>... classes) {
-		conduct(new JUnitExecutor(classes));
+	public void conductWithJunit4(Set<Mutator> mutators, Class<?>... classes) {
+		conduct(new JUnitExecutor(classes), mutators);
 	}
 
 	private void checkIfSetuped() {
