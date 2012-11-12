@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -91,23 +92,31 @@ public class MutationTestConductor {
 	 * </ol>
 	 */
 	public void conduct(TestExecutor testExecutor) {
+		List<String> unkilledMutatns = new ArrayList<String>();
 		checkIfSetuped();
 		conducting = true;
 		Thread commandReceiver = new Thread(new CommandReceiver());
 		commandReceiver.start();
 		for (Mutator mutator: mutators) {
 			while (!mutator.isFinished() && conducting) {
-				mutator.applyMutation();
+				String mutationInformation = mutator.applyMutation();
+				if (mutationInformation == null)
+					continue;
 				Util.writeToFile(pathToJSFile, astRoot.toSource());
-				String result = testExecutor.execute();
-				outputStream.println(result);
+				if (testExecutor.execute())
+					unkilledMutatns.add(mutationInformation);
+				String message = testExecutor.getMessageOnLastExecution();
+				if (message != null)
+					outputStream.println(message);
 				mutator.undoMutation();
 			}
+			// execution can be canceled from outside.
 			if (!conducting)
 				break;
 		}
 		if (conducting)
 			commandReceiver.interrupt();
+		System.out.println(unkilledMutatns);
 		System.out.println("finished!");
 	}
 
@@ -134,11 +143,13 @@ public class MutationTestConductor {
 						break;
 					else if ("q".equals(command))
 						break;
-
 					System.out.println(command);
-				} catch (IOException e) {
-					break;
 				} catch (InterruptedException e) {
+					System.out.println(
+							"I/O thread interrupt, which may mean program successfully finished");
+					break;
+				} catch (IOException e) {
+					e.printStackTrace();
 					break;
 				}
 			}

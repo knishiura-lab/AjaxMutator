@@ -10,19 +10,28 @@ import org.junit.runner.Result;
  */
 public class JUnitExecutor implements TestExecutor {
 	Class<?>[] targetClasses;
-	
+	String executionMessage;
+
 	public JUnitExecutor(Class<?>... targetClasses) {
 		this.targetClasses = targetClasses;
 	}
-	
+
 	@Override
-	public String execute()	{
+	public boolean execute()	{
 		JUnitCore core = new JUnitCore();
 		Result result = core.run(targetClasses);
 		if (result.wasSuccessful()) {
-			return "Success! " + result.getRunCount() + " tests ran.";
+			executionMessage = "Success! " + result.getRunCount() + " tests ran.";
+			return true;
 		} else {
-			return result.getFailureCount() + " tests fail within " + result.getRunCount();
+			executionMessage = result.getFailureCount()
+					+ " tests fail within " + result.getRunCount();
+			return false;
 		}
+	}
+
+	@Override
+	public String getMessageOnLastExecution() {
+		return executionMessage;
 	}
 }

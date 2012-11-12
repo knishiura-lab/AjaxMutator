@@ -58,21 +58,19 @@ public abstract class AbstractReplacingAmongMutator<T extends Mutatable>
 	}
 
 	@Override
-	protected void printMutationInformation(T target, AstNode replacingNode) {
+	protected String mutationInformation(T target, AstNode replacingNode) {
 		AstNode replaced = getFocusedNode(target);
-		if (stream != null) {
-			StringBuilder builder = new StringBuilder();
-			AstNode parent = replaced.getParent();
-			builder.append("mutate '");
-			builder.append(replaced.toSource());
-			builder.append("' in \"");
-			builder.append(parent.toSource());
-			builder.append("\" (at line ");
-			builder.append(parent.getLineno());
-			builder.append(") -> '");
-			builder.append(replacingNode.toSource());
-			builder.append("'");
-			stream.println(builder);
-		}
+		StringBuilder builder = new StringBuilder();
+		AstNode parent = replaced.getParent();
+		builder.append("mutate '");
+		builder.append(replaced.toSource());
+		builder.append("' in \"");
+		builder.append(parent.toSource());
+		builder.append("\" (at line ");
+		builder.append(parent.getLineno());
+		builder.append(") -> '");
+		builder.append(replacingNode.toSource());
+		builder.append("'");
+		return builder.toString();
 	}
 }

@@ -39,17 +39,20 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
 	abstract protected AstNode selectReplacingCandidate(T mutationTarget);
 
 	@Override
-	public boolean applyMutation() {
+	public String applyMutation() {
 		T mutationTarget = mutationTargets.get(targetIndex);
 		AstNode replacingNode = selectReplacingCandidate(mutationTarget);
 		if (replacingNode == null) {
 			System.out.println("mutation is not applied to: ");
 			System.out.println(mutationTarget.toString());
-			return false;
+			return null;
 		}
-		printMutationInformation(mutationTarget, replacingNode);
+		String mutationInformation
+			= mutationInformation(mutationTarget, replacingNode);
+		if (stream != null)
+			stream.println(mutationInformation);
 		replaceFocusedNodeOf(mutationTarget, replacingNode);
-		return true;
+		return mutationInformation;
 	}
 
 	@Override
@@ -67,18 +70,16 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
 	/**
 	 * output mutation information to PrintStream pointed by {@code stream}.
 	 */
-	protected void printMutationInformation(T target, AstNode replacingNode) {
-		if (stream != null) {
-			StringBuilder builder = new StringBuilder();
-			builder.append("mutate '");
-			builder.append(target);
-			builder.append("\" (at line ");
-			builder.append(target.getAstNode().getLineno());
-			builder.append(") by using '");
-			builder.append(replacingNode.toSource());
-			builder.append("'");
-			stream.println(builder);
-		}
+	protected String mutationInformation(T target, AstNode replacingNode) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("mutate '");
+		builder.append(target);
+		builder.append("\" (at line ");
+		builder.append(target.getAstNode().getLineno());
+		builder.append(") by using '");
+		builder.append(replacingNode.toSource());
+		builder.append("'");
+		return builder.toString();
 	}
 
 	/**
