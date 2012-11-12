@@ -114,9 +114,14 @@ public class MutationTestConductor {
 			if (!conducting)
 				break;
 		}
-		if (conducting)
+		if (conducting) {
 			commandReceiver.interrupt();
-		System.out.println(unkilledMutatns);
+			conducting = false;
+		}
+		outputStream.println("unkilled mutants:");
+		for (String line: unkilledMutatns)
+			outputStream.println(line);
+
 		System.out.println("finished!");
 	}
 
@@ -133,17 +138,13 @@ public class MutationTestConductor {
 		@Override
 		public void run() {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-			while (conducting) {
+			while (true) {
 				try {
-					while (!reader.ready()) {
+					while (conducting && !reader.ready()) {
 						Thread.sleep(200);
 					}
-					String command = reader.readLine();
-					if (null == command)
+					if (!conducting || isQuitCommand(reader.readLine()))
 						break;
-					else if ("q".equals(command))
-						break;
-					System.out.println(command);
 				} catch (InterruptedException e) {
 					System.out.println(
 							"I/O thread interrupt, which may mean program successfully finished");
@@ -155,6 +156,14 @@ public class MutationTestConductor {
 			}
 			conducting = false;
 			System.out.println("thread finish");
+		}
+
+		private boolean isQuitCommand(String command) {
+			if (null == command || "q".equals(command))
+				return true;
+
+			System.out.println(command);
+			return false;
 		}
 	}
 }
