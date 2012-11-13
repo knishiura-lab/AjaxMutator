@@ -42,9 +42,19 @@ public class MutationTestConductor {
 	 *
 	 * @return if setup is successfully finished.
 	 */
-	public boolean setup(String pathToJSFile, String targetURL, MutateVisitor visitor) {
+	public boolean setup(final String pathToJSFile, String targetURL, MutateVisitor visitor) {
 		setup = false;
 		this.pathToJSFile = pathToJSFile;
+		// create backup file
+		Util.copyFile(pathToJSFile, pathToBackupFile());
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				// restore backup
+				Util.copyFile(pathToBackupFile(), pathToJSFile);
+				System.out.println("backup file restored");
+			}
+		});
 		parser = ParserWithBrowser.getParser();
 		try {
 			FileReader fileReader = new FileReader(new File(pathToJSFile));
@@ -106,6 +116,8 @@ public class MutationTestConductor {
 		for (String line: unkilledMutatns)
 			outputStream.println(line);
 
+		// restore backup
+		Util.copyFile(pathToBackupFile(), pathToJSFile);
 		System.out.println("finished!");
 	}
 
@@ -149,5 +161,9 @@ public class MutationTestConductor {
 			System.out.println(command);
 			return false;
 		}
+	}
+
+	private String pathToBackupFile() {
+		return pathToJSFile + ".backup";
 	}
 }

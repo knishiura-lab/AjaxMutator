@@ -17,7 +17,7 @@ import org.mozilla.javascript.tools.shell.Main;
 
 /**
  * JavaScript parser with browser environment (e.g., document object).
- * 
+ *
  * @author Kazuki Nishiura
  */
 public class ParserWithBrowser extends Parser {
@@ -27,7 +27,7 @@ public class ParserWithBrowser extends Parser {
 	private ParserWithBrowser(CompilerEnvirons compilerEnvirons) {
 		super(compilerEnvirons);
 	}
-	
+
 	public static ParserWithBrowser getParser() {
 		Context context = ContextFactory.getGlobal().enterContext();
 		if (global == null) {
@@ -37,8 +37,12 @@ public class ParserWithBrowser extends Parser {
 		Scriptable scope = context.initStandardObjects(global);
 		context.setOptimizationLevel(-1);
 		URL url = ParserWithBrowser.class.getResource(PATH_TO_ENV_JS);
+
 		if (url == null)
-			throw new IllegalStateException("Cannot access ENV_JS");
+			throw new IllegalStateException("Cannot access ENV_JS, " +
+					"which may be unexist under "
+					+ ParserWithBrowser.class.getResource("").getPath()
+					+ PATH_TO_ENV_JS);
 		try {
 			context.evaluateReader(scope, new FileReader(new File(url.toURI())),
 					"env.rhino.1.2", 1, null);
@@ -48,7 +52,7 @@ public class ParserWithBrowser extends Parser {
 		} catch (IOException e) {
 			throw new IllegalStateException("Instantiating parser failed.");
 		} catch (URISyntaxException e) {
-			throw new IllegalStateException("Cannot access ENV_JS");
+			e.printStackTrace();
 		}
 		CompilerEnvirons compilerEnvirons = new CompilerEnvirons();
 		compilerEnvirons.initFromContext(context);
