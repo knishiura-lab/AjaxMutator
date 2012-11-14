@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import jp.gr.java_conf.daisy.ajax_mutator.Randomizer;
+import jp.gr.java_conf.daisy.ajax_mutator.Util;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Mutatable;
 
 import org.mozilla.javascript.ast.AstNode;
@@ -15,7 +16,7 @@ import org.mozilla.javascript.ast.AstNode;
 /**
  * Abstract implementation of {@code Mutator}. This implementation provide
  * framework to mutate Mutatbles by replacing subnode of Mutatables among them.
- * 
+ *
  * @author Kazuki Nishiura
  */
 public abstract class AbstractReplacingAmongMutator<T extends Mutatable>
@@ -68,13 +69,13 @@ public abstract class AbstractReplacingAmongMutator<T extends Mutatable>
 		StringBuilder builder = new StringBuilder();
 		AstNode parent = replaced.getParent();
 		builder.append("mutate '");
-		builder.append(replaced.toSource());
+		builder.append(Util.oneLineStringOf(replaced));
 		builder.append("' in \"");
-		builder.append(parent.toSource());
+		builder.append(Util.oneLineStringOf(parent));
 		builder.append("\" (at line ");
 		builder.append(parent.getLineno());
-		builder.append(") -> '");
-		builder.append(replacingNode.toSource());
+		builder.append(") \n  -> '");
+		builder.append(Util.oneLineStringOf(replacingNode));
 		builder.append("'");
 		return builder.toString();
 	}

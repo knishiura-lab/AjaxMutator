@@ -108,11 +108,20 @@ public class Util {
 	public static String oneLineStringOf(AstNode node) {
 		if (node == null)
 			return "";
-		String[] str = node.toSource().split("\n", 2);
+		String[] str = node.toSource().split("\n");
 		if (str.length == 1)
 			return str[0];
-		else
-			return str[0] + "... ";
+		else {
+			int numOfShownLine = 2;
+			boolean use1 = str.length > 2 && str[0].length() < 10;
+			boolean useLast2 = str.length + (use1 ? 1 : 0) > 2
+									&& str[str.length - 1].length() < 10;
+			numOfShownLine += (use1 ? 1 : 0) + (useLast2 ? 1 : 0);
+
+			return str[0] + (use1 ? str[1] : "") + " ..("
+				+ (str.length - numOfShownLine) + ").. "
+				+ (useLast2 ? str[str.length - 2] : "") + str[str.length - 1];
+		}
 	}
 
 	public static String join(String[] arrayOfString) {
