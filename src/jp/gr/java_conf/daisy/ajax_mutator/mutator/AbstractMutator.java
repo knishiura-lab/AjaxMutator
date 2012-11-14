@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import jp.gr.java_conf.daisy.ajax_mutator.Util;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Mutatable;
 
 import org.mozilla.javascript.ast.AstNode;
@@ -12,7 +13,7 @@ import org.mozilla.javascript.ast.AstNode;
 /**
  * Abstract implementation of {@code Mutator} which replacing part of Mutatable
  * by something.
- * 
+ *
  * @author Kazuki Nishiura
  */
 public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
@@ -75,6 +76,11 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
 		return mutationTargets.size() <= targetIndex;
 	}
 
+	@Override
+	public int numberOfMutation() {
+		return mutationTargets.size();
+	}
+
 	/**
 	 * output mutation information to PrintStream pointed by {@code stream}.
 	 */
@@ -85,7 +91,7 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
 		builder.append("\" (at line ");
 		builder.append(target.getAstNode().getLineno());
 		builder.append(") by using '");
-		builder.append(replacingNode.toSource());
+		builder.append(Util.oneLineStringOf(replacingNode));
 		builder.append("'");
 		return builder.toString();
 	}

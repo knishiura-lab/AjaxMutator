@@ -2,7 +2,7 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 /**
  * Interface for mutator, which apply mutation operation to AST.
- * 
+ *
  * @author Kazuki Nishiura
  */
 public interface Mutator {
@@ -14,5 +14,14 @@ public interface Mutator {
 
 	public void undoMutation();
 
+	/**
+	 * @return true if this mutator cannot applied mutation any more.
+	 */
 	public boolean isFinished();
+
+	/**
+	 * @return numberOfMutation, which indicates the maximum number of mutation
+	 * 	       that this mutator will apply.
+	 */
+	public int numberOfMutation();
 }

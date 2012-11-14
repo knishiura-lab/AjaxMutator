@@ -87,11 +87,20 @@ public class MutationTestConductor {
 		List<String> unkilledMutatns = new ArrayList<String>();
 		checkIfSetuped();
 		int numberOfMutants = 0;
+
+		// show numberOfMutations
+		int numberOfMaxMutants = 0;
+		for (Mutator mutator: mutators) {
+			numberOfMaxMutants += mutator.numberOfMutation();
+		}
+
 		conducting = true;
 		Thread commandReceiver = new Thread(new CommandReceiver());
 		commandReceiver.start();
+		int numberOfTried = 0;
 		for (Mutator mutator : mutators) {
 			while (!mutator.isFinished() && conducting) {
+				numberOfTried++;
 				String mutationInformation = mutator.applyMutation();
 				if (mutationInformation == null)
 					continue;
@@ -103,6 +112,9 @@ public class MutationTestConductor {
 					outputStream.println(message);
 				mutator.undoMutation();
 				numberOfMutants++;
+				System.out.println(numberOfTried + "/" + numberOfMaxMutants
+						+ "|" + Math.floor(10000 * numberOfTried / numberOfMaxMutants) / 100
+						+ "%");
 			}
 			// execution can be canceled from outside.
 			if (!conducting)
