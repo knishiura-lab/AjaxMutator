@@ -54,6 +54,7 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
 		if (replacingNode == null) {
 			System.out.println("mutation is not applied to: ");
 			System.out.println(mutationTarget.toString());
+			targetIndex++;
 			return null;
 		}
 		String mutationInformation = mutationInformation(mutationTarget,
