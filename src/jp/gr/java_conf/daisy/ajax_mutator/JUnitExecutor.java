@@ -17,15 +17,16 @@ public class JUnitExecutor implements TestExecutor {
 	}
 
 	@Override
-	public boolean execute()	{
+	public boolean execute() {
 		JUnitCore core = new JUnitCore();
 		Result result = core.run(targetClasses);
 		if (result.wasSuccessful()) {
-			executionMessage = "Success! " + result.getRunCount() + " tests ran.";
+			executionMessage
+				= "Success! " + result.getRunCount() + " tests ran.";
 			return true;
 		} else {
-			executionMessage = result.getFailureCount()
-					+ " tests fail within " + result.getRunCount();
+			executionMessage = result.getFailureCount() + " tests fail within "
+					+ result.getRunCount();
 			return false;
 		}
 	}

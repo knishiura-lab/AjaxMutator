@@ -12,7 +12,7 @@ import org.mozilla.javascript.ast.AstNode;
 public class DOMRemoval extends Mutatable {
 	private final AstNode from;
 	private final AstNode target;
-	
+
 	public DOMRemoval(AstNode node, AstNode from, AstNode target) {
 		super(node);
 		this.from = from;
@@ -22,11 +22,11 @@ public class DOMRemoval extends Mutatable {
 	public AstNode getFrom() {
 		return from;
 	}
-	
+
 	public AstNode getTarget() {
 		return target;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -35,5 +35,5 @@ public class DOMRemoval extends Mutatable {
 		builder.append(Util.oneLineStringOf(from)).append(", removed:");
 		builder.append(target).append("]");
 		return builder.toString();
-	}	
+	}
 }

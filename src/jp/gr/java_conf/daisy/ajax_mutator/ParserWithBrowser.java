@@ -39,16 +39,16 @@ public class ParserWithBrowser extends Parser {
 		URL url = ParserWithBrowser.class.getResource(PATH_TO_ENV_JS);
 
 		if (url == null)
-			throw new IllegalStateException("Cannot access ENV_JS, " +
-					"which may be unexist under "
+			throw new IllegalStateException("Cannot access ENV_JS, "
+					+ "which may be unexist under "
 					+ ParserWithBrowser.class.getResource("").getPath()
 					+ PATH_TO_ENV_JS);
 		try {
 			context.evaluateReader(scope, new FileReader(new File(url.toURI())),
 					"env.rhino.1.2", 1, null);
 		} catch (FileNotFoundException e) {
-			throw new IllegalStateException("Environment file '" + PATH_TO_ENV_JS
-					+ "' does not exist.");
+			throw new IllegalStateException(
+					"Environment file '" + PATH_TO_ENV_JS + "' does not exist.");
 		} catch (IOException e) {
 			throw new IllegalStateException("Instantiating parser failed.");
 		} catch (URISyntaxException e) {

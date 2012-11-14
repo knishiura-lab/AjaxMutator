@@ -6,10 +6,11 @@ import org.mozilla.javascript.ast.AstNode;
 
 /**
  * Implementation of detector which detect function call for event handler
- * 
+ *
  * @author Kazuki Nishiura
  */
-public abstract class EventAttacherDetector extends AbstractDetector<EventAttachment> {
+public abstract class EventAttacherDetector
+		extends AbstractDetector<EventAttachment> {
 	/**
 	 * detect event attachment from passed function call
 	 */

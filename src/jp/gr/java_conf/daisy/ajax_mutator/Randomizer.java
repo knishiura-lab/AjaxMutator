@@ -14,14 +14,14 @@ public class Randomizer {
 	private static double[] values;
 	private static int index = 0;
 
-	private Randomizer(){};
+	private Randomizer() {};
 
 	static public void setTestMode(boolean testMode) {
 		Randomizer.testMode = testMode;
 	}
 
 	/**
- 	 * set values to be returned from Randomizer and make it test mode.
+	 * set values to be returned from Randomizer and make it test mode.
 	 */
 	static public void setValues(double[] values) {
 		Randomizer.values = values;
@@ -30,7 +30,7 @@ public class Randomizer {
 
 	/**
 	 * @return if not testMode, behaves as Math.random(), if testMode, returns
-	 * predefined values given by {@code setValues}.
+	 *         predefined values given by {@code setValues}.
 	 */
 	static public double getDouble() {
 		if (testMode)
@@ -40,8 +40,8 @@ public class Randomizer {
 	}
 
 	/**
-	 * @return random integer, which is bigger than or equals to zero and
-	 * less than upperBound
+	 * @return random integer, which is bigger than or equals to zero and less
+	 *         than upperBound
 	 */
 	static public int getInt(int upperBound) {
 		if (testMode)

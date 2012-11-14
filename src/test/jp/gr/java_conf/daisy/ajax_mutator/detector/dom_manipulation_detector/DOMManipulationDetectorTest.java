@@ -25,8 +25,8 @@ public class DOMManipulationDetectorTest {
 	public void testAppendChildDetector() {
 		AppendChildDetector detector = new AppendChildDetector();
 
-		DOMAppending result = detector.detect(
-				stringToFunctionCall("hoge.appendChild(fuga);"));
+		DOMAppending result
+			= detector.detect(stringToFunctionCall("hoge.appendChild(fuga);"));
 		assertTrue(result != null);
 		assertEquals("hoge", ((Name) result.getAppendTarget()).getIdentifier());
 		assertEquals("fuga", ((Name) result.getAppendedDom()).getIdentifier());
@@ -36,40 +36,41 @@ public class DOMManipulationDetectorTest {
 	public void removeChildDetectorTest() {
 		RemoveChildDetector detector = new RemoveChildDetector();
 
-		DOMRemoval result = detector.detect(
-				stringToFunctionCall("hoge.removeChild(fuga);"));
+		DOMRemoval result
+			= detector.detect(stringToFunctionCall("hoge.removeChild(fuga);"));
 		assertTrue(result != null);
 		assertEquals("hoge", ((Name) result.getFrom()).getIdentifier());
 		assertEquals("fuga", ((Name) result.getTarget()).getIdentifier());
 	}
-	
+
 	@Test
 	public void craeteElementDetectorTest() {
 		CreateElementDetector detector = new CreateElementDetector();
-		DOMCreation result = detector.detect(
-				stringToFunctionCall("document.createElement('div')"));
+		DOMCreation result
+			= detector.detect(stringToFunctionCall("document.createElement('div')"));
 		assertTrue(result != null);
 		assertEquals("div", ((StringLiteral) result.getTagName()).getValue());
-		
+
 	}
-	
+
 	@Test
 	public void domSelectionDetectorTest() {
 		DOMSelectionDetector detector = new DOMSelectionDetector();
-		DOMSelection result = detector.detect(
-				stringToFunctionCall("document.getElementById('aaa')"));
+		DOMSelection result
+			= detector.detect(stringToFunctionCall("document.getElementById('aaa')"));
 		assertTrue(result != null);
-		assertEquals(DOMSelection.SelectionMethod.ID, result.getSelectionMethod());
+		assertEquals(DOMSelection.SelectionMethod.ID,
+				result.getSelectionMethod());
 		assertTrue(result.getRange() != null);
 		AstNode selector = result.getSelector();
 		assertEquals("'aaa'", selector.toSource());
 	}
-	
+
 	@Test
 	public void attributeAssignmentDetectorTest() {
 		AttributeAssignmentDetector detector = new AttributeAssignmentDetector();
-		AttributeModification result = detector.detect(
-				stringToAssignment("hoge.hidden = true;"));
+		AttributeModification result
+			= detector.detect(stringToAssignment("hoge.hidden = true;"));
 		assertTrue(result != null);
 		assertEquals("true", result.getAttributeValue().toSource());
 		assertEquals("hoge", result.getTargetDom().toSource());

@@ -20,12 +20,12 @@ public class DOMSelectionDetector extends AbstractDetector<DOMSelection> {
 			AstNode target, List<AstNode> arguments) {
 		AstNode range = null;
 		String selectionMethod = null;
-		
+
 		if (target instanceof PropertyGet) {
 			PropertyGet propertyGet = (PropertyGet) target;
 			range = propertyGet.getTarget();
 			selectionMethod = propertyGet.getProperty().getIdentifier();
-		
+
 			DOMSelection.SelectionMethod method = null;
 			if ("getElementById".equals(selectionMethod)) {
 				method = DOMSelection.SelectionMethod.ID;
@@ -36,11 +36,12 @@ public class DOMSelectionDetector extends AbstractDetector<DOMSelection> {
 			} else if ("getElementsByName".equals(selectionMethod)) {
 				method = DOMSelection.SelectionMethod.NAME;
 			}
-			
+
 			if (method != null)
-				return new DOMSelection(functionCall, range, method, arguments.get(0));
+				return new DOMSelection(functionCall, range, method,
+						arguments.get(0));
 		}
-			
+
 		return null;
 	}
 }

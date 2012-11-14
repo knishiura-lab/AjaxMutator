@@ -3,14 +3,21 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 import java.io.PrintStream;
 import java.util.Collection;
 
-import org.mozilla.javascript.ast.AstNode;
-
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
 
-public class AttributeModificationValueMutator extends AbstractReplacingAmongMutator<AttributeModification>{
-	public AttributeModificationValueMutator(PrintStream printStream,
+import org.mozilla.javascript.ast.AstNode;
+
+public class AttributeModificationValueMutator extends
+		AbstractReplacingAmongMutator<AttributeModification> {
+	public AttributeModificationValueMutator(
 			Collection<AttributeModification> mutationTargets) {
-		super(printStream, mutationTargets);
+		this(mutationTargets, DEFAULT_STREAM);
+	}
+
+	public AttributeModificationValueMutator(
+			Collection<AttributeModification> mutationTargets,
+			PrintStream printStream) {
+		super(mutationTargets, printStream);
 	}
 
 	@Override
@@ -19,9 +26,8 @@ public class AttributeModificationValueMutator extends AbstractReplacingAmongMut
 	}
 
 	@Override
-	protected void replaceFocusedNodeOf(
-			AttributeModification parent, AstNode newValue) {
+	protected void replaceFocusedNodeOf(AttributeModification parent,
+			AstNode newValue) {
 		parent.replaceAttributeValue(newValue);
 	}
-
 }

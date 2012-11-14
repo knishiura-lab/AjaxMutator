@@ -5,7 +5,7 @@ import jp.gr.java_conf.daisy.ajax_mutator.Util;
 import org.mozilla.javascript.ast.AstNode;
 
 /**
- * Event attachment statement such as element.addEventListner or 
+ * Event attachment statement such as element.addEventListner or
  * element.attachEvent
  * 
  * @author Kazuki Nishiura
@@ -14,14 +14,15 @@ public class EventAttachment extends Mutatable {
 	private AstNode target;
 	private AstNode event;
 	private AstNode callback;
-	
-	public EventAttachment(AstNode astNode, AstNode target, AstNode event, AstNode callback) {
+
+	public EventAttachment(AstNode astNode, AstNode target, AstNode event,
+			AstNode callback) {
 		super(astNode);
 		this.target = target;
 		this.event = event;
 		this.callback = callback;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -45,15 +46,15 @@ public class EventAttachment extends Mutatable {
 	public AstNode getCallback() {
 		return callback;
 	}
-	
+
 	public void replaceTarget(AstNode newTarget) {
 		replace(target, newTarget);
 	}
-	
+
 	public void replaceEvent(AstNode newEvent) {
 		replace(event, newEvent);
 	}
-	
+
 	public void replaceCallback(AstNode newCallback) {
 		replace(callback, newCallback);
 	}

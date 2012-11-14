@@ -3,14 +3,19 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 import java.io.PrintStream;
 import java.util.Collection;
 
-import org.mozilla.javascript.ast.AstNode;
-
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
 
-public class RequestOnSuccessHandlerMutator extends AbstractReplacingAmongMutator<Request> {
-	public RequestOnSuccessHandlerMutator(PrintStream printStream,
-			Collection<Request> mutationTargets) {
-		super(printStream, mutationTargets);
+import org.mozilla.javascript.ast.AstNode;
+
+public class RequestOnSuccessHandlerMutator extends
+		AbstractReplacingAmongMutator<Request> {
+	public RequestOnSuccessHandlerMutator(Collection<Request> mutationTargets) {
+		this(mutationTargets, DEFAULT_STREAM);
+	}
+
+	public RequestOnSuccessHandlerMutator(Collection<Request> mutationTargets,
+			PrintStream printStream) {
+		super(mutationTargets, printStream);
 	}
 
 	@Override

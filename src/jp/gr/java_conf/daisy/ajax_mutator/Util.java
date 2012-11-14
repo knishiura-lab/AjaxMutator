@@ -50,8 +50,8 @@ public class Util {
 	/**
 	 * read all string from specified file
 	 *
-	 * @return list of String, each element is a line in file.
-	 * If some error happen during reading, returns null.
+	 * @return list of String, each element is a line in file. If some error
+	 *         happen during reading, returns null.
 	 */
 	public static List<String> readFromFile(String pathToFile) {
 		List<String> lines = new ArrayList<String>();
@@ -79,9 +79,9 @@ public class Util {
 	}
 
 	/**
-	 * write content into a file with specified path.
-	 * This method override existing file.
-	 * Even if file is not exist, this method does not create new file.
+	 * write content into a file with specified path. This method override
+	 * existing file. Even if file is not exist, this method does not create new
+	 * file.
 	 *
 	 * @return true if write is successfully finished.
 	 */
@@ -97,7 +97,8 @@ public class Util {
 			try {
 				writer.close();
 			} catch (IOException e) {
-				System.err.println("Fail to close source file" + e.getMessage());
+				System.err.println(
+						"Fail to close source file" + e.getMessage());
 				return false;
 			}
 		}

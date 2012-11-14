@@ -4,13 +4,14 @@ import org.mozilla.javascript.ast.AstNode;
 
 /**
  * Dom attribute modification such as element.id = 'anotherId'
- *
+ * 
  * @author Kazuki Nishiura
  */
 public class AttributeModification extends Mutatable {
 	private final AstNode targetDom;
 	private final AstNode targetAttribute;
 	private final AstNode attributeValue;
+
 	public AttributeModification(AstNode node, AstNode targetDom,
 			AstNode targetAttribute, AstNode attributeValue) {
 		super(node);
@@ -18,31 +19,31 @@ public class AttributeModification extends Mutatable {
 		this.targetAttribute = targetAttribute;
 		this.attributeValue = attributeValue;
 	}
-	
+
 	public AstNode getTargetDom() {
 		return targetDom;
 	}
-	
+
 	public AstNode getTargetAttribute() {
 		return targetAttribute;
 	}
-	
+
 	public AstNode getAttributeValue() {
 		return attributeValue;
 	}
-	
+
 	public void replaceAttributeValue(AstNode newValue) {
 		replace(attributeValue, newValue);
 	}
-	
+
 	public void replaceAttribute(AstNode newAttribute) {
 		replace(targetAttribute, newAttribute);
 	}
-	
+
 	public void replaceTargetDOM(AstNode newTarget) {
 		replace(targetDom, newTarget);
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

@@ -9,39 +9,39 @@ import org.mozilla.javascript.ast.AstNode;
  * 
  * @author Kazuki Nishiura
  */
-public class TimerEventAttachment extends Mutatable {	
+public class TimerEventAttachment extends Mutatable {
 	private final TimerEventType timerEventType;
 	private AstNode callback;
 	private AstNode duration;
-	
-	public TimerEventAttachment(AstNode node, AstNode callback, 
+
+	public TimerEventAttachment(AstNode node, AstNode callback,
 			AstNode duration, TimerEventType timerEventType) {
 		super(node);
 		this.timerEventType = timerEventType;
 		this.callback = callback;
 		this.duration = duration;
 	}
-	
+
 	public TimerEventType getTimerEventType() {
 		return timerEventType;
 	}
-	
+
 	public AstNode getCallback() {
 		return callback;
 	}
-	
+
 	public AstNode getDuration() {
 		return duration;
 	}
-	
+
 	public void replaceCallback(AstNode newCallback) {
 		replace(callback, newCallback);
 	}
-	
+
 	public void replaceDuration(AstNode newDuration) {
 		replace(duration, newDuration);
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -52,7 +52,7 @@ public class TimerEventAttachment extends Mutatable {
 		builder.append("]");
 		return builder.toString();
 	}
-	
+
 	public enum TimerEventType {
 		SET_TIMEOUT, SET_INTERVAL
 	}

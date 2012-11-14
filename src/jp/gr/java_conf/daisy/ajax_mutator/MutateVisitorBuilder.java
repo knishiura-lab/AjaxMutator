@@ -19,45 +19,51 @@ public class MutateVisitorBuilder {
 		= Collections.emptySet();
 	private Set<? extends AbstractDetector<DOMCreation>> domCreationDetectors
 		= Collections.emptySet();
-	private Set<? extends AbstractDetector<AttributeModification>> 
-		attributeModificationDetectors = Collections.emptySet();
+	private Set<? extends AbstractDetector<AttributeModification>> attributeModificationDetectors
+			= Collections.emptySet();
 	private Set<? extends AbstractDetector<DOMRemoval>> domRemovalDetectors
-		= Collections.emptySet();
+			= Collections.emptySet();
 	private Set<? extends AbstractDetector<DOMSelection>> domSelectionDetectors
-		= Collections.emptySet();
+			= Collections.emptySet();
 	private Set<? extends AbstractDetector<Request>> requestDetectors
-		= Collections.emptySet();
+			= Collections.emptySet();
 
 	public MutateVisitor build() {
-		return new MutateVisitor(eventAttacherDetectors, timerEventDetectors, 
-				domCreationDetectors, attributeModificationDetectors, 
+		return new MutateVisitor(eventAttacherDetectors, timerEventDetectors,
+				domCreationDetectors, attributeModificationDetectors,
 				domRemovalDetectors, domSelectionDetectors, requestDetectors);
 	}
-	
+
 	public void setEventAttacherDetectors(
 			Set<EventAttacherDetector> eventAttacherDetectors) {
 		this.eventAttacherDetectors = eventAttacherDetectors;
 	}
+
 	public void setTimerEventDetectors(
 			Set<TimerEventDetector> timerEventDetectors) {
 		this.timerEventDetectors = timerEventDetectors;
 	}
+
 	public void setDomCreationDetectors(
 			Set<? extends AbstractDetector<DOMCreation>> domCreationDetectors) {
 		this.domCreationDetectors = domCreationDetectors;
 	}
+
 	public void setAttributeModificationDetectors(
 			Set<? extends AbstractDetector<AttributeModification>> attributeModificationDetectors) {
 		this.attributeModificationDetectors = attributeModificationDetectors;
 	}
+
 	public void setDomRemovalDetectors(
 			Set<? extends AbstractDetector<DOMRemoval>> domRemovalDetectors) {
 		this.domRemovalDetectors = domRemovalDetectors;
 	}
+
 	public void setDomSelectionDetectors(
 			Set<? extends AbstractDetector<DOMSelection>> domSelectionDetectors) {
 		this.domSelectionDetectors = domSelectionDetectors;
 	}
+
 	public void setRequestDetectors(
 			Set<? extends AbstractDetector<Request>> requestDetectors) {
 		this.requestDetectors = requestDetectors;

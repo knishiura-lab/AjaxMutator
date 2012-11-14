@@ -5,10 +5,6 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.Set;
 
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableSet;
-
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventListenerDetector;
@@ -17,6 +13,10 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventTargetMutator;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventTypeMutator;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 
+import org.junit.Test;
+
+import com.google.common.collect.ImmutableSet;
+
 public class EventMutatorTest extends MutatorTestBase {
 	private String[] targets;
 	private String[] events;
@@ -24,23 +24,23 @@ public class EventMutatorTest extends MutatorTestBase {
 
 	@Override
 	void prepare() {
-		targets = new String[] {"element", "document.getElementById('hoge')"};
-		events = new String[] {"'blur'", "'click'"};
-		callbacks = new String[] {"func1", "func2"};
+		targets = new String[] { "element", "document.getElementById('hoge')" };
+		events = new String[] { "'blur'", "'click'" };
+		callbacks = new String[] { "func1", "func2" };
 		inputs = new String[2];
 		for (int i = 0; i < 2; i++)
 			inputs[i] = addEventListner(targets[i], events[i], callbacks[i]);
-		
-		Set<EventAttacherDetector> attacherDetector 
-			= ImmutableSet.of((EventAttacherDetector) new AddEventListenerDetector());
+
+		Set<EventAttacherDetector> attacherDetector = ImmutableSet
+				.of((EventAttacherDetector) new AddEventListenerDetector());
 		MutateVisitorBuilder builder = new MutateVisitorBuilder();
 		builder.setEventAttacherDetectors(attacherDetector);
 		visitor = builder.build();
 	}
-	
+
 	@Test
 	public void testEventTargetMutator() {
-		Mutator mutator = new EventTargetMutator(System.out, visitor.getEventAttachments());
+		Mutator mutator = new EventTargetMutator(visitor.getEventAttachments());
 		assertFalse(mutator.isFinished());
 		mutator.applyMutation();
 		String[] outputs = ast.toSource().split("\n");
@@ -56,7 +56,7 @@ public class EventMutatorTest extends MutatorTestBase {
 
 	@Test
 	public void testEventTypeMutator() {
-		Mutator mutator = new EventTypeMutator(System.out, visitor.getEventAttachments());
+		Mutator mutator = new EventTypeMutator(visitor.getEventAttachments());
 		assertFalse(mutator.isFinished());
 		mutator.applyMutation();
 		String[] outputs = ast.toSource().split("\n");
@@ -72,7 +72,8 @@ public class EventMutatorTest extends MutatorTestBase {
 
 	@Test
 	public void testEventCallbackMutator() {
-		Mutator mutator = new EventCallbackMutator(System.out, visitor.getEventAttachments());
+		Mutator mutator = new EventCallbackMutator(
+				visitor.getEventAttachments());
 		assertFalse(mutator.isFinished());
 		mutator.applyMutation();
 		String[] outputs = ast.toSource().split("\n");
@@ -89,10 +90,11 @@ public class EventMutatorTest extends MutatorTestBase {
 	private String addEventListner(String target, String event, String callback) {
 		return target + ".addEventListener(" + event + ", " + callback + ");";
 	}
-	
-	private void assertChanged(int targetIndex, int eventIndex, 
+
+	private void assertChanged(int targetIndex, int eventIndex,
 			int callbackIndex, String actual) {
-		assertEquals(addEventListner(targets[targetIndex], events[eventIndex], 
-				callbacks[callbackIndex]), actual);
+		assertEquals(
+				addEventListner(targets[targetIndex], events[eventIndex],
+						callbacks[callbackIndex]), actual);
 	}
 }

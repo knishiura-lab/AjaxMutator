@@ -21,15 +21,15 @@ public class TimerEventMutatorTest extends MutatorTestBase {
 
 	@Override
 	public void prepare() {
-		callbacks = new String[] {"func1", "func2"};
-		durations = new String[] {"300", "duration"};
+		callbacks = new String[] { "func1", "func2" };
+		durations = new String[] { "300", "duration" };
 		inputs = new String[2];
 		for (int i = 0; i < 2; i++)
-			inputs[i] = (i == 1 ? "window." : "") 
-				+ setTimeout(callbacks[i], durations[i], i == 0);
-		
-		Set<TimerEventDetector> attacherDetector 
-			= ImmutableSet.of(new TimerEventDetector());
+			inputs[i] = (i == 1 ? "window." : "")
+					+ setTimeout(callbacks[i], durations[i], i == 0);
+
+		Set<TimerEventDetector> attacherDetector = ImmutableSet
+				.of(new TimerEventDetector());
 		MutateVisitorBuilder builder = new MutateVisitorBuilder();
 		builder.setTimerEventDetectors(attacherDetector);
 		visitor = builder.build();
@@ -38,7 +38,7 @@ public class TimerEventMutatorTest extends MutatorTestBase {
 	@Test
 	public void testTimerDurationMutator() {
 		Mutator mutator = new TimerEventDurationMutator(
-				System.out, visitor.getTimerEventAttachmentExpressions());
+				visitor.getTimerEventAttachmentExpressions());
 		assertFalse(mutator.isFinished());
 		mutator.applyMutation();
 		String[] outputs = ast.toSource().split("\n");
@@ -48,14 +48,15 @@ public class TimerEventMutatorTest extends MutatorTestBase {
 		mutator.applyMutation();
 		outputs = ast.toSource().split("\n");
 		assertEquals(inputs[0], outputs[0]);
-		assertEquals("window." + setTimeout(callbacks[1], durations[0], false), outputs[1]);
+		assertEquals("window." + setTimeout(callbacks[1], durations[0], false),
+				outputs[1]);
 		undoAndAssert(mutator);
 	}
 
 	@Test
 	public void testTimerCallbackMutator() {
 		Mutator mutator = new TimerEventCallbackMutator(
-				System.out, visitor.getTimerEventAttachmentExpressions());
+				visitor.getTimerEventAttachmentExpressions());
 		assertFalse(mutator.isFinished());
 		mutator.applyMutation();
 		String[] outputs = ast.toSource().split("\n");
@@ -65,7 +66,8 @@ public class TimerEventMutatorTest extends MutatorTestBase {
 		mutator.applyMutation();
 		outputs = ast.toSource().split("\n");
 		assertEquals(inputs[0], outputs[0]);
-		assertEquals("window." + setTimeout(callbacks[0], durations[1], false), outputs[1]);
+		assertEquals("window." + setTimeout(callbacks[0], durations[1], false),
+				outputs[1]);
 		undoAndAssert(mutator);
 	}
 

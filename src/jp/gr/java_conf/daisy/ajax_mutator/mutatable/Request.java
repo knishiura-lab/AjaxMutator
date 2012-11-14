@@ -11,8 +11,9 @@ public class Request extends Mutatable {
 	ResponseType responseType;
 	AstNode parameters;
 
-	public Request(AstNode node, AstNode url, AstNode successHandler, 
-			AstNode failureHandler, ResponseType responseType, AstNode parameters) {
+	public Request(AstNode node, AstNode url, AstNode successHandler,
+			AstNode failureHandler, ResponseType responseType,
+			AstNode parameters) {
 		super(node);
 		this.url = url;
 		this.successHanlder = successHandler;
@@ -40,7 +41,7 @@ public class Request extends Mutatable {
 	public AstNode getParameters() {
 		return parameters;
 	}
-	
+
 	public void replaceUrl(AstNode newUrl) {
 		replace(url, newUrl);
 	}
@@ -57,7 +58,7 @@ public class Request extends Mutatable {
 		builder.append(Util.oneLineStringOf(successHanlder)).append("]");
 		return builder.toString();
 	}
-	
+
 	public enum ResponseType {
 		JSON, TEXT, HTML
 	}

@@ -7,10 +7,15 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 
 import org.mozilla.javascript.ast.AstNode;
 
-public class EventTypeMutator extends AbstractReplacingAmongMutator<EventAttachment> {
-	public EventTypeMutator(
-			PrintStream printStream, Collection<EventAttachment> mutationTargets) {
-		super(printStream, mutationTargets);
+public class EventTypeMutator extends
+		AbstractReplacingAmongMutator<EventAttachment> {
+	public EventTypeMutator(Collection<EventAttachment> mutationTargets) {
+		this(mutationTargets, DEFAULT_STREAM);
+	}
+
+	public EventTypeMutator(Collection<EventAttachment> mutationTargets,
+			PrintStream printStream) {
+		super(mutationTargets, printStream);
 	}
 
 	@Override
@@ -22,4 +27,4 @@ public class EventTypeMutator extends AbstractReplacingAmongMutator<EventAttachm
 	protected void replaceFocusedNodeOf(EventAttachment parent, AstNode newEvent) {
 		parent.replaceEvent(newEvent);
 	}
-}	
+}

@@ -9,16 +9,16 @@ import org.mozilla.javascript.ast.AstNode;
  */
 public class DOMCreation extends Mutatable {
 	private final AstNode tagName;
-	
+
 	public DOMCreation(AstNode node, AstNode tagName) {
 		super(node);
 		this.tagName = tagName;
 	}
-	
-	public AstNode getTagName()	{
+
+	public AstNode getTagName() {
 		return tagName;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

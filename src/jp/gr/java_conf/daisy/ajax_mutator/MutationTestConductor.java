@@ -15,7 +15,7 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 import org.mozilla.javascript.ast.AstRoot;
 
 /**
- * Executor to apply mutation testing to target applications.
+ * Executor to apply mutation testing to target applications. <br>
  * Note: Currently we assume that mutation target is single JavaScript file.
  *
  * @author Kazuki Nishiura
@@ -37,12 +37,13 @@ public class MutationTestConductor {
 	}
 
 	/**
-	 * Setting information required for mutation testing. This method MUST
-	 * be called before conducting mutation testing.
+	 * Setting information required for mutation testing. This method MUST be
+	 * called before conducting mutation testing.
 	 *
 	 * @return if setup is successfully finished.
 	 */
-	public boolean setup(final String pathToJSFile, String targetURL, MutateVisitor visitor) {
+	public boolean setup(
+			final String pathToJSFile, String targetURL, MutateVisitor visitor) {
 		setup = false;
 		this.pathToJSFile = pathToJSFile;
 		// create backup file
@@ -89,7 +90,7 @@ public class MutationTestConductor {
 		conducting = true;
 		Thread commandReceiver = new Thread(new CommandReceiver());
 		commandReceiver.start();
-		for (Mutator mutator: mutators) {
+		for (Mutator mutator : mutators) {
 			while (!mutator.isFinished() && conducting) {
 				String mutationInformation = mutator.applyMutation();
 				if (mutationInformation == null)
@@ -113,7 +114,7 @@ public class MutationTestConductor {
 		}
 		outputStream.println("unkilled mutants (" + unkilledMutatns.size()
 				+ " among " + numberOfMutants + "):");
-		for (String line: unkilledMutatns)
+		for (String line : unkilledMutatns)
 			outputStream.println(line);
 
 		// restore backup
@@ -127,13 +128,15 @@ public class MutationTestConductor {
 
 	private void checkIfSetuped() {
 		if (!setup)
-			throw new IllegalStateException("You 'must' call setup method before you use.");
+			throw new IllegalStateException(
+					"You 'must' call setup method before you use.");
 	}
 
 	private class CommandReceiver implements Runnable {
 		@Override
 		public void run() {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+			BufferedReader reader
+				= new BufferedReader(new InputStreamReader(System.in));
 			while (true) {
 				try {
 					while (conducting && !reader.ready()) {
@@ -142,8 +145,8 @@ public class MutationTestConductor {
 					if (!conducting || isQuitCommand(reader.readLine()))
 						break;
 				} catch (InterruptedException e) {
-					System.out.println(
-							"I/O thread interrupt, which may mean program successfully finished");
+					System.out.println("I/O thread interrupt, "
+							+ "which may mean program successfully finished");
 					break;
 				} catch (IOException e) {
 					e.printStackTrace();

@@ -3,14 +3,21 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 import java.io.PrintStream;
 import java.util.Collection;
 
-import org.mozilla.javascript.ast.AstNode;
-
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.TimerEventAttachment;
 
-public class TimerEventDurationMutator extends AbstractReplacingAmongMutator<TimerEventAttachment> {
-	public TimerEventDurationMutator(PrintStream printStream,
+import org.mozilla.javascript.ast.AstNode;
+
+public class TimerEventDurationMutator extends
+		AbstractReplacingAmongMutator<TimerEventAttachment> {
+	public TimerEventDurationMutator(
 			Collection<TimerEventAttachment> mutationTargets) {
-		super(printStream, mutationTargets);
+		this(mutationTargets, DEFAULT_STREAM);
+	}
+
+	public TimerEventDurationMutator(
+			Collection<TimerEventAttachment> mutationTargets,
+			PrintStream printStream) {
+		super(mutationTargets, printStream);
 	}
 
 	@Override

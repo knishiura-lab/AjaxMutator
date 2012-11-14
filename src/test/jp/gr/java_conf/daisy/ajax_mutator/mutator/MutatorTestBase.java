@@ -11,7 +11,7 @@ import org.mozilla.javascript.ast.AstRoot;
 
 /**
  * Base class for testing subclasses of {@code Mutator}.
- *
+ * 
  * @author Kazuki Nishiura
  */
 public abstract class MutatorTestBase {
@@ -33,8 +33,9 @@ public abstract class MutatorTestBase {
 	abstract void prepare();
 
 	/**
-	 * @throws IllegalStateException when either inputs or visitor is not
-	 * initialized by {@code prepare} method.
+	 * @throws IllegalStateException
+	 *             when either inputs or visitor is not initialized by
+	 *             {@code prepare} method.
 	 */
 	public MutatorTestBase() {
 		prepare();

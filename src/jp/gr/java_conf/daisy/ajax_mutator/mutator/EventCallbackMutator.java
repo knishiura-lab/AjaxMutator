@@ -3,14 +3,19 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 import java.io.PrintStream;
 import java.util.Collection;
 
-import org.mozilla.javascript.ast.AstNode;
-
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 
-public class EventCallbackMutator extends AbstractReplacingAmongMutator<EventAttachment> {
-	public EventCallbackMutator(
-			PrintStream stream, Collection<EventAttachment> eventAttachments) {
-		super(stream, eventAttachments);
+import org.mozilla.javascript.ast.AstNode;
+
+public class EventCallbackMutator extends
+		AbstractReplacingAmongMutator<EventAttachment> {
+	public EventCallbackMutator(Collection<EventAttachment> mutationTargets) {
+		this(mutationTargets, DEFAULT_STREAM);
+	}
+
+	public EventCallbackMutator(Collection<EventAttachment> mutationTargets,
+			PrintStream printStream) {
+		super(mutationTargets, printStream);
 	}
 
 	@Override
@@ -19,7 +24,8 @@ public class EventCallbackMutator extends AbstractReplacingAmongMutator<EventAtt
 	}
 
 	@Override
-	protected void replaceFocusedNodeOf(EventAttachment parent, AstNode newCallback) {
+	protected void replaceFocusedNodeOf(
+			EventAttachment parent, AstNode newCallback) {
 		parent.replaceCallback(newCallback);
 	}
 }

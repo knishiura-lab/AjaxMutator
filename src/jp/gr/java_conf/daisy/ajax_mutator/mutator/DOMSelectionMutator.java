@@ -12,15 +12,19 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection.SelectionMethod
 import org.mozilla.javascript.ast.AstNode;
 
 /**
- * Mutator for {@code DOMSelection}, which mutate domSelection result to
- * its parent or child.
+ * Mutator for {@code DOMSelection}, which mutate domSelection result to its
+ * parent or child.
  *
  * @author Kazuki Nishiura
  */
-public class DOMSelectionMutator extends AbstractMutator<DOMSelection>{
-	public DOMSelectionMutator(PrintStream printStream,
-			Collection<DOMSelection> mutationTargets) {
-		super(printStream, mutationTargets);
+public class DOMSelectionMutator extends AbstractMutator<DOMSelection> {
+	public DOMSelectionMutator(Collection<DOMSelection> mutationTargets) {
+		this(mutationTargets, DEFAULT_STREAM);
+	}
+
+	public DOMSelectionMutator(Collection<DOMSelection> mutationTargets,
+			PrintStream printStream) {
+		super(mutationTargets, printStream);
 	}
 
 	@Override
@@ -29,7 +33,8 @@ public class DOMSelectionMutator extends AbstractMutator<DOMSelection>{
 	}
 
 	@Override
-	protected void replaceFocusedNodeOf(DOMSelection parent, AstNode replacingNode) {
+	protected void replaceFocusedNodeOf(DOMSelection parent,
+			AstNode replacingNode) {
 		double randomValue = Randomizer.getDouble();
 		AstNode node = parent.getAstNode();
 		JSType domType
