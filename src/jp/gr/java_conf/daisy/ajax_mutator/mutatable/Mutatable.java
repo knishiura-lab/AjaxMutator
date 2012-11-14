@@ -13,7 +13,7 @@ import org.mozilla.javascript.ast.PropertyGet;
 /**
  * Mutatable object, which means mutation operator can be applied to astnode
  * held by this instance.
- * 
+ *
  * @author Kazuki Nishiura
  */
 public abstract class Mutatable implements Comparable<Mutatable> {
@@ -70,7 +70,7 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 
 	private boolean applyReplaceTo(PropertyGet propertyGet, AstNode from,
 			AstNode to) {
-		if (propertyGet.getProperty().equals(from)) {
+		if (propertyGet.getProperty().equals(from) && to instanceof Name) {
 			propertyGet.setProperty((Name) to);
 			return true;
 		} else if (propertyGet.getTarget().equals(from)) {
