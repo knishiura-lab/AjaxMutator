@@ -38,7 +38,7 @@ public class MutateVisitor implements NodeVisitor {
 	private final ImmutableSet<? extends AbstractDetector<DOMSelection>> domSelectionDetectors;
 	private final ImmutableSet<? extends AbstractDetector<Request>> requestDetectors;
 
-	private final Set<EventAttachment> eventAttachmentExpressions
+	private final Set<EventAttachment> eventAttachments
 		= new TreeSet<EventAttachment>();
 	private final Set<TimerEventAttachment> timerEventAttachmentExpressions
 		= new TreeSet<TimerEventAttachment>();
@@ -93,7 +93,7 @@ public class MutateVisitor implements NodeVisitor {
 
 	public boolean visit(FunctionCall call) {
 		for (EventAttacherDetector detector : eventAttacherDetectors)
-			detectAndAdd(detector, call, eventAttachmentExpressions);
+			detectAndAdd(detector, call, eventAttachments);
 		for (TimerEventDetector detector : timerEventDetectors)
 			detectAndAdd(detector, call, timerEventAttachmentExpressions);
 		for (AbstractDetector<DOMCreation> detector : domCreationDetectors)
@@ -110,11 +110,7 @@ public class MutateVisitor implements NodeVisitor {
 	}
 
 	public Set<EventAttachment> getEventAttachments() {
-		return eventAttachmentExpressions;
-	}
-
-	public Set<EventAttachment> getEventAttachmentExpressions() {
-		return eventAttachmentExpressions;
+		return eventAttachments;
 	}
 
 	public Set<TimerEventAttachment> getTimerEventAttachmentExpressions() {
@@ -156,7 +152,7 @@ public class MutateVisitor implements NodeVisitor {
 	public String MutatablesInfo() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("=== Event ===\n");
-		appendSet("Event attachments", builder, eventAttachmentExpressions);
+		appendSet("Event attachments", builder, eventAttachments);
 		appendSet("Timer event attachment", builder,
 				timerEventAttachmentExpressions);
 		builder.append("=== DOM ===\n");
