@@ -129,8 +129,12 @@ public class MutationTestConductor {
 			conducting = false;
 		}
 		long finishTimeMillis = System.currentTimeMillis();
-		outputStream.println("unkilled mutants (" + unkilledMutatns.size()
-				+ " among " + numberOfMutants + "):");
+		outputStream.println();
+		outputStream.println("---------------------------------------------");
+		outputStream.println();
+		outputStream.println(unkilledMutatns.size() + " unkilled mutants "
+				+ " among " + numberOfMutants + ", kill score is "
+				+ Math.floor(100.0 * (1 - unkilledMutatns.size()) / numberOfMaxMutants) / 100);
 		for (String line : unkilledMutatns)
 			outputStream.println(line);
 
