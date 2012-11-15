@@ -7,10 +7,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
+import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
 
 import org.mozilla.javascript.ast.AstRoot;
@@ -134,6 +136,8 @@ public class MutationTestConductor {
 
 		// restore backup
 		Util.copyFile(pathToBackupFile(), pathToJSFile);
+		System.out.println("Randomizer log: "
+				+ Arrays.toString(Randomizer.getReturnedValues()));
 		System.out.println("finished! "
 				+ (finishTimeMillis - startTimeMillis) / 1000 + " sec.");
 	}
