@@ -98,6 +98,7 @@ public class MutationTestConductor {
 		conducting = true;
 		Thread commandReceiver = new Thread(new CommandReceiver());
 		commandReceiver.start();
+		long startTimeMillis = System.currentTimeMillis();
 		int numberOfTried = 0;
 		for (Mutator mutator : mutators) {
 			while (!mutator.isFinished() && conducting) {
@@ -125,6 +126,7 @@ public class MutationTestConductor {
 			commandReceiver.interrupt();
 			conducting = false;
 		}
+		long finishTimeMillis = System.currentTimeMillis();
 		outputStream.println("unkilled mutants (" + unkilledMutatns.size()
 				+ " among " + numberOfMutants + "):");
 		for (String line : unkilledMutatns)
@@ -132,7 +134,8 @@ public class MutationTestConductor {
 
 		// restore backup
 		Util.copyFile(pathToBackupFile(), pathToJSFile);
-		System.out.println("finished!");
+		System.out.println("finished! "
+				+ (finishTimeMillis - startTimeMillis) / 1000 + " sec.");
 	}
 
 	public void conductWithJunit4(Set<Mutator> mutators, Class<?>... classes) {
