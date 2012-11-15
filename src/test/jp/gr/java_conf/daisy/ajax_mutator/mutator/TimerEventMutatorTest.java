@@ -5,13 +5,17 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.Set;
 
+import jp.gr.java_conf.daisy.ajax_mutator.ASTUtil;
+import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
+import jp.gr.java_conf.daisy.ajax_mutator.Randomizer;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.TimerEventDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.TimerEventCallbackMutator;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.TimerEventDurationMutator;
 
 import org.junit.Test;
+import org.mozilla.javascript.ast.AstRoot;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -69,6 +73,35 @@ public class TimerEventMutatorTest extends MutatorTestBase {
 		assertEquals("window." + setTimeout(callbacks[0], durations[1], false),
 				outputs[1]);
 		undoAndAssert(mutator);
+	}
+
+	@Test
+	public void testNesting() {
+		String nestingCalls =
+				"setTimeout(function() { "
+				+ "setTimeout(function() {"
+				+ "   $('#quizzy_q' + curQuestion + '_exp').fadeIn(fadeSpeed);"
+				+ "  setTimeout(function() {"
+				+ "    $('#quizzy_q' + curQuestion + '_foot_nxt').attr('disabled', false).fadeIn(fadeSpeed);"
+				+ "}, nextFadeInWait);}, expFadeInWait)}, slideUpWait);";
+		System.out.println(nestingCalls);
+		MutateVisitorBuilder builder = new MutateVisitorBuilder();
+		builder.setTimerEventDetectors(ImmutableSet.of(new TimerEventDetector()));
+		MutateVisitor visitor = builder.build();
+		AstRoot astRoot = ASTUtil.stringToAstRoot(nestingCalls);
+		astRoot.visit(visitor);
+		Mutator mutator = new TimerEventCallbackMutator(visitor.getTimerEventAttachmentExpressions());
+		Randomizer.setValues(new double[] {1, 0, 0});
+		mutator.applyMutation();
+		astRoot.toSource();
+		mutator.undoMutation();
+		mutator.applyMutation();
+		astRoot.toSource();
+		mutator.undoMutation();
+		mutator.applyMutation();
+		astRoot.toSource();
+		mutator.undoMutation();
+		Randomizer.setTestMode(false);
 	}
 
 	private String setTimeout(String func, String duration, boolean recurcive) {

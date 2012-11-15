@@ -2,6 +2,7 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutatable;
 
 import java.util.List;
 
+import jp.gr.java_conf.daisy.ajax_mutator.ASTUtil;
 import jp.gr.java_conf.daisy.ajax_mutator.Util;
 
 import org.mozilla.javascript.ast.AstNode;
@@ -21,6 +22,7 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 	private AstNode lastReplacedFrom;
 	private AstNode lastReplacedTo;
 	private AstNode parentOfLastReplacedTo;
+	private boolean lastMutationSuccessed;
 
 	public Mutatable(AstNode astNode) {
 		this.astNode = astNode;
@@ -35,11 +37,25 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 		lastReplacedTo = to;
 		parentOfLastReplacedTo = lastReplacedTo.getParent();
 
-		replace(from.getParent(), from, to);
+		AstNode parent = from.getParent();
+		if (ASTUtil.isContained(to, parent)) {
+			lastMutationSuccessed = false;
+			System.err.println("Cannot replace "
+					+ Util.oneLineStringOf(from) + "("
+					+ Util.oneLineStringOf(parent)
+					+ ") to " + Util.oneLineStringOf(to) + "("
+					+ Util.oneLineStringOf(to.getParent())
+					+ ")\n, quit this mutation");
+			return;
+		}
+
+		lastMutationSuccessed = true;
+		replace(parent, from, to);
 	}
 
 	private void replace(AstNode parent, AstNode from, AstNode to) {
 		boolean replaced = false;
+
 		// parent node do not always have replace target as its child node.
 		// For instance, assignment node that models "element = val", do not
 		// have Variable node 'val' as its child.
@@ -55,6 +71,7 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 			parent.replaceChild(from, to);
 			replaced = true;
 		}
+
 		if (!replaced) {
 			throw new IllegalArgumentException("Cannot replace "
 					+ from.toSource() + "(" + from.getParent().toSource()
@@ -64,8 +81,10 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 	}
 
 	public void undoLastReplace() {
-		replace(lastReplacedFrom.getParent(), lastReplacedTo, lastReplacedFrom);
-		lastReplacedTo.setParent(parentOfLastReplacedTo);
+		if (lastMutationSuccessed) {
+			replace(lastReplacedFrom.getParent(), lastReplacedTo, lastReplacedFrom);
+			lastReplacedTo.setParent(parentOfLastReplacedTo);
+		}
 	}
 
 	private boolean applyReplaceTo(PropertyGet propertyGet, AstNode from,

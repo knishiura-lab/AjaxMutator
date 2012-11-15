@@ -16,6 +16,18 @@ import org.mozilla.javascript.ast.PropertyGet;
 public class ASTUtil {
 	private ASTUtil() {}
 
+	public static boolean isContained(
+			AstNode mayAncestor, AstNode filial) {
+		AstNode node = filial;
+		while (node != null) {
+			if (node.equals(mayAncestor))
+				return true;
+			node = node.getParent();
+		}
+
+		return false;
+	}
+
 	public static AstRoot stringToAstRoot(String javaScriptSnippet) {
 		ParserWithBrowser parser = ParserWithBrowser.getParser();
 		AstRoot root
