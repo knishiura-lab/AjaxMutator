@@ -2,8 +2,8 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutatable;
 
 import java.util.List;
 
-import jp.gr.java_conf.daisy.ajax_mutator.ASTUtil;
-import jp.gr.java_conf.daisy.ajax_mutator.Util;
+import jp.gr.java_conf.daisy.ajax_mutator.util.AstUtil;
+import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
 
 import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.FunctionCall;
@@ -38,7 +38,10 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 		parentOfLastReplacedTo = lastReplacedTo.getParent();
 
 		AstNode parent = from.getParent();
-		if (ASTUtil.isContained(to, parent)) {
+		if (AstUtil.isContained(to, parent)) {
+			// TODO: currently we just ignore mutation request.
+			// In the future, we can do it another way to tell callee to tell
+			// the result (e.g., throw exception?)
 			lastMutationSuccessed = false;
 			System.err.println("Cannot replace "
 					+ Util.oneLineStringOf(from) + "("

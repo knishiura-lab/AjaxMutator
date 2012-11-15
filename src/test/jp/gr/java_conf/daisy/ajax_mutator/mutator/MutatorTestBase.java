@@ -1,10 +1,10 @@
 package test.jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
-import static jp.gr.java_conf.daisy.ajax_mutator.ASTUtil.stringToAstRoot;
+import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAstRoot;
 import static org.junit.Assert.assertEquals;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
-import jp.gr.java_conf.daisy.ajax_mutator.Util;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
+import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
 
 import org.junit.Before;
 import org.mozilla.javascript.ast.AstRoot;
@@ -46,7 +46,7 @@ public abstract class MutatorTestBase {
 
 	@Before
 	public void before() {
-		ast = stringToAstRoot(Util.join(inputs));
+		ast = parseAstRoot(Util.join(inputs));
 		ast.visit(visitor);
 	}
 

@@ -1,7 +1,7 @@
 package test.jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector;
 
-import static jp.gr.java_conf.daisy.ajax_mutator.ASTUtil.stringToAssignment;
-import static jp.gr.java_conf.daisy.ajax_mutator.ASTUtil.stringToFunctionCall;
+import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAsAssignment;
+import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAsFunctionCall;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.AppendChildDetector;
@@ -26,7 +26,7 @@ public class DOMManipulationDetectorTest {
 		AppendChildDetector detector = new AppendChildDetector();
 
 		DOMAppending result
-			= detector.detect(stringToFunctionCall("hoge.appendChild(fuga);"));
+			= detector.detect(parseAsFunctionCall("hoge.appendChild(fuga);"));
 		assertTrue(result != null);
 		assertEquals("hoge", ((Name) result.getAppendTarget()).getIdentifier());
 		assertEquals("fuga", ((Name) result.getAppendedDom()).getIdentifier());
@@ -37,7 +37,7 @@ public class DOMManipulationDetectorTest {
 		RemoveChildDetector detector = new RemoveChildDetector();
 
 		DOMRemoval result
-			= detector.detect(stringToFunctionCall("hoge.removeChild(fuga);"));
+			= detector.detect(parseAsFunctionCall("hoge.removeChild(fuga);"));
 		assertTrue(result != null);
 		assertEquals("hoge", ((Name) result.getFrom()).getIdentifier());
 		assertEquals("fuga", ((Name) result.getTarget()).getIdentifier());
@@ -47,7 +47,7 @@ public class DOMManipulationDetectorTest {
 	public void craeteElementDetectorTest() {
 		CreateElementDetector detector = new CreateElementDetector();
 		DOMCreation result
-			= detector.detect(stringToFunctionCall("document.createElement('div')"));
+			= detector.detect(parseAsFunctionCall("document.createElement('div')"));
 		assertTrue(result != null);
 		assertEquals("div", ((StringLiteral) result.getTagName()).getValue());
 
@@ -57,7 +57,7 @@ public class DOMManipulationDetectorTest {
 	public void domSelectionDetectorTest() {
 		DOMSelectionDetector detector = new DOMSelectionDetector();
 		DOMSelection result
-			= detector.detect(stringToFunctionCall("document.getElementById('aaa')"));
+			= detector.detect(parseAsFunctionCall("document.getElementById('aaa')"));
 		assertTrue(result != null);
 		assertEquals(DOMSelection.SelectionMethod.ID,
 				result.getSelectionMethod());
@@ -70,14 +70,14 @@ public class DOMManipulationDetectorTest {
 	public void attributeAssignmentDetectorTest() {
 		AttributeAssignmentDetector detector = new AttributeAssignmentDetector();
 		AttributeModification result
-			= detector.detect(stringToAssignment("hoge.hidden = true;"));
+			= detector.detect(parseAsAssignment("hoge.hidden = true;"));
 		assertTrue(result != null);
 		assertEquals("true", result.getAttributeValue().toSource());
 		assertEquals("hoge", result.getTargetDom().toSource());
 		assertEquals("hidden", result.getTargetAttribute().toSource());
-		result = detector.detect(stringToAssignment("hoge.hige = true;"));
+		result = detector.detect(parseAsAssignment("hoge.hige = true;"));
 		assertTrue(result == null);
-		result = detector.detect(stringToAssignment("document.findElementById('hoge')['hidden'] = true;"));
+		result = detector.detect(parseAsAssignment("document.findElementById('hoge')['hidden'] = true;"));
 		assertTrue(result != null);
 	}
 }

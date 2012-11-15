@@ -1,4 +1,7 @@
-package jp.gr.java_conf.daisy.ajax_mutator;
+package jp.gr.java_conf.daisy.ajax_mutator.util;
+
+import jp.gr.java_conf.daisy.ajax_mutator.JSType;
+import jp.gr.java_conf.daisy.ajax_mutator.ParserWithBrowser;
 
 import org.mozilla.javascript.ast.Assignment;
 import org.mozilla.javascript.ast.AstNode;
@@ -13,22 +16,10 @@ import org.mozilla.javascript.ast.PropertyGet;
  *
  * @author Kazuki Nishiura
  */
-public class ASTUtil {
-	private ASTUtil() {}
+public class StringToAst {
+	private StringToAst() {}
 
-	public static boolean isContained(
-			AstNode mayAncestor, AstNode filial) {
-		AstNode node = filial;
-		while (node != null) {
-			if (node.equals(mayAncestor))
-				return true;
-			node = node.getParent();
-		}
-
-		return false;
-	}
-
-	public static AstRoot stringToAstRoot(String javaScriptSnippet) {
+	public static AstRoot parseAstRoot(String javaScriptSnippet) {
 		ParserWithBrowser parser = ParserWithBrowser.getParser();
 		AstRoot root
 			= parser.parse(javaScriptSnippet,
@@ -36,9 +27,9 @@ public class ASTUtil {
 		return root;
 	}
 
-	public static <T extends AstNode> T stringToType(Class<T> type,
+	public static <T extends AstNode> T parseAsType(Class<T> type,
 			String javaScriptSnippet) {
-		AstRoot ast = stringToAstRoot(javaScriptSnippet);
+		AstRoot ast = parseAstRoot(javaScriptSnippet);
 
 		try {
 			@SuppressWarnings("unchecked")
@@ -51,16 +42,16 @@ public class ASTUtil {
 		}
 	}
 
-	public static FunctionCall stringToFunctionCall(String javaScriptSnippet) {
-		return stringToType(FunctionCall.class, javaScriptSnippet);
+	public static FunctionCall parseAsFunctionCall(String javaScriptSnippet) {
+		return parseAsType(FunctionCall.class, javaScriptSnippet);
 	}
 
-	public static Assignment stringToAssignment(String javaScriptSnippet) {
-		return stringToType(Assignment.class, javaScriptSnippet);
+	public static Assignment parseAsAssignment(String javaScriptSnippet) {
+		return parseAsType(Assignment.class, javaScriptSnippet);
 	}
 
-	public static PropertyGet stringToPropertyGet(String javaScriptSnippet) {
-		return stringToType(PropertyGet.class, javaScriptSnippet);
+	public static PropertyGet parseAsPropertyGet(String javaScriptSnippet) {
+		return parseAsType(PropertyGet.class, javaScriptSnippet);
 	}
 
 	public static AstNode createParentNode(AstNode node, JSType domType) {
@@ -68,10 +59,10 @@ public class ASTUtil {
 		builder.append("(").append(node.toSource()).append(")");
 		if (domType == JSType.DOM_ELEMENT) {
 			builder.append(".parentElement");
-			return stringToPropertyGet(builder.toString());
+			return parseAsPropertyGet(builder.toString());
 		} else if (domType == JSType.JQUERY_OBJECT) {
 			builder.append(".parent()");
-			return stringToFunctionCall(builder.toString());
+			return parseAsFunctionCall(builder.toString());
 		} else {
 			throw new IllegalArgumentException(domType + " is not supported.");
 		}
@@ -82,10 +73,10 @@ public class ASTUtil {
 		builder.append("(").append(node.toSource()).append(")");
 		if (domType == JSType.DOM_ELEMENT) {
 			builder.append(".children[0]");
-			return stringToType(ElementGet.class, builder.toString());
+			return parseAsType(ElementGet.class, builder.toString());
 		} else if (domType == JSType.JQUERY_OBJECT) {
 			builder.append(".children(':first')");
-			return stringToFunctionCall(builder.toString());
+			return parseAsFunctionCall(builder.toString());
 		} else {
 			throw new IllegalArgumentException(domType + " is not supported.");
 		}

@@ -1,4 +1,4 @@
-package jp.gr.java_conf.daisy.ajax_mutator;
+package jp.gr.java_conf.daisy.ajax_mutator.util;
 
 /**
  * Wrapper of Math.random. When conducting test, we can set testMode flat true,

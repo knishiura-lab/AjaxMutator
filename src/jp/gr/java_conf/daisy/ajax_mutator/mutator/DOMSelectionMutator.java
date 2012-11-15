@@ -3,11 +3,11 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 import java.io.PrintStream;
 import java.util.Collection;
 
-import jp.gr.java_conf.daisy.ajax_mutator.ASTUtil;
 import jp.gr.java_conf.daisy.ajax_mutator.JSType;
-import jp.gr.java_conf.daisy.ajax_mutator.Randomizer;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection.SelectionMethod;
+import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
+import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
 
 import org.mozilla.javascript.ast.AstNode;
 
@@ -43,9 +43,9 @@ public class DOMSelectionMutator extends AbstractMutator<DOMSelection> {
 				: JSType.DOM_ELEMENT;
 
 		if (randomValue < 0.5) {
-			parent.replace(node, ASTUtil.createParentNode(node, domType));
+			parent.replace(node, StringToAst.createParentNode(node, domType));
 		} else {
-			parent.replace(node, ASTUtil.createChildNode(node, domType));
+			parent.replace(node, StringToAst.createChildNode(node, domType));
 		}
 	}
 }

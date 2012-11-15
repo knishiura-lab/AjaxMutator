@@ -1,4 +1,4 @@
-package jp.gr.java_conf.daisy.ajax_mutator;
+package jp.gr.java_conf.daisy.ajax_mutator.util;
 
 import java.io.BufferedReader;
 import java.io.File;

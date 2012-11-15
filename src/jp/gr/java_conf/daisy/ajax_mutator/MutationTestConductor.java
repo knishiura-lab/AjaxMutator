@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
+import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
 
 import org.mozilla.javascript.ast.AstRoot;
 

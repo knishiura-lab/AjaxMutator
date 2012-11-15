@@ -7,9 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jp.gr.java_conf.daisy.ajax_mutator.Randomizer;
-import jp.gr.java_conf.daisy.ajax_mutator.Util;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Mutatable;
+import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
+import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
 
 import org.mozilla.javascript.ast.AstNode;
 

@@ -1,6 +1,6 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutatable;
 
-import jp.gr.java_conf.daisy.ajax_mutator.Util;
+import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
 
 import org.mozilla.javascript.ast.AstNode;
 

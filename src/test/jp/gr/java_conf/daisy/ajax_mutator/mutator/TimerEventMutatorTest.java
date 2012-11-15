@@ -5,14 +5,14 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.Set;
 
-import jp.gr.java_conf.daisy.ajax_mutator.ASTUtil;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
-import jp.gr.java_conf.daisy.ajax_mutator.Randomizer;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.TimerEventDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.TimerEventCallbackMutator;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.TimerEventDurationMutator;
+import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
+import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
 
 import org.junit.Test;
 import org.mozilla.javascript.ast.AstRoot;
@@ -88,7 +88,7 @@ public class TimerEventMutatorTest extends MutatorTestBase {
 		MutateVisitorBuilder builder = new MutateVisitorBuilder();
 		builder.setTimerEventDetectors(ImmutableSet.of(new TimerEventDetector()));
 		MutateVisitor visitor = builder.build();
-		AstRoot astRoot = ASTUtil.stringToAstRoot(nestingCalls);
+		AstRoot astRoot = StringToAst.parseAstRoot(nestingCalls);
 		astRoot.visit(visitor);
 		Mutator mutator = new TimerEventCallbackMutator(visitor.getTimerEventAttachmentExpressions());
 		Randomizer.setValues(new double[] {1, 0, 0});

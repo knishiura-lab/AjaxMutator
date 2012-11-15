@@ -1,6 +1,6 @@
 package test.jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector;
 
-import static jp.gr.java_conf.daisy.ajax_mutator.ASTUtil.stringToFunctionCall;
+import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAsFunctionCall;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
@@ -21,12 +21,12 @@ public class EventDetectorTest {
 		EventAttacherDetector detector = new AddEventListenerDetector();
 
 		EventAttachment result
-			= detector.detect(stringToFunctionCall(
+			= detector.detect(parseAsFunctionCall(
 				"target.addEventListener('click', func);"));
 		assertTrue(result != null);
 		assertEquals("target", ((Name) result.getTarget()).getIdentifier());
 
-		result = detector.detect(stringToFunctionCall(
+		result = detector.detect(parseAsFunctionCall(
 				"target.addEventListenr('click', func);"));
 		assertTrue(result == null);
 	}
@@ -35,10 +35,10 @@ public class EventDetectorTest {
 	public void testAttachEventDetector() {
 		EventAttacherDetector detector = new AttachEventDetector();
 
-		assertTrue(detector.detect(stringToFunctionCall(
+		assertTrue(detector.detect(parseAsFunctionCall(
 				"target.attachEvent('onclick', func);")) != null);
 
-		assertTrue(detector.detect(stringToFunctionCall(
+		assertTrue(detector.detect(parseAsFunctionCall(
 				"target.addEventListener('click', func);")) == null);
 	}
 
@@ -46,10 +46,10 @@ public class EventDetectorTest {
 	public void testAddEventDetector() {
 		EventAttacherDetector detector = new AddEventDetector();
 
-		assertTrue(detector.detect(stringToFunctionCall(
+		assertTrue(detector.detect(parseAsFunctionCall(
 				"addEvent(target, 'click', func);")) != null);
 
-		assertTrue(detector.detect(stringToFunctionCall(
+		assertTrue(detector.detect(parseAsFunctionCall(
 				"target.addEventListener('click', func);")) == null);
 	}
 
@@ -57,18 +57,18 @@ public class EventDetectorTest {
 	public void testTimerEventDetector() {
 		TimerEventDetector detector = new TimerEventDetector();
 		assertTrue(detector.detect(
-				stringToFunctionCall("setInterval(func, 1000)")) != null);
+				parseAsFunctionCall("setInterval(func, 1000)")) != null);
 		assertTrue(detector.detect(
-				stringToFunctionCall("window.setTimeout(func, callAfter)")) != null);
+				parseAsFunctionCall("window.setTimeout(func, callAfter)")) != null);
 		assertTrue(detector.detect(
-				stringToFunctionCall("window.setInterval(func, funcName)")) != null);
+				parseAsFunctionCall("window.setInterval(func, funcName)")) != null);
 
 		TimerEventAttachment attachment = detector.detect(
-				stringToFunctionCall("setTimeout(func, 1000)"));
+				parseAsFunctionCall("setTimeout(func, 1000)"));
 		NumberLiteral duration = (NumberLiteral) attachment.getDuration();
 		assertEquals(1000.0, duration.getNumber(), 0.0000000000001);
 
-		assertTrue(detector.detect(stringToFunctionCall(
+		assertTrue(detector.detect(parseAsFunctionCall(
 				"target.addEventListener('click', func);")) == null);
 	}
 }
