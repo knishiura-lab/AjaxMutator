@@ -6,6 +6,7 @@ import jp.gr.java_conf.daisy.ajax_mutator.util.AstUtil;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
 
 import org.mozilla.javascript.ast.AstNode;
+import org.mozilla.javascript.ast.ExpressionStatement;
 import org.mozilla.javascript.ast.FunctionCall;
 import org.mozilla.javascript.ast.InfixExpression;
 import org.mozilla.javascript.ast.Name;
@@ -70,6 +71,8 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 			replaced = applyReplaceTo((FunctionCall) parent, from, to);
 		} else if (parent instanceof InfixExpression) {
 			replaced = applyReplaceTo((InfixExpression) parent, from, to);
+		} else if (parent instanceof ExpressionStatement) {
+			replaced = applyReplaceTo((ExpressionStatement) parent, from, to);
 		} else {
 			parent.replaceChild(from, to);
 			replaced = true;
@@ -128,14 +131,22 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 		}
 	}
 
-	private boolean applyReplaceTo(InfixExpression expression, AstNode from,
-			AstNode to) {
-		System.out.println("hoge");
+	private boolean applyReplaceTo(
+			InfixExpression expression, AstNode from, AstNode to) {
 		if (expression.getLeft().equals(from)) {
 			expression.setLeft(to);
 			return true;
 		} else if (expression.getRight().equals(from)) {
 			expression.setRight(to);
+			return true;
+		}
+		return false;
+	}
+
+	private boolean applyReplaceTo(
+			ExpressionStatement statement, AstNode from, AstNode to) {
+		if (from.equals(statement.getExpression())) {
+			statement.setExpression(to);
 			return true;
 		}
 		return false;

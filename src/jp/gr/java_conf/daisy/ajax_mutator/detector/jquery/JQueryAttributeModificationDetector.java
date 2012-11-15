@@ -1,7 +1,6 @@
 package jp.gr.java_conf.daisy.ajax_mutator.detector.jquery;
 
 import java.util.List;
-import java.util.Set;
 
 import jp.gr.java_conf.daisy.ajax_mutator.detector.AbstractDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
@@ -9,8 +8,6 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
 import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.FunctionCall;
 import org.mozilla.javascript.ast.PropertyGet;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * detector for jQuery attribute modifications, which can be classfied into two
@@ -22,8 +19,6 @@ import com.google.common.collect.ImmutableSet;
 public class JQueryAttributeModificationDetector extends
 		AbstractDetector<AttributeModification> {
 	private static final String ATTR_KEYWORD = "attr";
-	private static final Set<String> ATTR_SHORTCUTS
-		= ImmutableSet.of("height", "width", "text");
 
 	@Override
 	public AttributeModification detect(AstNode node) {
@@ -40,11 +35,11 @@ public class JQueryAttributeModificationDetector extends
 				return new AttributeModification(functionCall,
 						propertyGet.getTarget(), arguments.get(0),
 						arguments.get(1));
-			} else if (ATTR_SHORTCUTS.contains(methodName)
+			} else if (AttributeModification.JQUERY_ATTR_SHORTCUTS.contains(methodName)
 					&& arguments.size() >= 1) {
 				return new AttributeModification(functionCall,
 						propertyGet.getTarget(), propertyGet.getProperty(),
-						arguments.get(0));
+						arguments.get(0), true);
 			}
 		}
 		return null;

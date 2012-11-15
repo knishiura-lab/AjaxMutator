@@ -124,6 +124,14 @@ public class Util {
 		}
 	}
 
+	public static String omitLineBreak(AstNode node) {
+		return omitLineBreak(node.toSource());
+	}
+
+	public static String omitLineBreak(String string) {
+		return string.replaceAll("(\r)?\n", "");
+	}
+
 	public static String join(String[] arrayOfString) {
 		return join(arrayOfString, null);
 	}

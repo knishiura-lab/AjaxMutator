@@ -26,8 +26,8 @@ public class AttributeModificationTargetAttributeMutator extends
 	}
 
 	@Override
-	protected void replaceFocusedNodeOf(AttributeModification parent,
-			AstNode newTargetAttribute) {
+	protected void replaceFocusedNodeOf(
+			AttributeModification parent, AstNode newTargetAttribute) {
 		parent.replaceAttribute(newTargetAttribute);
 	}
 }
