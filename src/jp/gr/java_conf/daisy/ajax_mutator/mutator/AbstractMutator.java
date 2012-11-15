@@ -91,7 +91,7 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
 		builder.append(target);
 		builder.append("\" (at line ");
 		builder.append(target.getAstNode().getLineno());
-		builder.append(") by using '");
+		builder.append(") \n  -> '");
 		builder.append(Util.oneLineStringOf(replacingNode));
 		builder.append("'");
 		builder.append(" (at line ").append(replacingNode.getLineno()).append(")");
