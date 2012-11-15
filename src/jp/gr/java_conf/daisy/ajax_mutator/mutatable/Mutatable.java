@@ -74,8 +74,14 @@ public abstract class Mutatable implements Comparable<Mutatable> {
 		} else if (parent instanceof ExpressionStatement) {
 			replaced = applyReplaceTo((ExpressionStatement) parent, from, to);
 		} else {
-			parent.replaceChild(from, to);
-			replaced = true;
+			try {
+				parent.replaceChild(from, to);
+				replaced = true;
+			} catch (NullPointerException exception) {
+				System.err.println("replacement error " + parent.getClass());
+				System.err.println(parent.toSource());
+				System.err.println(to.toSource());
+			}
 		}
 
 		if (!replaced) {
