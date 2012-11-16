@@ -24,4 +24,9 @@ public interface Mutator {
 	 * 	       that this mutator will apply.
 	 */
 	public int numberOfMutation();
+
+	/**
+	 * @return identifier of mutation applied by this mutator.
+	 */
+	public String mutationName();
 }

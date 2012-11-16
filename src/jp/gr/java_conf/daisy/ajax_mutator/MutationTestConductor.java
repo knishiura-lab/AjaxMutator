@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
@@ -87,15 +89,21 @@ public class MutationTestConductor {
 	 * </ol>
 	 */
 	public void conduct(TestExecutor testExecutor, Set<Mutator> mutators) {
-		List<String> unkilledMutatns = new ArrayList<String>();
+		Map<String, List<String>> unkilledMutantsInfo
+			= new HashMap<String, List<String>>();
 		checkIfSetuped();
 		int numberOfMutants = 0;
 
 		// show numberOfMutations
 		int numberOfMaxMutants = 0;
+		outputStream.println("-------Number of mutations------");
 		for (Mutator mutator: mutators) {
 			numberOfMaxMutants += mutator.numberOfMutation();
+			outputStream.println(
+					mutator.mutationName() + ": " + mutator.numberOfMutation());
 		}
+		outputStream.println("Total: " + numberOfMaxMutants);
+		outputStream.println();
 
 		conducting = true;
 		Thread commandReceiver = new Thread(new CommandReceiver());
@@ -103,14 +111,22 @@ public class MutationTestConductor {
 		long startTimeMillis = System.currentTimeMillis();
 		int numberOfTried = 0;
 		for (Mutator mutator : mutators) {
+			String mutationName = mutator.mutationName();
 			while (!mutator.isFinished() && conducting) {
 				numberOfTried++;
 				String mutationInformation = mutator.applyMutation();
 				if (mutationInformation == null)
 					continue;
 				Util.writeToFile(pathToJSFile, astRoot.toSource());
-				if (testExecutor.execute())
-					unkilledMutatns.add(mutationInformation);
+				if (testExecutor.execute()) { // This mutatns cannot be killed
+					if (unkilledMutantsInfo.containsKey(mutationName)) {
+						unkilledMutantsInfo.get(mutationName).add(mutationInformation);
+					} else {
+						List<String> info = new ArrayList<String>();
+						info.add(mutationInformation);
+						unkilledMutantsInfo.put(mutationName, info);
+					}
+				}
 				String message = testExecutor.getMessageOnLastExecution();
 				if (message != null)
 					outputStream.println(message);
@@ -132,18 +148,32 @@ public class MutationTestConductor {
 		outputStream.println();
 		outputStream.println("---------------------------------------------");
 		outputStream.println();
-		outputStream.println(unkilledMutatns.size() + " unkilled mutants "
+		StringBuilder detailedInfo = new StringBuilder();
+		int numberOfUnkilledMutatns = 0;
+		for (Map.Entry<String, List<String>> unkilledMutantsInfoEntry
+				: unkilledMutantsInfo.entrySet()) {
+			numberOfUnkilledMutatns
+				+= unkilledMutantsInfoEntry.getValue().size();
+			detailedInfo.append(unkilledMutantsInfoEntry.getKey()).append(": ")
+				.append(unkilledMutantsInfoEntry.getValue().size()).append('\n');
+			for (String info: unkilledMutantsInfoEntry.getValue()){
+				detailedInfo.append(info).append('\n');
+			}
+			detailedInfo.append('\n');
+		}
+
+		outputStream.println(numberOfUnkilledMutatns + " unkilled mutants "
 				+ " among " + numberOfMutants + ", kill score is "
-				+ Math.floor(100.0 * (1 - unkilledMutatns.size()) / numberOfMaxMutants) / 100);
-		for (String line : unkilledMutatns)
-			outputStream.println(line);
+				+ Math.floor((1.0 - (1.0 * numberOfUnkilledMutatns / numberOfMaxMutants)) * 100) / 100);
+
+		outputStream.println(detailedInfo.toString());
 
 		// restore backup
 		Util.copyFile(pathToBackupFile(), pathToJSFile);
 		System.out.println("Randomizer log: "
 				+ Arrays.toString(Randomizer.getReturnedValues()));
 		System.out.println("finished! "
-				+ (finishTimeMillis - startTimeMillis) / 1000 + " sec.");
+				+ (finishTimeMillis - startTimeMillis) / 1000.0 + " sec.");
 	}
 
 	public void conductWithJunit4(Set<Mutator> mutators, Class<?>... classes) {

@@ -106,4 +106,9 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
 	protected boolean ifEquals(AstNode node1, AstNode node2) {
 		return node1.toSource().equals(node2.toSource());
 	}
+
+	@Override
+	public String mutationName() {
+		return this.getClass().getSimpleName().replace("Mutator", "Mutation");
+	}
 }
