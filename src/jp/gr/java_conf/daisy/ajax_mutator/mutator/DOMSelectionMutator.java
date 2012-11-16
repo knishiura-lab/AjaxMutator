@@ -6,8 +6,8 @@ import java.util.Collection;
 import jp.gr.java_conf.daisy.ajax_mutator.JSType;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection.SelectionMethod;
-import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
+import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
 
 import org.mozilla.javascript.ast.AstNode;
 
@@ -22,30 +22,31 @@ public class DOMSelectionMutator extends AbstractMutator<DOMSelection> {
 		this(mutationTargets, DEFAULT_STREAM);
 	}
 
-	public DOMSelectionMutator(Collection<DOMSelection> mutationTargets,
-			PrintStream printStream) {
+	public DOMSelectionMutator(
+			Collection<DOMSelection> mutationTargets, PrintStream printStream) {
 		super(mutationTargets, printStream);
 	}
 
 	@Override
 	protected AstNode selectReplacingCandidate(DOMSelection mutationTarget) {
-		return mutationTarget.getAstNode();
-	}
-
-	@Override
-	protected void replaceFocusedNodeOf(DOMSelection parent,
-			AstNode replacingNode) {
 		double randomValue = Randomizer.getDouble();
-		AstNode node = parent.getAstNode();
+		AstNode node = mutationTarget.getAstNode();
 		JSType domType
-			= (parent.getSelectionMethod() == SelectionMethod.JQUERY)
+			= (mutationTarget.getSelectionMethod() == SelectionMethod.JQUERY)
 				? JSType.JQUERY_OBJECT
 				: JSType.DOM_ELEMENT;
 
 		if (randomValue < 0.5) {
-			parent.replace(node, StringToAst.createParentNode(node, domType));
+			return StringToAst.createParentNode(node, domType);
 		} else {
-			parent.replace(node, StringToAst.createChildNode(node, domType));
+			return StringToAst.createChildNode(node, domType);
 		}
+	}
+
+	@Override
+	protected void replaceFocusedNodeOf(
+			DOMSelection parent, AstNode replacingNode) {
+		AstNode node = parent.getAstNode();
+		parent.replace(node, replacingNode);
 	}
 }
