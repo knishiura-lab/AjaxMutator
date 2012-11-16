@@ -19,10 +19,10 @@ public class DOMSelectionMutatorTest extends MutatorTestBase {
 
 	@Override
 	void prepare() {
-		selectors = new String[] { "document.getElementById('piyo')",
-				"$('#abc')" };
-		operations = new String[] { ".className = 'abc';",
-				".attr('id', 'another');" };
+		selectors = new String[] {
+				"document.getElementById('piyo')", "$('#abc')"};
+		operations = new String[] {
+				".className = 'abc';", ".attr('id', 'another');"};
 		inputs = new String[2];
 		for (int i = 0; i < 2; i++)
 			inputs[i] = selectors[i] + operations[i];

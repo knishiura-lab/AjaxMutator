@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableSet;
  *
  * @author Kazuki Nishiura
  */
-public class AttributeAssignmentDetector 
+public class AttributeAssignmentDetector
 		extends AbstractDetector<AttributeModification> {
 	// TODO: we can infer variable type to detect if variable is DOM element.
 	// Current implementation is:
@@ -79,8 +79,8 @@ public class AttributeAssignmentDetector
 			AstNode element = ((ElementGet) left).getElement();
 			if (element instanceof StringLiteral
 					&& mayHTMLAttribute(((StringLiteral) element).getValue())) {
-				return new AttributeModification(assignment, target, element,
-						right);
+				return new AttributeModification(
+						assignment, target, element, right);
 			}
 		}
 		return null;

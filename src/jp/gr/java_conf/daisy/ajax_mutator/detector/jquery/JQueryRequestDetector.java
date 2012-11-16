@@ -68,8 +68,8 @@ public class JQueryRequestDetector extends AbstractDetector<Request> {
 					}
 				} else if (AJAX_SHORTCUT_METHODS.contains(method)) {
 					if (arguments.get(1) instanceof ObjectLiteral) {
-						ObjectLiteral settings = (ObjectLiteral) arguments
-								.get(1);
+						ObjectLiteral settings
+							= (ObjectLiteral) arguments.get(1);
 						parseParams(settings);
 						if (arguments.size() > 2)
 							successHandler = arguments.get(2);
