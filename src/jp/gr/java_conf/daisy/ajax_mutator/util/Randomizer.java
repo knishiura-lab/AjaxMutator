@@ -45,6 +45,20 @@ public class Randomizer {
 	}
 
 	/**
+	 * @return integer that indicates how many time this rondomizer is called.
+	 */
+	static public int getNumberOfCalled() {
+		return index != 0 ? index : returnedValueLog.size();
+	}
+
+	/**
+	 * @return index which is used internally to return preset values.
+	 */
+	static public void increaseIndex(int delta) {
+		index += delta;
+	}
+
+	/**
 	 * @return if not testMode, behaves as Math.random(), if testMode, returns
 	 *         predefined values given by {@code setValues}.
 	 */

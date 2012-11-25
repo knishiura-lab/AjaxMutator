@@ -73,6 +73,11 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
 	}
 
 	@Override
+	public void skipMutation() {
+		targetIndex++;
+	}
+
+	@Override
 	public boolean isFinished() {
 		return mutationTargets.size() <= targetIndex;
 	}

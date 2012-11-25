@@ -32,6 +32,7 @@ public class MutationTestConductor {
 	private String pathToJSFile;
 	private AstRoot astRoot;
 	private boolean conducting;
+	private int[] skipCount;
 
 	public MutationTestConductor() {
 		this(System.out);
@@ -94,47 +95,58 @@ public class MutationTestConductor {
 		checkIfSetuped();
 		int numberOfMutants = 0;
 
-		// show numberOfMutations
-		int numberOfMaxMutants = 0;
-		outputStream.println("-------Number of mutations------");
-		for (Mutator mutator: mutators) {
-			numberOfMaxMutants += mutator.numberOfMutation();
-			outputStream.println(
-					mutator.mutationName() + ": " + mutator.numberOfMutation());
-		}
-		outputStream.println("Total: " + numberOfMaxMutants);
-		outputStream.println();
+		int numberOfMaxMutants = calcMaxNumOfMutations(mutators);
 
 		conducting = true;
 		Thread commandReceiver = new Thread(new CommandReceiver());
 		commandReceiver.start();
 		long startTimeMillis = System.currentTimeMillis();
-		int numberOfTried = 0;
+		int trialId = -1;
+		int[] skipLog = new int[numberOfMaxMutants];
+		Arrays.fill(skipLog, -1);
+		int[] numberOfRandomizerCalled = new int[numberOfMaxMutants];
 		for (Mutator mutator : mutators) {
 			String mutationName = mutator.mutationName();
+			outputStream.println(mutationName + " ----------");
 			while (!mutator.isFinished() && conducting) {
-				numberOfTried++;
-				String mutationInformation = mutator.applyMutation();
-				if (mutationInformation == null)
+				boolean mutantsUnkilled = false;
+				trialId++;
+				outputStream.println("[" + trialId + "]");
+				if (skipCount != null && skipCount[trialId] >= 0) {
+					skipLog[trialId] = skipCount[trialId];
+					Randomizer.increaseIndex(skipCount[trialId]);
+					numberOfMutants++;
+					mutator.skipMutation();
+					outputStream.println("skiped");
 					continue;
-				Util.writeToFile(pathToJSFile, astRoot.toSource());
-				if (testExecutor.execute()) { // This mutatns cannot be killed
-					if (unkilledMutantsInfo.containsKey(mutationName)) {
-						unkilledMutantsInfo.get(mutationName).add(mutationInformation);
-					} else {
-						List<String> info = new ArrayList<String>();
-						info.add(mutationInformation);
-						unkilledMutantsInfo.put(mutationName, info);
-					}
 				}
-				String message = testExecutor.getMessageOnLastExecution();
-				if (message != null)
-					outputStream.println(message);
-				mutator.undoMutation();
-				numberOfMutants++;
-				System.out.println(numberOfTried + "/" + numberOfMaxMutants
-						+ "|" + Math.floor(10000 * numberOfTried / numberOfMaxMutants) / 100
-						+ "%");
+				String mutationInformation = mutator.applyMutation();
+				if (mutationInformation != null) {
+					Util.writeToFile(pathToJSFile, astRoot.toSource());
+					if (testExecutor.execute()) { // This mutants cannot be killed
+						if (unkilledMutantsInfo.containsKey(mutationName)) {
+							unkilledMutantsInfo.get(mutationName).add(mutationInformation);
+						} else {
+							List<String> info = new ArrayList<String>();
+							info.add(mutationInformation);
+							unkilledMutantsInfo.put(mutationName, info);
+						}
+						mutantsUnkilled = true;
+					}
+					String message = testExecutor.getMessageOnLastExecution();
+					if (message != null)
+						outputStream.println(message);
+					mutator.undoMutation();
+					numberOfMutants++;
+					System.out.println((trialId + 1) + "/" + numberOfMaxMutants
+							+ "|" + Math.floor(10000 * (trialId + 1) / numberOfMaxMutants) / 100
+							+ "%");
+				}
+				numberOfRandomizerCalled[trialId] = Randomizer.getNumberOfCalled();
+				if (!mutantsUnkilled)
+					skipLog[trialId]
+							= numberOfRandomizerCalled[trialId]
+									- ((trialId == 0) ? 0 : numberOfRandomizerCalled[trialId - 1]);
 			}
 			// execution can be canceled from outside.
 			if (!conducting)
@@ -172,8 +184,22 @@ public class MutationTestConductor {
 		Util.copyFile(pathToBackupFile(), pathToJSFile);
 		System.out.println("Randomizer log: "
 				+ Arrays.toString(Randomizer.getReturnedValues()));
+		System.out.println("skip log: " + Arrays.toString(skipLog));
 		System.out.println("finished! "
 				+ (finishTimeMillis - startTimeMillis) / 1000.0 + " sec.");
+	}
+
+	private int calcMaxNumOfMutations(Set<Mutator> mutators) {
+		int numberOfMaxMutants = 0;
+		outputStream.println("-------Number of mutations------");
+		for (Mutator mutator: mutators) {
+			numberOfMaxMutants += mutator.numberOfMutation();
+			outputStream.println(
+					mutator.mutationName() + ": " + mutator.numberOfMutation());
+		}
+		outputStream.println("Total: " + numberOfMaxMutants);
+		outputStream.println();
+		return numberOfMaxMutants;
 	}
 
 	public void conductWithJunit4(Set<Mutator> mutators, Class<?>... classes) {
@@ -184,6 +210,14 @@ public class MutationTestConductor {
 		if (!setup)
 			throw new IllegalStateException(
 					"You 'must' call setup method before you use.");
+	}
+
+	/**
+	 * client can pass skip count to this class, so that this class can avoid
+	 * executing tests against mutants which have been already killed in past.
+	 */
+	public void setSkipCount(int[] skipCount) {
+		this.skipCount = skipCount;
 	}
 
 	private class CommandReceiver implements Runnable {

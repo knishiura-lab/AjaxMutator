@@ -15,6 +15,12 @@ public interface Mutator {
 	public void undoMutation();
 
 	/**
+	 * skip doing mutation for current mutation target possessed inside this
+	 * instance.
+	 */
+	public void skipMutation();
+
+	/**
 	 * @return true if this mutator cannot applied mutation any more.
 	 */
 	public boolean isFinished();
