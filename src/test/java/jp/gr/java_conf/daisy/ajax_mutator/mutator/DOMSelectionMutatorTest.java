@@ -5,6 +5,8 @@ import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.DOMSelectionDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryDOMSelectionDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
+
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -28,7 +30,12 @@ public class DOMSelectionMutatorTest extends MutatorTestBase {
                 new DOMSelectionDetector(), new JQueryDOMSelectionDetector()));
         visitor = builder.build();
 
-        Randomizer.setValues(new double[]{0.8, 0.2});
+        Randomizer.initializeWithMockValues(new double[] { 0.8, 0.2 });
+    }
+
+    @AfterClass
+    public static void resetRandomizer() {
+        Randomizer.setMockMode(false);
     }
 
     @Test
@@ -48,4 +55,6 @@ public class DOMSelectionMutatorTest extends MutatorTestBase {
         undoAndAssert(mutator);
         assertTrue(mutator.isFinished());
     }
+
+
 }

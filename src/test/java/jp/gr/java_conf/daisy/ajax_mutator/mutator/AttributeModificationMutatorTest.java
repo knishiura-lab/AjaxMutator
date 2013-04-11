@@ -87,7 +87,7 @@ public class AttributeModificationMutatorTest extends MutatorTestBase {
         astRoot.visit(visitor);
         Mutator mutator = new AttributeModificationTargetAttributeMutator(
                 visitor.getAttributeModifications());
-        Randomizer.setValues(new double[]{2, 0, 1});
+        Randomizer.initializeWithMockValues(new double[] {2, 0, 1});
         assertFalse(mutator.isFinished());
         mutator.applyMutation();
         undoAndAssert(mutator);
@@ -98,7 +98,7 @@ public class AttributeModificationMutatorTest extends MutatorTestBase {
                 + "$elm3.attr('disabled', 200);", Util.omitLineBreak(astRoot));
         undoAndAssert(mutator);
         assertEquals(jQueryAttrModifications, Util.omitLineBreak(astRoot));
-        Randomizer.setTestMode(false);
+        Randomizer.setMockMode(false);
     }
 
     private String getJQueryAssignment(String attribute, String value) {

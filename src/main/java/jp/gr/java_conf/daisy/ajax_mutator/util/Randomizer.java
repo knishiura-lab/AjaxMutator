@@ -12,7 +12,7 @@ import com.google.common.primitives.Doubles;
  * @author Kazuki Nishiura
  */
 public class Randomizer {
-    private static boolean testMode = false;
+    private static boolean mockOutput = false;
 
     // These two members only used in test mode to return predefined numbers
     // instead of randomly generated values
@@ -24,16 +24,21 @@ public class Randomizer {
 
     private Randomizer() {};
 
-    static public void setTestMode(boolean testMode) {
-        Randomizer.testMode = testMode;
+    /**
+     * If set true, this class will returns prepared values passed by
+     * {@link #initializeWithMockValues(double[])}.
+     */
+    static public void setMockMode(boolean mockOutput) {
+        Randomizer.mockOutput = mockOutput;
     }
 
     /**
      * set values to be returned from Randomizer and make it test mode.
      */
-    static public void setValues(double[] values) {
+    static public void initializeWithMockValues(double[] values) {
         Randomizer.values = values;
-        setTestMode(true);
+        index = 0;
+        setMockMode(true);
     }
 
     /**
@@ -63,7 +68,7 @@ public class Randomizer {
      *         predefined values given by {@code setValues}.
      */
     static public double getDouble() {
-        if (testMode)
+        if (mockOutput)
             return values[index++];
         else {
             double ret = Math.random();
@@ -77,7 +82,7 @@ public class Randomizer {
      *         than upperBound
      */
     static public int getInt(int upperBound) {
-        if (testMode)
+        if (mockOutput)
             return (int) values[index++];
         else {
             double ret = Math.floor(Math.random() * upperBound);

@@ -86,7 +86,7 @@ public class TimerEventMutatorTest extends MutatorTestBase {
         AstRoot astRoot = StringToAst.parseAstRoot(nestingCalls);
         astRoot.visit(visitor);
         Mutator mutator = new TimerEventCallbackMutator(visitor.getTimerEventAttachmentExpressions());
-        Randomizer.setValues(new double[]{1, 0, 0});
+        Randomizer.initializeWithMockValues(new double[] {1, 0, 0});
         mutator.applyMutation();
         astRoot.toSource();
         mutator.undoMutation();
@@ -96,7 +96,7 @@ public class TimerEventMutatorTest extends MutatorTestBase {
         mutator.applyMutation();
         astRoot.toSource();
         mutator.undoMutation();
-        Randomizer.setTestMode(false);
+        Randomizer.setMockMode(false);
     }
 
     private String setTimeout(String func, String duration, boolean recurcive) {
