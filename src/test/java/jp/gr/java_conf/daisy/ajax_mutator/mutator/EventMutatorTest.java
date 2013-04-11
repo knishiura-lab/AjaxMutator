@@ -1,21 +1,15 @@
-package test.jp.gr.java_conf.daisy.ajax_mutator.mutator;
+package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.util.Set;
-
+import com.google.common.collect.ImmutableSet;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventListenerDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventCallbackMutator;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventTargetMutator;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventTypeMutator;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
-
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class EventMutatorTest extends MutatorTestBase {
     private String[] targets;

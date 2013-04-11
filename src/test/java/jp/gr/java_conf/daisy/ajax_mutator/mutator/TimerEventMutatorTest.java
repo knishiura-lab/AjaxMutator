@@ -1,23 +1,18 @@
-package test.jp.gr.java_conf.daisy.ajax_mutator.mutator;
+package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.util.Set;
-
+import com.google.common.collect.ImmutableSet;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.TimerEventDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.TimerEventCallbackMutator;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.TimerEventDurationMutator;
-import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
-
+import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
 import org.junit.Test;
 import org.mozilla.javascript.ast.AstRoot;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class TimerEventMutatorTest extends MutatorTestBase {
     private String[] callbacks;
@@ -91,7 +86,7 @@ public class TimerEventMutatorTest extends MutatorTestBase {
         AstRoot astRoot = StringToAst.parseAstRoot(nestingCalls);
         astRoot.visit(visitor);
         Mutator mutator = new TimerEventCallbackMutator(visitor.getTimerEventAttachmentExpressions());
-        Randomizer.setValues(new double[] {1, 0, 0});
+        Randomizer.setValues(new double[]{1, 0, 0});
         mutator.applyMutation();
         astRoot.toSource();
         mutator.undoMutation();

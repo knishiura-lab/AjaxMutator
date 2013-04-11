@@ -1,16 +1,12 @@
-package test.jp.gr.java_conf.daisy.ajax_mutator.mutator;
+package jp.gr.java_conf.daisy.ajax_mutator.mutator;
+
+import com.google.common.collect.ImmutableSet;
+import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryRequestDetector;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryRequestDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.RequestOnSuccessHandlerMutator;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.RequestUrlMutator;
-
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableSet;
 
 public class RequestMutatorTest extends MutatorTestBase {
     private String[] urls;

@@ -1,13 +1,12 @@
-package test.jp.gr.java_conf.daisy.ajax_mutator.mutator;
+package jp.gr.java_conf.daisy.ajax_mutator.mutator;
+
+import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
+import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
+import org.junit.Before;
+import org.mozilla.javascript.ast.AstRoot;
 
 import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAstRoot;
 import static org.junit.Assert.assertEquals;
-import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
-import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
-
-import org.junit.Before;
-import org.mozilla.javascript.ast.AstRoot;
 
 /**
  * Base class for testing subclasses of {@code Mutator}.

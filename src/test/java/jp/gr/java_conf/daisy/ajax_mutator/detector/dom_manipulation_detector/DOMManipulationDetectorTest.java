@@ -1,24 +1,15 @@
-package test.jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector;
+package jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector;
+
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.*;
+import org.junit.Test;
+import org.mozilla.javascript.ast.AstNode;
+import org.mozilla.javascript.ast.Name;
+import org.mozilla.javascript.ast.StringLiteral;
 
 import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAsAssignment;
 import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAsFunctionCall;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.AppendChildDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.AttributeAssignmentDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.CreateElementDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.DOMSelectionDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.RemoveChildDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMAppending;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMCreation;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMRemoval;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection;
-
-import org.junit.Test;
-import org.mozilla.javascript.ast.AstNode;
-import org.mozilla.javascript.ast.Name;
-import org.mozilla.javascript.ast.StringLiteral;
 
 public class DOMManipulationDetectorTest {
     @Test

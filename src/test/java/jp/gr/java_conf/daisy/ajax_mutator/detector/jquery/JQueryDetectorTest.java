@@ -1,19 +1,15 @@
-package test.jp.gr.java_conf.daisy.ajax_mutator.detector.jquery;
+package jp.gr.java_conf.daisy.ajax_mutator.detector.jquery;
 
-import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAsFunctionCall;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryAttributeModificationDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryDOMSelectionDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryEventAttachmentDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryRequestDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request.ResponseType;
-
 import org.junit.Test;
+
+import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAsFunctionCall;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class JQueryDetectorTest {
     @Test

@@ -1,22 +1,18 @@
-package test.jp.gr.java_conf.daisy.ajax_mutator.mutator;
+package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import com.google.common.collect.ImmutableSet;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.AttributeAssignmentDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryAttributeModificationDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.AttributeModificationTargetAttributeMutator;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.AttributeModificationValueMutator;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
 import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
-
 import org.junit.Test;
 import org.mozilla.javascript.ast.AstRoot;
 
-import com.google.common.collect.ImmutableSet;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class AttributeModificationMutatorTest extends MutatorTestBase {
     private String[] targetAttributes;
@@ -91,7 +87,7 @@ public class AttributeModificationMutatorTest extends MutatorTestBase {
         astRoot.visit(visitor);
         Mutator mutator = new AttributeModificationTargetAttributeMutator(
                 visitor.getAttributeModifications());
-        Randomizer.setValues(new double[] {2, 0, 1});
+        Randomizer.setValues(new double[]{2, 0, 1});
         assertFalse(mutator.isFinished());
         mutator.applyMutation();
         undoAndAssert(mutator);

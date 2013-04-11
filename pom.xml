@@ -26,13 +26,6 @@
     </dependency>
   </dependencies>
   <build>
-    <sourceDirectory>src</sourceDirectory>
-    <testSourceDirectory>src/test</testSourceDirectory>
-    <resources>
-      <resource>
-        <directory>resources</directory>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

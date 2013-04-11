@@ -1,19 +1,15 @@
-package test.jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector;
+package jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector;
+
+import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.TimerEventAttachment;
+import org.junit.Test;
+import org.mozilla.javascript.ast.Name;
+import org.mozilla.javascript.ast.NumberLiteral;
 
 import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAsFunctionCall;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventListenerDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AttachEventDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.TimerEventDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.TimerEventAttachment;
-
-import org.junit.Test;
-import org.mozilla.javascript.ast.Name;
-import org.mozilla.javascript.ast.NumberLiteral;
 
 public class EventDetectorTest {
     @Test
