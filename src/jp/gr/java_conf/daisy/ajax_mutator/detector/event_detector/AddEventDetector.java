@@ -16,16 +16,16 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
  * @author Kazuki Nishiura
  */
 public class AddEventDetector extends EventAttacherDetector {
-	private static String targetString = "addEvent";
+    private static String targetString = "addEvent";
 
-	@Override
-	public EventAttachment detectFromFunctionCall(FunctionCall functionCall,
-			AstNode target, List<AstNode> arguments) {
-		if (target instanceof Name
-				&& targetString.equals(((Name) target).getIdentifier())) {
-			return new EventAttachment(functionCall, arguments.get(0),
-					arguments.get(1), arguments.get(2));
-		}
-		return null;
-	}
+    @Override
+    public EventAttachment detectFromFunctionCall(FunctionCall functionCall,
+            AstNode target, List<AstNode> arguments) {
+        if (target instanceof Name
+                && targetString.equals(((Name) target).getIdentifier())) {
+            return new EventAttachment(functionCall, arguments.get(0),
+                    arguments.get(1), arguments.get(2));
+        }
+        return null;
+    }
 }

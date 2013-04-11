@@ -16,58 +16,58 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request.ResponseType;
 import org.junit.Test;
 
 public class JQueryDetectorTest {
-	@Test
-	public void testJQueryEventDetector() {
-		EventAttacherDetector detector = new JQueryEventAttachmentDetector();
+    @Test
+    public void testJQueryEventDetector() {
+        EventAttacherDetector detector = new JQueryEventAttachmentDetector();
 
-		assertTrue(detector.detect(parseAsFunctionCall(
-				"$('#elm').on('click', func);")) != null);
+        assertTrue(detector.detect(parseAsFunctionCall(
+                "$('#elm').on('click', func);")) != null);
 
-		assertTrue(detector.detect(
-				parseAsFunctionCall("target.click(func);")) != null);
-	}
+        assertTrue(detector.detect(
+                parseAsFunctionCall("target.click(func);")) != null);
+    }
 
-	@Test
-	public void jQueryDomSelectionDetectorTest() {
-		JQueryDOMSelectionDetector detector = new JQueryDOMSelectionDetector();
-		DOMSelection result = detector.detect(parseAsFunctionCall("$('.aaa')"));
-		assertTrue(result != null);
-		assertEquals(DOMSelection.SelectionMethod.JQUERY,
-				result.getSelectionMethod());
-		assertEquals("'.aaa'", result.getSelector().toSource());
-	}
+    @Test
+    public void jQueryDomSelectionDetectorTest() {
+        JQueryDOMSelectionDetector detector = new JQueryDOMSelectionDetector();
+        DOMSelection result = detector.detect(parseAsFunctionCall("$('.aaa')"));
+        assertTrue(result != null);
+        assertEquals(DOMSelection.SelectionMethod.JQUERY,
+                result.getSelectionMethod());
+        assertEquals("'.aaa'", result.getSelector().toSource());
+    }
 
-	@Test
-	public void testJQueryRequestDetector() {
-		JQueryRequestDetector detector = new JQueryRequestDetector();
-		String data = "{index: 1, value: 'fuga'}";
-		Request result = detector.detect(parseAsFunctionCall(
-				"$.get('hogehoge.php', " + data
-						+ ", function(data){var d = data.member; func(d);});"));
-		assertTrue(result != null);
-		assertEquals("'hogehoge.php'", result.getUrl().toSource());
-		assertEquals(data, result.getParameters().toSource());
-		assertTrue(result.getSuccessHanlder() != null);
-		assertTrue(result.getFailureHandler() == null);
+    @Test
+    public void testJQueryRequestDetector() {
+        JQueryRequestDetector detector = new JQueryRequestDetector();
+        String data = "{index: 1, value: 'fuga'}";
+        Request result = detector.detect(parseAsFunctionCall(
+                "$.get('hogehoge.php', " + data
+                        + ", function(data){var d = data.member; func(d);});"));
+        assertTrue(result != null);
+        assertEquals("'hogehoge.php'", result.getUrl().toSource());
+        assertEquals(data, result.getParameters().toSource());
+        assertTrue(result.getSuccessHanlder() != null);
+        assertTrue(result.getFailureHandler() == null);
 
-		data = "{type: 'POST', dataType: 'html', success: func1, error: func2}";
-		result = detector.detect(parseAsFunctionCall("$.ajax('fugafuga.php', "
-				+ data + ");"));
-		assertTrue(result != null);
-		assertEquals("'fugafuga.php'", result.getUrl().toSource());
-		assertEquals(ResponseType.HTML, result.getResponseType());
-		assertEquals("func1", result.getSuccessHanlder().toSource());
-		assertEquals("func2", result.getFailureHandler().toSource());
-	}
+        data = "{type: 'POST', dataType: 'html', success: func1, error: func2}";
+        result = detector.detect(parseAsFunctionCall("$.ajax('fugafuga.php', "
+                + data + ");"));
+        assertTrue(result != null);
+        assertEquals("'fugafuga.php'", result.getUrl().toSource());
+        assertEquals(ResponseType.HTML, result.getResponseType());
+        assertEquals("func1", result.getSuccessHanlder().toSource());
+        assertEquals("func2", result.getFailureHandler().toSource());
+    }
 
-	@Test
-	public void testJQueryAttributeModificationDetector() {
-		JQueryAttributeModificationDetector detector = new JQueryAttributeModificationDetector();
-		AttributeModification result = detector.detect(parseAsFunctionCall(
-				"$(this).attr('disabled', true)"));
-		assertTrue(result != null);
-		assertEquals("$(this)", result.getTargetDom().toSource());
-		assertEquals("'disabled'", result.getTargetAttribute().toSource());
-		assertEquals("true", result.getAttributeValue().toSource());
-	}
+    @Test
+    public void testJQueryAttributeModificationDetector() {
+        JQueryAttributeModificationDetector detector = new JQueryAttributeModificationDetector();
+        AttributeModification result = detector.detect(parseAsFunctionCall(
+                "$(this).attr('disabled', true)"));
+        assertTrue(result != null);
+        assertEquals("$(this)", result.getTargetDom().toSource());
+        assertEquals("'disabled'", result.getTargetAttribute().toSource());
+        assertEquals("true", result.getAttributeValue().toSource());
+    }
 }

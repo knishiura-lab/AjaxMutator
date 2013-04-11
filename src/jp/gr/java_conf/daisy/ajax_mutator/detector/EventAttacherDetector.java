@@ -10,12 +10,12 @@ import org.mozilla.javascript.ast.AstNode;
  * @author Kazuki Nishiura
  */
 public abstract class EventAttacherDetector
-		extends AbstractDetector<EventAttachment> {
-	/**
-	 * detect event attachment from passed function call
-	 */
-	@Override
-	public EventAttachment detect(AstNode node) {
-		return detectFromFunctionCall(node, true);
-	}
+        extends AbstractDetector<EventAttachment> {
+    /**
+     * detect event attachment from passed function call
+     */
+    @Override
+    public EventAttachment detect(AstNode node) {
+        return detectFromFunctionCall(node, true);
+    }
 }

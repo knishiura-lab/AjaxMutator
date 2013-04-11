@@ -16,59 +16,59 @@ import org.mozilla.javascript.ast.Name;
 import org.mozilla.javascript.ast.NumberLiteral;
 
 public class EventDetectorTest {
-	@Test
-	public void testAddEventListnerDetector() {
-		EventAttacherDetector detector = new AddEventListenerDetector();
+    @Test
+    public void testAddEventListnerDetector() {
+        EventAttacherDetector detector = new AddEventListenerDetector();
 
-		EventAttachment result
-			= detector.detect(parseAsFunctionCall(
-				"target.addEventListener('click', func);"));
-		assertTrue(result != null);
-		assertEquals("target", ((Name) result.getTarget()).getIdentifier());
+        EventAttachment result
+            = detector.detect(parseAsFunctionCall(
+                "target.addEventListener('click', func);"));
+        assertTrue(result != null);
+        assertEquals("target", ((Name) result.getTarget()).getIdentifier());
 
-		result = detector.detect(parseAsFunctionCall(
-				"target.addEventListenr('click', func);"));
-		assertTrue(result == null);
-	}
+        result = detector.detect(parseAsFunctionCall(
+                "target.addEventListenr('click', func);"));
+        assertTrue(result == null);
+    }
 
-	@Test
-	public void testAttachEventDetector() {
-		EventAttacherDetector detector = new AttachEventDetector();
+    @Test
+    public void testAttachEventDetector() {
+        EventAttacherDetector detector = new AttachEventDetector();
 
-		assertTrue(detector.detect(parseAsFunctionCall(
-				"target.attachEvent('onclick', func);")) != null);
+        assertTrue(detector.detect(parseAsFunctionCall(
+                "target.attachEvent('onclick', func);")) != null);
 
-		assertTrue(detector.detect(parseAsFunctionCall(
-				"target.addEventListener('click', func);")) == null);
-	}
+        assertTrue(detector.detect(parseAsFunctionCall(
+                "target.addEventListener('click', func);")) == null);
+    }
 
-	@Test
-	public void testAddEventDetector() {
-		EventAttacherDetector detector = new AddEventDetector();
+    @Test
+    public void testAddEventDetector() {
+        EventAttacherDetector detector = new AddEventDetector();
 
-		assertTrue(detector.detect(parseAsFunctionCall(
-				"addEvent(target, 'click', func);")) != null);
+        assertTrue(detector.detect(parseAsFunctionCall(
+                "addEvent(target, 'click', func);")) != null);
 
-		assertTrue(detector.detect(parseAsFunctionCall(
-				"target.addEventListener('click', func);")) == null);
-	}
+        assertTrue(detector.detect(parseAsFunctionCall(
+                "target.addEventListener('click', func);")) == null);
+    }
 
-	@Test
-	public void testTimerEventDetector() {
-		TimerEventDetector detector = new TimerEventDetector();
-		assertTrue(detector.detect(
-				parseAsFunctionCall("setInterval(func, 1000)")) != null);
-		assertTrue(detector.detect(
-				parseAsFunctionCall("window.setTimeout(func, callAfter)")) != null);
-		assertTrue(detector.detect(
-				parseAsFunctionCall("window.setInterval(func, funcName)")) != null);
+    @Test
+    public void testTimerEventDetector() {
+        TimerEventDetector detector = new TimerEventDetector();
+        assertTrue(detector.detect(
+                parseAsFunctionCall("setInterval(func, 1000)")) != null);
+        assertTrue(detector.detect(
+                parseAsFunctionCall("window.setTimeout(func, callAfter)")) != null);
+        assertTrue(detector.detect(
+                parseAsFunctionCall("window.setInterval(func, funcName)")) != null);
 
-		TimerEventAttachment attachment = detector.detect(
-				parseAsFunctionCall("setTimeout(func, 1000)"));
-		NumberLiteral duration = (NumberLiteral) attachment.getDuration();
-		assertEquals(1000.0, duration.getNumber(), 0.0000000000001);
+        TimerEventAttachment attachment = detector.detect(
+                parseAsFunctionCall("setTimeout(func, 1000)"));
+        NumberLiteral duration = (NumberLiteral) attachment.getDuration();
+        assertEquals(1000.0, duration.getNumber(), 0.0000000000001);
 
-		assertTrue(detector.detect(parseAsFunctionCall(
-				"target.addEventListener('click', func);")) == null);
-	}
+        assertTrue(detector.detect(parseAsFunctionCall(
+                "target.addEventListener('click', func);")) == null);
+    }
 }

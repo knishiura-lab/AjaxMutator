@@ -15,23 +15,23 @@ import org.mozilla.javascript.ast.PropertyGet;
  * @author Kazuki Nishiura
  */
 public class CreateElementDetector extends AbstractDetector<DOMCreation> {
-	private static String CREATE_ELEMENT_IDENTIFIER = "createElement";
+    private static String CREATE_ELEMENT_IDENTIFIER = "createElement";
 
-	@Override
-	public DOMCreation detect(AstNode node) {
-		return detectFromFunctionCall(node, true);
-	}
+    @Override
+    public DOMCreation detect(AstNode node) {
+        return detectFromFunctionCall(node, true);
+    }
 
-	@Override
-	protected DOMCreation detectFromFunctionCall(FunctionCall functionCall,
-			AstNode target, List<AstNode> arguments) {
-		if (functionCall.getTarget() instanceof PropertyGet) {
-			PropertyGet propertyGet = (PropertyGet) functionCall.getTarget();
-			if (CREATE_ELEMENT_IDENTIFIER.equals(
-					propertyGet.getProperty().getIdentifier())) {
-				return new DOMCreation(functionCall, arguments.get(0));
-			}
-		}
-		return null;
-	}
+    @Override
+    protected DOMCreation detectFromFunctionCall(FunctionCall functionCall,
+            AstNode target, List<AstNode> arguments) {
+        if (functionCall.getTarget() instanceof PropertyGet) {
+            PropertyGet propertyGet = (PropertyGet) functionCall.getTarget();
+            if (CREATE_ELEMENT_IDENTIFIER.equals(
+                    propertyGet.getProperty().getIdentifier())) {
+                return new DOMCreation(functionCall, arguments.get(0));
+            }
+        }
+        return null;
+    }
 }

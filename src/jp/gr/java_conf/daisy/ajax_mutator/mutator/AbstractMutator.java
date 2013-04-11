@@ -17,103 +17,103 @@ import org.mozilla.javascript.ast.AstNode;
  * @author Kazuki Nishiura
  */
 public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
-	protected PrintStream stream;
-	protected List<T> mutationTargets;
-	protected int targetIndex = 0;
-	protected static PrintStream DEFAULT_STREAM = System.out;
+    protected PrintStream stream;
+    protected List<T> mutationTargets;
+    protected int targetIndex = 0;
+    protected static PrintStream DEFAULT_STREAM = System.out;
 
-	protected AbstractMutator(Collection<T> mutationTargets) {
-		this(mutationTargets, DEFAULT_STREAM);
-	}
+    protected AbstractMutator(Collection<T> mutationTargets) {
+        this(mutationTargets, DEFAULT_STREAM);
+    }
 
-	protected AbstractMutator(Collection<T> mutationTargets,
-			PrintStream printStream) {
-		this.stream = printStream;
-		this.mutationTargets = new ArrayList<T>(mutationTargets);
-	}
+    protected AbstractMutator(Collection<T> mutationTargets,
+            PrintStream printStream) {
+        this.stream = printStream;
+        this.mutationTargets = new ArrayList<T>(mutationTargets);
+    }
 
-	/**
-	 * @param parent
-	 *            Mutatable part of which to be mutated
-	 * @param replacingNode
-	 *            node that replace part of {@code parent}
-	 */
-	abstract protected void replaceFocusedNodeOf(T parent,
-			AstNode replacingNodwe);
+    /**
+     * @param parent
+     *            Mutatable part of which to be mutated
+     * @param replacingNode
+     *            node that replace part of {@code parent}
+     */
+    abstract protected void replaceFocusedNodeOf(T parent,
+            AstNode replacingNodwe);
 
-	/**
-	 * @return node that can replace a part of mutation target. When appropriate
-	 *         node do not exist or cannot be found, returns null.
-	 */
-	abstract protected AstNode selectReplacingCandidate(T mutationTarget);
+    /**
+     * @return node that can replace a part of mutation target. When appropriate
+     *         node do not exist or cannot be found, returns null.
+     */
+    abstract protected AstNode selectReplacingCandidate(T mutationTarget);
 
-	@Override
-	public String applyMutation() {
-		T mutationTarget = mutationTargets.get(targetIndex);
-		AstNode replacingNode = selectReplacingCandidate(mutationTarget);
-		if (replacingNode == null) {
-			System.out.println("mutation is not applied to: ");
-			System.out.println(mutationTarget.toString());
-			targetIndex++;
-			return null;
-		}
-		String mutationInformation = mutationInformation(mutationTarget,
-				replacingNode);
-		if (stream != null)
-			stream.println(mutationInformation);
-		replaceFocusedNodeOf(mutationTarget, replacingNode);
-		return mutationInformation;
-	}
+    @Override
+    public String applyMutation() {
+        T mutationTarget = mutationTargets.get(targetIndex);
+        AstNode replacingNode = selectReplacingCandidate(mutationTarget);
+        if (replacingNode == null) {
+            System.out.println("mutation is not applied to: ");
+            System.out.println(mutationTarget.toString());
+            targetIndex++;
+            return null;
+        }
+        String mutationInformation = mutationInformation(mutationTarget,
+                replacingNode);
+        if (stream != null)
+            stream.println(mutationInformation);
+        replaceFocusedNodeOf(mutationTarget, replacingNode);
+        return mutationInformation;
+    }
 
-	@Override
-	public void undoMutation() {
-		Mutatable mutationTarget = mutationTargets.get(targetIndex);
-		mutationTarget.undoLastReplace();
-		targetIndex++;
-	}
+    @Override
+    public void undoMutation() {
+        Mutatable mutationTarget = mutationTargets.get(targetIndex);
+        mutationTarget.undoLastReplace();
+        targetIndex++;
+    }
 
-	@Override
-	public void skipMutation() {
-		targetIndex++;
-	}
+    @Override
+    public void skipMutation() {
+        targetIndex++;
+    }
 
-	@Override
-	public boolean isFinished() {
-		return mutationTargets.size() <= targetIndex;
-	}
+    @Override
+    public boolean isFinished() {
+        return mutationTargets.size() <= targetIndex;
+    }
 
-	@Override
-	public int numberOfMutation() {
-		return mutationTargets.size();
-	}
+    @Override
+    public int numberOfMutation() {
+        return mutationTargets.size();
+    }
 
-	/**
-	 * output mutation information to PrintStream pointed by {@code stream}.
-	 */
-	protected String mutationInformation(T target, AstNode replacingNode) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("mutate '");
-		builder.append(target);
-		builder.append("\" (at line ");
-		builder.append(target.getAstNode().getLineno());
-		builder.append(") \n  -> '");
-		builder.append(Util.oneLineStringOf(replacingNode));
-		builder.append("'");
-		builder.append(" (at line ").append(replacingNode.getLineno()).append(")");
-		return builder.toString();
-	}
+    /**
+     * output mutation information to PrintStream pointed by {@code stream}.
+     */
+    protected String mutationInformation(T target, AstNode replacingNode) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("mutate '");
+        builder.append(target);
+        builder.append("\" (at line ");
+        builder.append(target.getAstNode().getLineno());
+        builder.append(") \n  -> '");
+        builder.append(Util.oneLineStringOf(replacingNode));
+        builder.append("'");
+        builder.append(" (at line ").append(replacingNode.getLineno()).append(")");
+        return builder.toString();
+    }
 
-	/**
-	 * Determine the equality of given to AstNodes in the context of mutator.
-	 * Subclass may want to override this method to create only meaningful
-	 * mutants.
-	 */
-	protected boolean ifEquals(AstNode node1, AstNode node2) {
-		return node1.toSource().equals(node2.toSource());
-	}
+    /**
+     * Determine the equality of given to AstNodes in the context of mutator.
+     * Subclass may want to override this method to create only meaningful
+     * mutants.
+     */
+    protected boolean ifEquals(AstNode node1, AstNode node2) {
+        return node1.toSource().equals(node2.toSource());
+    }
 
-	@Override
-	public String mutationName() {
-		return this.getClass().getSimpleName().replace("Mutator", "Mutation");
-	}
+    @Override
+    public String mutationName() {
+        return this.getClass().getSimpleName().replace("Mutator", "Mutation");
+    }
 }

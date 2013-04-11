@@ -13,9 +13,9 @@ import test.jp.gr.java_conf.daisy.ajax_mutator.mutator.TimerEventMutatorTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ DOMManipulationDetectorTest.class,
-		EventDetectorTest.class, JQueryDetectorTest.class,
-		AttributeModificationMutatorTest.class, EventMutatorTest.class,
-		RequestMutatorTest.class, TimerEventMutatorTest.class})
+        EventDetectorTest.class, JQueryDetectorTest.class,
+        AttributeModificationMutatorTest.class, EventMutatorTest.class,
+        RequestMutatorTest.class, TimerEventMutatorTest.class})
 public class TestAll {
 
 }

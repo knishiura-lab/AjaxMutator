@@ -6,5 +6,5 @@ package jp.gr.java_conf.daisy.ajax_mutator;
  * @author Kazuki Nishiura
  */
 public enum JSType {
-	NUMBER, STRING, DOM_ELEMENT, JQUERY_OBJECT
+    NUMBER, STRING, DOM_ELEMENT, JQUERY_OBJECT
 }

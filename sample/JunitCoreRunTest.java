@@ -14,21 +14,21 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 import com.google.common.collect.ImmutableSet;
 
 public class JunitCoreRunTest {
-	public static void main(String[] args) {
-		MutationTestConductor conductor = new MutationTestConductor();
-		EventAttacherDetector[] attahcerDetectorArray
-			= {new AddEventDetector()};
-		Set<EventAttacherDetector> attacherDetector
-			= new HashSet<EventAttacherDetector>(Arrays.asList(attahcerDetectorArray));
-		MutateVisitor visitor = new MutateVisitor(attacherDetector, null, null, null, null, null, null);
+    public static void main(String[] args) {
+        MutationTestConductor conductor = new MutationTestConductor();
+        EventAttacherDetector[] attahcerDetectorArray
+            = {new AddEventDetector()};
+        Set<EventAttacherDetector> attacherDetector
+            = new HashSet<EventAttacherDetector>(Arrays.asList(attahcerDetectorArray));
+        MutateVisitor visitor = new MutateVisitor(attacherDetector, null, null, null, null, null, null);
 
-		conductor.setup("Path_to_AjaxLogin/login_presentation.js", "test_target_URI", visitor);
+        conductor.setup("Path_to_AjaxLogin/login_presentation.js", "test_target_URI", visitor);
 
-		Set<EventAttachment> eventAttachments = visitor.getEventAttachments();
-		Set<Mutator> mutators = ImmutableSet.of(
-				(Mutator) new EventTargetMutator(System.out, eventAttachments),
-				(Mutator) new EventTypeMutator(System.out, eventAttachments));
+        Set<EventAttachment> eventAttachments = visitor.getEventAttachments();
+        Set<Mutator> mutators = ImmutableSet.of(
+                (Mutator) new EventTargetMutator(System.out, eventAttachments),
+                (Mutator) new EventTypeMutator(System.out, eventAttachments));
 
-		conductor.conductWithJunit4(mutators, LoginTest.class);
-	}
+        conductor.conductWithJunit4(mutators, LoginTest.class);
+    }
 }

@@ -18,35 +18,35 @@ import org.mozilla.javascript.ast.AstNode;
  * @author Kazuki Nishiura
  */
 public class DOMSelectionMutator extends AbstractMutator<DOMSelection> {
-	public DOMSelectionMutator(Collection<DOMSelection> mutationTargets) {
-		this(mutationTargets, DEFAULT_STREAM);
-	}
+    public DOMSelectionMutator(Collection<DOMSelection> mutationTargets) {
+        this(mutationTargets, DEFAULT_STREAM);
+    }
 
-	public DOMSelectionMutator(
-			Collection<DOMSelection> mutationTargets, PrintStream printStream) {
-		super(mutationTargets, printStream);
-	}
+    public DOMSelectionMutator(
+            Collection<DOMSelection> mutationTargets, PrintStream printStream) {
+        super(mutationTargets, printStream);
+    }
 
-	@Override
-	protected AstNode selectReplacingCandidate(DOMSelection mutationTarget) {
-		double randomValue = Randomizer.getDouble();
-		AstNode node = mutationTarget.getAstNode();
-		JSType domType
-			= (mutationTarget.getSelectionMethod() == SelectionMethod.JQUERY)
-				? JSType.JQUERY_OBJECT
-				: JSType.DOM_ELEMENT;
+    @Override
+    protected AstNode selectReplacingCandidate(DOMSelection mutationTarget) {
+        double randomValue = Randomizer.getDouble();
+        AstNode node = mutationTarget.getAstNode();
+        JSType domType
+            = (mutationTarget.getSelectionMethod() == SelectionMethod.JQUERY)
+                ? JSType.JQUERY_OBJECT
+                : JSType.DOM_ELEMENT;
 
-		if (randomValue < 0.5) {
-			return StringToAst.createParentNode(node, domType);
-		} else {
-			return StringToAst.createChildNode(node, domType);
-		}
-	}
+        if (randomValue < 0.5) {
+            return StringToAst.createParentNode(node, domType);
+        } else {
+            return StringToAst.createChildNode(node, domType);
+        }
+    }
 
-	@Override
-	protected void replaceFocusedNodeOf(
-			DOMSelection parent, AstNode replacingNode) {
-		AstNode node = parent.getAstNode();
-		parent.replace(node, replacingNode);
-	}
+    @Override
+    protected void replaceFocusedNodeOf(
+            DOMSelection parent, AstNode replacingNode) {
+        AstNode node = parent.getAstNode();
+        parent.replace(node, replacingNode);
+    }
 }

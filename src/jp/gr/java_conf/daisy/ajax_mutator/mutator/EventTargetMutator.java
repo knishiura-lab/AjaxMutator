@@ -8,24 +8,24 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 import org.mozilla.javascript.ast.AstNode;
 
 public class EventTargetMutator extends
-		AbstractReplacingAmongMutator<EventAttachment> {
-	public EventTargetMutator(Collection<EventAttachment> mutationTargets) {
-		this(mutationTargets, DEFAULT_STREAM);
-	}
+        AbstractReplacingAmongMutator<EventAttachment> {
+    public EventTargetMutator(Collection<EventAttachment> mutationTargets) {
+        this(mutationTargets, DEFAULT_STREAM);
+    }
 
-	public EventTargetMutator(Collection<EventAttachment> mutationTargets,
-			PrintStream printStream) {
-		super(mutationTargets, printStream);
-	}
+    public EventTargetMutator(Collection<EventAttachment> mutationTargets,
+            PrintStream printStream) {
+        super(mutationTargets, printStream);
+    }
 
-	@Override
-	protected AstNode getFocusedNode(EventAttachment node) {
-		return node.getTarget();
-	}
+    @Override
+    protected AstNode getFocusedNode(EventAttachment node) {
+        return node.getTarget();
+    }
 
-	@Override
-	protected void replaceFocusedNodeOf(EventAttachment parent,
-			AstNode newTarget) {
-		parent.replaceTarget(newTarget);
-	}
+    @Override
+    protected void replaceFocusedNodeOf(EventAttachment parent,
+            AstNode newTarget) {
+        parent.replaceTarget(newTarget);
+    }
 }

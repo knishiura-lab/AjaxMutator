@@ -8,23 +8,23 @@ import org.mozilla.javascript.ast.AstNode;
  * @author Kazuki Nishiura
  */
 public class DOMCreation extends Mutatable {
-	private final AstNode tagName;
+    private final AstNode tagName;
 
-	public DOMCreation(AstNode node, AstNode tagName) {
-		super(node);
-		this.tagName = tagName;
-	}
+    public DOMCreation(AstNode node, AstNode tagName) {
+        super(node);
+        this.tagName = tagName;
+    }
 
-	public AstNode getTagName() {
-		return tagName;
-	}
+    public AstNode getTagName() {
+        return tagName;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(super.toString()).append('\n');
-		builder.append("  DOM creation: [tag:");
-		builder.append(tagName.toSource()).append("]");
-		return builder.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(super.toString()).append('\n');
+        builder.append("  DOM creation: [tag:");
+        builder.append(tagName.toSource()).append("]");
+        return builder.toString();
+    }
 }

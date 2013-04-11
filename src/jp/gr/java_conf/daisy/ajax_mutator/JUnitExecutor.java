@@ -17,53 +17,53 @@ import org.junit.runner.notification.Failure;
  * @author Kazuki Nishiura
  */
 public class JUnitExecutor implements TestExecutor {
-	Class<?>[] targetClasses;
-	String executionMessage;
+    Class<?>[] targetClasses;
+    String executionMessage;
 
-	public JUnitExecutor(Class<?>... targetClasses) {
-		this.targetClasses = targetClasses;
-	}
+    public JUnitExecutor(Class<?>... targetClasses) {
+        this.targetClasses = targetClasses;
+    }
 
-	@Override
-	public boolean execute() {
-		JUnitCore core = new JUnitCore();
-		Result result = core.run(targetClasses);
-		List<String> testMethods = new ArrayList<String>();
-		for (Class<?> clazz: targetClasses) {
-			for (Method method: clazz.getMethods()) {
-				if (method.isAnnotationPresent(Test.class))
-					testMethods.add(method.getName());
-			}
-		}
-		Map<String, Boolean> testSucceed = new TreeMap<String, Boolean>();
-		for (String methodName: testMethods)
-			testSucceed.put(methodName, true);
+    @Override
+    public boolean execute() {
+        JUnitCore core = new JUnitCore();
+        Result result = core.run(targetClasses);
+        List<String> testMethods = new ArrayList<String>();
+        for (Class<?> clazz: targetClasses) {
+            for (Method method: clazz.getMethods()) {
+                if (method.isAnnotationPresent(Test.class))
+                    testMethods.add(method.getName());
+            }
+        }
+        Map<String, Boolean> testSucceed = new TreeMap<String, Boolean>();
+        for (String methodName: testMethods)
+            testSucceed.put(methodName, true);
 
-		StringBuilder messageBuilder = new StringBuilder();
-		if (result.wasSuccessful()) {
-			messageBuilder.append("Test succeed (failed to kill mutants), ")
-				.append(result.getRunCount()).append(" tests ran.\n");
-			for (int i = 0; i < testSucceed.size(); i++)
-				messageBuilder.append("x ");
-			messageBuilder.append("x");
-			executionMessage = messageBuilder.toString();
-			return true;
-		} else {
-			messageBuilder.append(result.getFailureCount())
-				.append(" tests failed within ").append(result.getRunCount())
-				.append('\n');
-			for (Failure failure: result.getFailures())
-				testSucceed.put(failure.getDescription().getMethodName(), false);
-			for (Map.Entry<String, Boolean> entry: testSucceed.entrySet())
-				messageBuilder.append(entry.getValue() ? 'x' : 'o').append(' ');
-			messageBuilder.append("o");
-			executionMessage = messageBuilder.toString();
-			return false;
-		}
-	}
+        StringBuilder messageBuilder = new StringBuilder();
+        if (result.wasSuccessful()) {
+            messageBuilder.append("Test succeed (failed to kill mutants), ")
+                .append(result.getRunCount()).append(" tests ran.\n");
+            for (int i = 0; i < testSucceed.size(); i++)
+                messageBuilder.append("x ");
+            messageBuilder.append("x");
+            executionMessage = messageBuilder.toString();
+            return true;
+        } else {
+            messageBuilder.append(result.getFailureCount())
+                .append(" tests failed within ").append(result.getRunCount())
+                .append('\n');
+            for (Failure failure: result.getFailures())
+                testSucceed.put(failure.getDescription().getMethodName(), false);
+            for (Map.Entry<String, Boolean> entry: testSucceed.entrySet())
+                messageBuilder.append(entry.getValue() ? 'x' : 'o').append(' ');
+            messageBuilder.append("o");
+            executionMessage = messageBuilder.toString();
+            return false;
+        }
+    }
 
-	@Override
-	public String getMessageOnLastExecution() {
-		return executionMessage;
-	}
+    @Override
+    public String getMessageOnLastExecution() {
+        return executionMessage;
+    }
 }

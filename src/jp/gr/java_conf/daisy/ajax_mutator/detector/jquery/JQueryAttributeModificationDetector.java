@@ -17,31 +17,31 @@ import org.mozilla.javascript.ast.PropertyGet;
  * @author Kazuki Nishiura
  */
 public class JQueryAttributeModificationDetector extends
-		AbstractDetector<AttributeModification> {
-	private static final String ATTR_KEYWORD = "attr";
+        AbstractDetector<AttributeModification> {
+    private static final String ATTR_KEYWORD = "attr";
 
-	@Override
-	public AttributeModification detect(AstNode node) {
-		return detectFromFunctionCall(node, false);
-	}
+    @Override
+    public AttributeModification detect(AstNode node) {
+        return detectFromFunctionCall(node, false);
+    }
 
-	@Override
-	public AttributeModification detectFromFunctionCall(
-			FunctionCall functionCall, AstNode target, List<AstNode> arguments) {
-		if (target instanceof PropertyGet) {
-			PropertyGet propertyGet = (PropertyGet) target;
-			String methodName = propertyGet.getProperty().getIdentifier();
-			if (ATTR_KEYWORD.equals(methodName) && arguments.size() >= 2) {
-				return new AttributeModification(functionCall,
-						propertyGet.getTarget(), arguments.get(0),
-						arguments.get(1));
-			} else if (AttributeModification.JQUERY_ATTR_SHORTCUTS.contains(methodName)
-					&& arguments.size() >= 1) {
-				return new AttributeModification(functionCall,
-						propertyGet.getTarget(), propertyGet.getProperty(),
-						arguments.get(0), true);
-			}
-		}
-		return null;
-	}
+    @Override
+    public AttributeModification detectFromFunctionCall(
+            FunctionCall functionCall, AstNode target, List<AstNode> arguments) {
+        if (target instanceof PropertyGet) {
+            PropertyGet propertyGet = (PropertyGet) target;
+            String methodName = propertyGet.getProperty().getIdentifier();
+            if (ATTR_KEYWORD.equals(methodName) && arguments.size() >= 2) {
+                return new AttributeModification(functionCall,
+                        propertyGet.getTarget(), arguments.get(0),
+                        arguments.get(1));
+            } else if (AttributeModification.JQUERY_ATTR_SHORTCUTS.contains(methodName)
+                    && arguments.size() >= 1) {
+                return new AttributeModification(functionCall,
+                        propertyGet.getTarget(), propertyGet.getProperty(),
+                        arguments.get(0), true);
+            }
+        }
+        return null;
+    }
 }
