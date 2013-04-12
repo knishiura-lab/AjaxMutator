@@ -7,16 +7,20 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
  */
 public interface Mutator {
     /**
-     * @return summary of applied mutation information, if mutation is applied
-     *         because of any reasons, return null.
+     * @return summary of applied mutation information, if mutation is NOT
+     *         applied for whatever reasons, return null.
      */
     public String applyMutation();
 
+    /**
+     * Undo the mutation applied by {@link #applyMutation()}. This method MUST
+     * NOT be called immediately after {@link #applyMutation()} returns null.
+     */
     public void undoMutation();
 
     /**
-     * skip doing mutation for current mutation target possessed inside this
-     * instance.
+     * skip doing mutation for current mutation target probably because this
+     * mutant is already considered and killed in past mutation analysis.
      */
     public void skipMutation();
 
@@ -27,7 +31,7 @@ public interface Mutator {
 
     /**
      * @return numberOfMutation, which indicates the maximum number of mutation
-     *            that this mutator will apply.
+     *         that this mutator will apply.
      */
     public int numberOfMutation();
 
