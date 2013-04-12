@@ -33,13 +33,11 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
     }
 
     /**
-     * @param parent
-     *            Mutatable part of which to be mutated
-     * @param replacingNode
-     *            node that replace part of {@code parent}
+     * @param parent Subclass of {@link Mutatable} part of which to be mutated.
+     * @param replacingNode node that replace part of {@code parent}.
      */
-    abstract protected void replaceFocusedNodeOf(T parent,
-            AstNode replacingNodwe);
+    abstract protected void replaceFocusedNodeOf(
+            T parent, AstNode replacingNode);
 
     /**
      * @return node that can replace a part of mutation target. When appropriate
@@ -99,8 +97,8 @@ public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
         builder.append(") \n  -> '");
         builder.append(Util.oneLineStringOf(replacingNode));
         builder.append("'");
-        builder.append(" (at line ").append(replacingNode.getLineno()).append(")");
-        return builder.toString();
+        builder.append(" (at line ").append(replacingNode.getLineno());
+        return builder.append(")").toString();
     }
 
     /**
