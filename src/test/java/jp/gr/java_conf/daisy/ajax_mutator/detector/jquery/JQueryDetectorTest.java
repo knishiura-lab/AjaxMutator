@@ -43,6 +43,7 @@ public class JQueryDetectorTest {
         assertTrue(result != null);
         assertEquals("'hogehoge.php'", result.getUrl().toSource());
         assertEquals(data, result.getParameters().toSource());
+        assertEquals(Request.RequestMethod.GET, result.getRequestMethod());
         assertTrue(result.getSuccessHanlder() != null);
         assertTrue(result.getFailureHandler() == null);
 
@@ -53,6 +54,7 @@ public class JQueryDetectorTest {
         assertEquals("'fugafuga.php'", result.getUrl().toSource());
         assertEquals(ResponseType.HTML, result.getResponseType());
         assertEquals("func1", result.getSuccessHanlder().toSource());
+        assertEquals(Request.RequestMethod.POST, result.getRequestMethod());
         assertEquals("func2", result.getFailureHandler().toSource());
     }
 

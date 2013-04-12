@@ -33,6 +33,7 @@ public class JQueryRequestDetector extends AbstractDetector<Request> {
 
     private AstNode successHandler;
     private AstNode failureHandler;
+    private AstNode requestMethodNode;
     private Request.ResponseType responseType;
     private AstNode data;
     private AstNode url;
@@ -49,9 +50,10 @@ public class JQueryRequestDetector extends AbstractDetector<Request> {
         if (target instanceof PropertyGet) {
             PropertyGet properyGet = (PropertyGet) target;
             AstNode obj = properyGet.getTarget();
-            String method = properyGet.getProperty().getIdentifier();
+            Name methodName = properyGet.getProperty();
+            String methodNameString = properyGet.getProperty().getIdentifier();
             if (obj instanceof Name && "$".equals(((Name) obj).getIdentifier())) {
-                if (AJAX_METHOD.equals(method)) {
+                if (AJAX_METHOD.equals(methodNameString)) {
                     ObjectLiteral settings = null;
                     if (arguments.get(0) instanceof ObjectLiteral) {
                         settings = (ObjectLiteral) arguments.get(0);
@@ -64,9 +66,10 @@ public class JQueryRequestDetector extends AbstractDetector<Request> {
                     if (settings != null) {
                         parseParams(settings);
                         return new Request(functionCall, url, successHandler,
-                                failureHandler, responseType, data);
+                                failureHandler, requestMethodNode, responseType,
+                                data);
                     }
-                } else if (AJAX_SHORTCUT_METHODS.contains(method)) {
+                } else if (AJAX_SHORTCUT_METHODS.contains(methodNameString)) {
                     if (arguments.get(1) instanceof ObjectLiteral) {
                         ObjectLiteral settings
                             = (ObjectLiteral) arguments.get(1);
@@ -77,11 +80,12 @@ public class JQueryRequestDetector extends AbstractDetector<Request> {
                         successHandler = arguments.get(1);
                     }
 
-                    if ("getJSON".equals(method))
+                    if ("getJSON".equals(methodNameString))
                         responseType = ResponseType.JSON;
 
                     return new Request(functionCall, arguments.get(0),
-                            successHandler, failureHandler, responseType, data);
+                            successHandler, failureHandler, methodName,
+                            responseType, data);
                 }
             }
         }
@@ -127,6 +131,8 @@ public class JQueryRequestDetector extends AbstractDetector<Request> {
                     else if ("json".equals(type))
                         responseType = ResponseType.JSON;
                 }
+            } else if ("type".equals(leftInStr)) {
+              requestMethodNode = right;
             }
         }
     }
