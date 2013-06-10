@@ -11,6 +11,7 @@ import org.mozilla.javascript.ast.FunctionCall;
 import org.mozilla.javascript.ast.InfixExpression;
 import org.mozilla.javascript.ast.Name;
 import org.mozilla.javascript.ast.PropertyGet;
+import org.mozilla.javascript.ast.ParenthesizedExpression;
 
 /**
  * Mutatable object, which means mutation operator can be applied to astnode
@@ -34,11 +35,18 @@ public abstract class Mutatable implements Comparable<Mutatable> {
     }
 
     public void replace(AstNode from, AstNode to) {
-        lastReplacedFrom = from;
         lastReplacedTo = to;
         parentOfLastReplacedTo = lastReplacedTo.getParent();
 
         AstNode parent = from.getParent();
+        // skip parenthesis
+        while (parent instanceof ParenthesizedExpression) {
+            from = parent;
+            parent = parent.getParent();
+        }
+
+        lastReplacedFrom = from;
+
         if (AstUtil.isContained(to, parent)) {
             // TODO: currently we just ignore mutation request.
             // In the future, we can do it another way to tell callee to tell

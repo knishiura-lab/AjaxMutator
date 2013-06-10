@@ -19,18 +19,18 @@ public class DOMSelectionMutatorTest extends MutatorTestBase {
     @Override
     void prepare() {
         selectors = new String[] {
-                "document.getElementById('piyo')", "$('#abc')"};
+                "document.getElementById('piyo')", "$('#abc')", "($('.hoge'))"};
         operations = new String[] {
-                ".className = 'abc';", ".attr('id', 'another');"};
-        inputs = new String[2];
-        for (int i = 0; i < 2; i++)
+                ".className = 'abc';", ".attr('id', 'another');", ".hide();"};
+        inputs = new String[3];
+        for (int i = 0; i < 3; i++)
             inputs[i] = selectors[i] + operations[i];
         MutateVisitorBuilder builder = new MutateVisitorBuilder();
         builder.setDomSelectionDetectors(ImmutableSet.of(
                 new DOMSelectionDetector(), new JQueryDOMSelectionDetector()));
         visitor = builder.build();
 
-        Randomizer.initializeWithMockValues(new double[] { 0.8, 0.2 });
+        Randomizer.initializeWithMockValues(new double[] { 0.8, 0.2, 0.7 });
     }
 
     @AfterClass
@@ -52,6 +52,11 @@ public class DOMSelectionMutatorTest extends MutatorTestBase {
         assertEquals(outputs[0], inputs[0]);
         assertEquals(outputs[1], "(" + selectors[1] + ").parent()"
                 + operations[1]);
+        undoAndAssert(mutator);
+        mutator.applyMutation();
+        outputs = ast.toSource().split("\n");
+        assertEquals(outputs[2], selectors[2] + ".children(':first')"
+                + operations[2]);
         undoAndAssert(mutator);
         assertTrue(mutator.isFinished());
     }
