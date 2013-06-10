@@ -5,8 +5,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>src.jp.gr.java_conf.daisy.ajax_mutator</groupId>
   <artifactId>AjaxMutator</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>AjaxMutator</name>
+    <packaging>jar</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>AjaxMutator</name>
   <description>Mutation testing for Ajax applications</description>
   <dependencies>
     <dependency>
@@ -48,6 +49,18 @@
         <artifactId>maven-surefire-report-plugin</artifactId>
         <version>2.4.2</version>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+            <archive>
+                <manifest>
+                    <addClasspath>true</addClasspath>
+                </manifest>
+            </archive>
+        </configuration>
+        <version>2.4</version>
+    </plugin>
     </plugins>
   </build>
 </project>
