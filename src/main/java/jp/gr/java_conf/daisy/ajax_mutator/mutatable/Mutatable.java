@@ -12,6 +12,7 @@ import org.mozilla.javascript.ast.InfixExpression;
 import org.mozilla.javascript.ast.Name;
 import org.mozilla.javascript.ast.PropertyGet;
 import org.mozilla.javascript.ast.ParenthesizedExpression;
+import org.mozilla.javascript.ast.VariableInitializer;
 
 /**
  * Mutatable object, which means mutation operator can be applied to astnode
@@ -81,6 +82,8 @@ public abstract class Mutatable implements Comparable<Mutatable> {
             replaced = applyReplaceTo((InfixExpression) parent, from, to);
         } else if (parent instanceof ExpressionStatement) {
             replaced = applyReplaceTo((ExpressionStatement) parent, from, to);
+        } else if (parent instanceof VariableInitializer) {
+            replaced = applyReplaceTo((VariableInitializer) parent, from, to);
         } else {
             try {
                 parent.replaceChild(from, to);
@@ -168,6 +171,15 @@ public abstract class Mutatable implements Comparable<Mutatable> {
             ExpressionStatement statement, AstNode from, AstNode to) {
         if (from.equals(statement.getExpression())) {
             statement.setExpression(to);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean applyReplaceTo(
+            VariableInitializer initializer, AstNode from, AstNode to) {
+        if (from.equals(initializer.getInitializer())) {
+            initializer.setInitializer(to);
             return true;
         }
         return false;

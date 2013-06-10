@@ -22,15 +22,16 @@ public class DOMSelectionMutatorTest extends MutatorTestBase {
                 "document.getElementById('piyo')", "$('#abc')", "($('.hoge'))"};
         operations = new String[] {
                 ".className = 'abc';", ".attr('id', 'another');", ".hide();"};
-        inputs = new String[3];
+        inputs = new String[4];
         for (int i = 0; i < 3; i++)
             inputs[i] = selectors[i] + operations[i];
+        inputs[3] = "var hoge= $('#fuga');";
         MutateVisitorBuilder builder = new MutateVisitorBuilder();
         builder.setDomSelectionDetectors(ImmutableSet.of(
                 new DOMSelectionDetector(), new JQueryDOMSelectionDetector()));
         visitor = builder.build();
 
-        Randomizer.initializeWithMockValues(new double[] { 0.8, 0.2, 0.7 });
+        Randomizer.initializeWithMockValues(new double[] { 0.8, 0.2, 0.7, 0.2});
     }
 
     @AfterClass
@@ -57,6 +58,10 @@ public class DOMSelectionMutatorTest extends MutatorTestBase {
         outputs = ast.toSource().split("\n");
         assertEquals(outputs[2], selectors[2] + ".children(':first')"
                 + operations[2]);
+        undoAndAssert(mutator);
+        mutator.applyMutation();
+        outputs = ast.toSource().split("\n");
+        assertEquals(outputs[3], "var hoge = ($('#fuga')).parent();");
         undoAndAssert(mutator);
         assertTrue(mutator.isFinished());
     }
