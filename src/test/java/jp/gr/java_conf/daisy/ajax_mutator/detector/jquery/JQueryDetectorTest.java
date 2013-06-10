@@ -3,12 +3,14 @@ package jp.gr.java_conf.daisy.ajax_mutator.detector.jquery;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request.ResponseType;
 import org.junit.Test;
 
 import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAsFunctionCall;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class JQueryDetectorTest {
@@ -16,11 +18,19 @@ public class JQueryDetectorTest {
     public void testJQueryEventDetector() {
         EventAttacherDetector detector = new JQueryEventAttachmentDetector();
 
-        assertTrue(detector.detect(parseAsFunctionCall(
-                "$('#elm').on('click', func);")) != null);
+        EventAttachment eventAttachment = detector.detect(parseAsFunctionCall(
+                "$('#elm').on('click', func);"));
+        assertNotNull(eventAttachment);
+        assertEquals("$('#elm')", eventAttachment.getTarget().toSource());
+        assertEquals("'click'", eventAttachment.getEvent().toSource());
+        assertEquals("func", eventAttachment.getCallback().toSource());
 
-        assertTrue(detector.detect(
-                parseAsFunctionCall("target.click(func);")) != null);
+        eventAttachment = detector.detect(parseAsFunctionCall(
+                "target.click(func);"));
+        assertNotNull(eventAttachment);
+        assertEquals("target", eventAttachment.getTarget().toSource());
+        assertEquals("click", eventAttachment.getEvent().toSource());
+        assertEquals("func", eventAttachment.getCallback().toSource());
     }
 
     @Test
