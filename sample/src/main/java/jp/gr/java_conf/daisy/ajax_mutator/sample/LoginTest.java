@@ -1,3 +1,5 @@
+package jp.gr.java_conf.daisy.ajax_mutator.sample;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;

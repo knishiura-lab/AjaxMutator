@@ -1,3 +1,5 @@
+package jp.gr.java_conf.daisy.ajax_mutator.sample;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,8 +28,8 @@ public class JunitCoreRunTest {
 
         Set<EventAttachment> eventAttachments = visitor.getEventAttachments();
         Set<Mutator> mutators = ImmutableSet.of(
-                (Mutator) new EventTargetMutator(System.out, eventAttachments),
-                (Mutator) new EventTypeMutator(System.out, eventAttachments));
+                (Mutator) new EventTargetMutator(eventAttachments, System.out),
+                (Mutator) new EventTypeMutator(eventAttachments, System.out));
 
         conductor.conductWithJunit4(mutators, LoginTest.class);
     }
