@@ -78,17 +78,24 @@ public abstract class Mutatable implements Comparable<Mutatable> {
                 parent.replaceChild(from, to);
                 replaced = true;
             } catch (NullPointerException exception) {
-                System.err.println("replacement error " + parent.getClass());
-                System.err.println(parent.toSource());
-                System.err.println(to.toSource());
+                System.err.println("Null point error happens when replacing:");
+                exception.printStackTrace();
+                System.err.println("parent is " + parent.toSource()
+                        + " (class:" + parent.getClass().getSimpleName() + ")"
+                        + " and " + (parent.hasChildren() ? "no" : "has")
+                        + " child") ;
+                System.err.println(to.toSource() + " : " + to.getParent());
+                System.err.println(from.toSource() + " : " + from.getParent().toSource());
             }
         }
 
         if (!replaced) {
-            throw new IllegalArgumentException("Cannot replace "
-                    + from.toSource() + "(" + from.getParent().toSource()
-                    + ") to " + to.toSource() + "(" + to.getParent().toSource()
-                    + ")");
+            throw new IllegalArgumentException("Cannot replace ["
+                    + from.toSource() + " in '" + from.getParent().toSource()
+                    + "' at line " + from.getParent().getLineno() + "] to ["
+                    + to.toSource() + " in '" + to.getParent().toSource()
+                    + "' at line " + to.getParent().getLineno() + "]" + " : "
+                    + "parent's class is " + parent.getClass().getSimpleName());
         }
     }
 
