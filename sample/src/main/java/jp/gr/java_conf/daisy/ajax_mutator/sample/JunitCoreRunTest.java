@@ -22,7 +22,7 @@ public class JunitCoreRunTest {
             = {new AddEventDetector()};
         Set<EventAttacherDetector> attacherDetector
             = new HashSet<EventAttacherDetector>(Arrays.asList(attahcerDetectorArray));
-        MutateVisitor visitor = new MutateVisitor(attacherDetector, null, null, null, null, null, null);
+        MutateVisitor visitor = new MutateVisitor(attacherDetector, null, null, null, null, null, null, null);
 
         conductor.setup("Path_to_AjaxLogin/login_presentation.js", "test_target_URI", visitor);
 

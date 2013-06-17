@@ -6,11 +6,7 @@ import java.util.Set;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.AbstractDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.TimerEventDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMCreation;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMRemoval;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.*;
 
 public class MutateVisitorBuilder {
     private Set<EventAttacherDetector> eventAttacherDetectors
@@ -20,6 +16,8 @@ public class MutateVisitorBuilder {
     private Set<? extends AbstractDetector<DOMCreation>> domCreationDetectors
         = Collections.emptySet();
     private Set<? extends AbstractDetector<AttributeModification>> attributeModificationDetectors
+            = Collections.emptySet();
+    private Set<? extends AbstractDetector<DOMAppending>> domAppendingDetectors
             = Collections.emptySet();
     private Set<? extends AbstractDetector<DOMRemoval>> domRemovalDetectors
             = Collections.emptySet();
@@ -31,7 +29,8 @@ public class MutateVisitorBuilder {
     public MutateVisitor build() {
         return new MutateVisitor(eventAttacherDetectors, timerEventDetectors,
                 domCreationDetectors, attributeModificationDetectors,
-                domRemovalDetectors, domSelectionDetectors, requestDetectors);
+                domAppendingDetectors, domRemovalDetectors,
+                domSelectionDetectors, requestDetectors);
     }
 
     public void setEventAttacherDetectors(
@@ -52,6 +51,11 @@ public class MutateVisitorBuilder {
     public void setAttributeModificationDetectors(
             Set<? extends AbstractDetector<AttributeModification>> attributeModificationDetectors) {
         this.attributeModificationDetectors = attributeModificationDetectors;
+    }
+
+    public void setDomAppendingDetectors(
+            Set<? extends AbstractDetector<DOMAppending>> domAppendingDetectors) {
+        this.domAppendingDetectors = domAppendingDetectors;
     }
 
     public void setDomRemovalDetectors(

@@ -7,14 +7,7 @@ import jp.gr.java_conf.daisy.ajax_mutator.detector.AbstractDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.MutationPointDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.TimerEventDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMCreation;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMRemoval;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Mutatable;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.TimerEventAttachment;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.*;
 
 import org.mozilla.javascript.ast.Assignment;
 import org.mozilla.javascript.ast.AstNode;
@@ -34,6 +27,7 @@ public class MutateVisitor implements NodeVisitor {
     private final ImmutableSet<TimerEventDetector> timerEventDetectors;
     private final ImmutableSet<? extends AbstractDetector<DOMCreation>> domCreationDetectors;
     private final ImmutableSet<? extends AbstractDetector<AttributeModification>> attributeModificationDetectors;
+    private final ImmutableSet<? extends AbstractDetector<DOMAppending>> domAppendingDetectors;
     private final ImmutableSet<? extends AbstractDetector<DOMRemoval>> domRemovalDetectors;
     private final ImmutableSet<? extends AbstractDetector<DOMSelection>> domSelectionDetectors;
     private final ImmutableSet<? extends AbstractDetector<Request>> requestDetectors;
@@ -45,6 +39,7 @@ public class MutateVisitor implements NodeVisitor {
     private final Set<DOMCreation> domCreations = new TreeSet<DOMCreation>();
     private final Set<AttributeModification> attributeModifications
         = new TreeSet<AttributeModification>();
+    private final Set<DOMAppending> domAppendings = new TreeSet<DOMAppending>();
     private final Set<DOMRemoval> domRemovals = new TreeSet<DOMRemoval>();
     private final Set<DOMSelection> domSelections = new TreeSet<DOMSelection>();
     private final Set<Request> requests = new TreeSet<Request>();
@@ -54,6 +49,7 @@ public class MutateVisitor implements NodeVisitor {
             Set<TimerEventDetector> timerEventDetectors,
             Set<? extends AbstractDetector<DOMCreation>> domCreationDetectors,
             Set<? extends AbstractDetector<AttributeModification>> attributeModificationDetectors,
+            Set<? extends AbstractDetector<DOMAppending>> domAppendingDetectors,
             Set<? extends AbstractDetector<DOMRemoval>> domRemovalDetectors,
             Set<? extends AbstractDetector<DOMSelection>> domSelectionDetectors,
             Set<? extends AbstractDetector<Request>> requestDetectors) {
@@ -61,6 +57,7 @@ public class MutateVisitor implements NodeVisitor {
         this.timerEventDetectors = immutableCopyOf(timerEventDetectors);
         this.domCreationDetectors = immutableCopyOf(domCreationDetectors);
         this.attributeModificationDetectors = immutableCopyOf(attributeModificationDetectors);
+        this.domAppendingDetectors = immutableCopyOf(domAppendingDetectors);
         this.domRemovalDetectors = immutableCopyOf(domRemovalDetectors);
         this.domSelectionDetectors = immutableCopyOf(domSelectionDetectors);
         this.requestDetectors = immutableCopyOf(requestDetectors);
@@ -98,6 +95,8 @@ public class MutateVisitor implements NodeVisitor {
             detectAndAdd(detector, call, timerEventAttachmentExpressions);
         for (AbstractDetector<DOMCreation> detector : domCreationDetectors)
             detectAndAdd(detector, call, domCreations);
+        for (AbstractDetector<DOMAppending> detector: domAppendingDetectors)
+            detectAndAdd(detector, call, domAppendings);
         for (AbstractDetector<DOMRemoval> detector : domRemovalDetectors)
             detectAndAdd(detector, call, domRemovals);
         for (AbstractDetector<DOMSelection> detector : domSelectionDetectors)
@@ -123,6 +122,10 @@ public class MutateVisitor implements NodeVisitor {
 
     public Set<AttributeModification> getAttributeModifications() {
         return attributeModifications;
+    }
+
+    public Set<DOMAppending> getDomAppendings() {
+        return domAppendings;
     }
 
     public Set<DOMRemoval> getDomRemovals() {
