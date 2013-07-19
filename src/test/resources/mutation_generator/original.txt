@@ -1,0 +1,9 @@
+var a = 200;
+function b() {
+  return function() {
+    document.getElementById('aa')
+      .addEventListener('click', function() {
+         console.log('item clicked');
+      });
+  };
+}
