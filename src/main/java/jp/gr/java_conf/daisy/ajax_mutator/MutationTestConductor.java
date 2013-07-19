@@ -26,10 +26,10 @@ import org.mozilla.javascript.ast.AstRoot;
  * @author Kazuki Nishiura
  */
 public class MutationTestConductor {
+    private Context context = Context.INSTANCE;
     private boolean setup = false;
     private final PrintStream outputStream;
     private ParserWithBrowser parser;
-    private String pathToJSFile;
     private AstRoot astRoot;
     private boolean conducting;
     private int[] skipCount;
@@ -51,7 +51,7 @@ public class MutationTestConductor {
     public boolean setup(
             final String pathToJSFile, String targetURL, MutateVisitor visitor) {
         setup = false;
-        this.pathToJSFile = pathToJSFile;
+        context.registerJsPath(pathToJSFile);
         // create backup file
         Util.copyFile(pathToJSFile, pathToBackupFile());
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -122,7 +122,7 @@ public class MutationTestConductor {
                 }
                 String mutationInformation = mutator.applyMutation();
                 if (mutationInformation != null) {
-                    Util.writeToFile(pathToJSFile, astRoot.toSource());
+                    Util.writeToFile(context.getJsPath(), astRoot.toSource());
                     if (testExecutor.execute()) { // This mutants cannot be killed
                         if (unkilledMutantsInfo.containsKey(mutationName)) {
                             unkilledMutantsInfo.get(mutationName).add(mutationInformation);
@@ -181,7 +181,7 @@ public class MutationTestConductor {
         outputStream.println(detailedInfo.toString());
 
         // restore backup
-        Util.copyFile(pathToBackupFile(), pathToJSFile);
+        Util.copyFile(pathToBackupFile(), context.getJsPath());
         System.out.println("Randomizer log: "
                 + Arrays.toString(Randomizer.getReturnedValues()));
         System.out.println("skip log: " + Arrays.toString(skipLog));
@@ -255,6 +255,6 @@ public class MutationTestConductor {
     }
 
     private String pathToBackupFile() {
-        return pathToJSFile + ".backup";
+        return context.getJsPath() + ".backup";
     }
 }
