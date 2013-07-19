@@ -1,10 +1,9 @@
 package jp.gr.java_conf.daisy.ajax_mutator.sample;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
+import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.MutationTestConductor;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventDetector;
@@ -15,21 +14,26 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 
 import com.google.common.collect.ImmutableSet;
 
-public class JunitCoreRunTest {
+/**
+ * Sample class to apply mutation analysis.
+ * This class is to estimate the adequacy of {@link LoginTest} by using two
+ * mutation operators, namely, EventTargetMutator and EventTypeMutator.
+ */
+public class EventMutatorExample {
     public static void main(String[] args) {
         MutationTestConductor conductor = new MutationTestConductor();
-        EventAttacherDetector[] attahcerDetectorArray
-            = {new AddEventDetector()};
-        Set<EventAttacherDetector> attacherDetector
-            = new HashSet<EventAttacherDetector>(Arrays.asList(attahcerDetectorArray));
-        MutateVisitor visitor = new MutateVisitor(attacherDetector, null, null, null, null, null, null, null);
+
+        MutateVisitorBuilder builder = new MutateVisitorBuilder();
+        builder.setEventAttacherDetectors(
+                ImmutableSet.<EventAttacherDetector>of(new AddEventDetector()));
+        MutateVisitor visitor = builder.build();
 
         conductor.setup("Path_to_AjaxLogin/login_presentation.js", "test_target_URI", visitor);
 
         Set<EventAttachment> eventAttachments = visitor.getEventAttachments();
-        Set<Mutator> mutators = ImmutableSet.of(
-                (Mutator) new EventTargetMutator(eventAttachments, System.out),
-                (Mutator) new EventTypeMutator(eventAttachments, System.out));
+        Set<Mutator> mutators = ImmutableSet.<Mutator>of(
+                new EventTargetMutator(eventAttachments, System.out),
+                new EventTypeMutator(eventAttachments, System.out));
 
         conductor.conductWithJunit4(mutators, LoginTest.class);
     }

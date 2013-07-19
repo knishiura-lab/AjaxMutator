@@ -16,7 +16,9 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
- * Test case for AjaxLogin (http://www.jamesdam.com/ajax_login/login.html)
+ * Test case for <a href="http://www.jamesdam.com/ajax_login/login.html">
+ * AjaxLogin</a>. Before executing this class, you must install AjaxLogin in
+ * your environment and set it up properly so that you can access it via browser
  *
  * @author Kazuki Nishiura
  */
