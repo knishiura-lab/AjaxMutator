@@ -140,32 +140,52 @@ public class MutateVisitor implements NodeVisitor {
         return requests;
     }
 
-    private <T> void appendSet(String title, StringBuilder builder, Set<T> set) {
+    /**
+     * @return Information about mutatables found by visiting AST.
+     */
+    public String getMutatablesInfo() {
+        return getMutatablesInfo(true);
+    }
+
+    /**
+     * @param detailed if true output detailed information about each mutant,
+     *                 otherwise output value only contain number of each mutants
+     * @return Information about mutatables found by visiting AST.
+     */
+    public String getMutatablesInfo(boolean detailed) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("=== Event ===").append(System.lineSeparator());
+        appendMutatablesInfo(
+                "Event attachments", builder, eventAttachments, detailed);
+        appendMutatablesInfo("Timer event attachment", builder,
+                timerEventAttachmentExpressions, detailed);
+        builder.append("=== DOM ===").append(System.lineSeparator());
+        appendMutatablesInfo("DOM creation", builder, domCreations, detailed);
+        appendMutatablesInfo("Attribute modification", builder,
+                attributeModifications, detailed);
+        appendMutatablesInfo("DOM removal", builder, domRemovals, detailed);
+        appendMutatablesInfo("DOM Selection", builder, domSelections, detailed);
+        builder.append("=== Asynchrous communications ===")
+                .append(System.lineSeparator());
+        appendMutatablesInfo("Requests", builder, requests, detailed);
+
+        return builder.toString();
+    }
+
+    private <T> void appendMutatablesInfo(
+            String title, StringBuilder builder, Set<T> set, boolean detailed) {
         builder.append("  --- ").append(title);
-        builder.append(" (").append(set.size()).append(") ---\n");
+        builder.append(" (").append(set.size()).append(") ---")
+                .append(System.lineSeparator());
+        if (!detailed) {
+            return;
+        }
         for (T element : set) {
             String str = element.toString();
             String spaceBeforeContent = "    ";
             builder.append(spaceBeforeContent)
                     .append(str.replaceAll("\n", "\n" + spaceBeforeContent))
-                    .append('\n');
+                    .append(System.lineSeparator());
         }
-    }
-
-    public String MutatablesInfo() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("=== Event ===\n");
-        appendSet("Event attachments", builder, eventAttachments);
-        appendSet("Timer event attachment", builder,
-                timerEventAttachmentExpressions);
-        builder.append("=== DOM ===\n");
-        appendSet("DOM creation", builder, domCreations);
-        appendSet("Attribute modification", builder, attributeModifications);
-        appendSet("DOM removal", builder, domRemovals);
-        appendSet("DOM Selection", builder, domSelections);
-        builder.append("=== Asynchrous communications ===\n");
-        appendSet("Requests", builder, requests);
-
-        return builder.toString();
     }
 }
