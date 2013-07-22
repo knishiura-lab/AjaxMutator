@@ -1,5 +1,8 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutation_generator;
 
+import com.google.common.annotations.VisibleForTesting;
+import org.mozilla.javascript.ast.AstNode;
+
 import java.util.List;
 
 /**
@@ -26,7 +29,8 @@ public class DiffFileGenerator {
      *                        of the list corresponds to an each line.
      * @return unified diff-formatted string that representing mutation
      */
-    public String generateUnifiedDiffBody(
+    @VisibleForTesting
+    protected String generateUnifiedDiffBodyFromExactIndices(
             List<String> contentsOfOriginalFile, int mutationStartLine,
             int numOfLinesForMutation, int positionOfStartPoint,
             int positionOfEndPoint, List<String> mutatingContent
@@ -69,5 +73,44 @@ public class DiffFileGenerator {
             }
         }
         return builder.toString();
+    }
+
+    /**
+     * @param contentsOfOriginalFile contents of original file which will be
+     *                               applied generated patch. Each element
+     *                               corresponds to each line of the file.
+     * @param numOfCharsForLine number of characters in each line in contents
+     *                          of the original file.
+     * @param mutatedNode AstNode that represents mutation target
+     * @param mutatingContent a new content that may include some comment
+     *                        denoting here is auto-assigned code. Each element
+     *                        of the list corresponds to an each line.
+     * @return unified diff-formatted string that representing mutation
+     */
+    public String generateUnifiedDiffBody(
+            List<String> contentsOfOriginalFile, List<Integer> numOfCharsForLine,
+            AstNode mutatedNode, List<String> mutatingContent) {
+        int absolutePosition = mutatedNode.getAbsolutePosition();
+        int startLine = 0;
+        int sumLength = 0;
+        while (sumLength + numOfCharsForLine.get(startLine) < absolutePosition) {
+            sumLength += numOfCharsForLine.get(startLine);
+            sumLength += System.lineSeparator().length();
+            startLine++;
+        }
+        int startIndex = absolutePosition - sumLength;
+
+        int endLine = startLine;
+        int absoluteEndPosition = absolutePosition + mutatedNode.getLength();
+        while (sumLength + numOfCharsForLine.get(endLine) < absoluteEndPosition) {
+            sumLength += numOfCharsForLine.get(endLine);
+            sumLength += System.lineSeparator().length();
+            endLine++;
+        }
+        int endIndex = absoluteEndPosition - sumLength;
+
+        return generateUnifiedDiffBodyFromExactIndices(contentsOfOriginalFile,
+                startLine + 1, endLine - startLine + 1, startIndex, endIndex,
+                mutatingContent);
     }
 }
