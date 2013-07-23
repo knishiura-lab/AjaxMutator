@@ -6,7 +6,6 @@ import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.MutationTestConductor;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventTargetMutator;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventTypeMutator;
