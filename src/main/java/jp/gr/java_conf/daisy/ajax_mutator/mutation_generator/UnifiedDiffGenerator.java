@@ -11,16 +11,19 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
+ * Helper class for generating unified diff style strings for given file and
+ * given mutation requirement.
+ *
  * @author Kazuki Nishiura
  */
-public class DiffFileGenerator {
+public class UnifiedDiffGenerator {
     private String fileName;
     private long targetFileLastModifiedMillis;
     private List<String> contentsOfOriginalFile;
     // number of chars for each line in js file, including newline code
     private List<Integer> numOfCharsForLine;
 
-    public DiffFileGenerator(File file) {
+    public UnifiedDiffGenerator(File file) {
         if (!file.exists()) {
             throw new IllegalArgumentException("specified file: '"
                      + file + "' does not exist.");

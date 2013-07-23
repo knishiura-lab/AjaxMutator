@@ -18,14 +18,14 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Kazuki Nishiura
  */
-public class DiffFileGeneratorTest {
-    private DiffFileGenerator generator;
+public class UnifiedDiffGeneratorTest {
+    private UnifiedDiffGenerator generator;
 
     @Before
     public void setup() throws Exception {
         URI resourceUri = this.getClass()
                 .getResource("/mutation_generator/original.txt").toURI();
-        generator = new DiffFileGenerator(new File(resourceUri));
+        generator = new UnifiedDiffGenerator(new File(resourceUri));
     }
 
     @Test
