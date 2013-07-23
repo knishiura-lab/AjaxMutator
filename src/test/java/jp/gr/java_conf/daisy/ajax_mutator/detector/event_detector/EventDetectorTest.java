@@ -39,17 +39,6 @@ public class EventDetectorTest {
     }
 
     @Test
-    public void testAddEventDetector() {
-        EventAttacherDetector detector = new AddEventDetector();
-
-        assertTrue(detector.detect(parseAsFunctionCall(
-                "addEvent(target, 'click', func);")) != null);
-
-        assertTrue(detector.detect(parseAsFunctionCall(
-                "target.addEventListener('click', func);")) == null);
-    }
-
-    @Test
     public void testTimerEventDetector() {
         TimerEventDetector detector = new TimerEventDetector();
         assertTrue(detector.detect(

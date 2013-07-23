@@ -1,4 +1,4 @@
-package jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector;
+package jp.gr.java_conf.daisy.ajax_mutator.sample;
 
 import java.util.List;
 
@@ -10,13 +10,14 @@ import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
 
 /**
- * concrete EventAttachementDetector to detect "addEvent(target, event,
- * callback)
+ * Implementation of {@link EventAttacherDetector} to deal with user function
+ * like "addEvent(target, event, callback)". Users of AjaxMutator can capture
+ * their own wrapper function by implementing user class like this.
  * 
  * @author Kazuki Nishiura
  */
 public class AddEventDetector extends EventAttacherDetector {
-    private static String targetString = "addEvent";
+    private static final String targetString = "addEvent";
 
     @Override
     public EventAttachment detectFromFunctionCall(FunctionCall functionCall,
