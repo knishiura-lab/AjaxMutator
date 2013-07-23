@@ -16,14 +16,14 @@ import java.util.Scanner;
  *
  * @author Kazuki Nishiura
  */
-public class UnifiedDiffGenerator {
+class UnifiedDiffGenerator {
     private String fileName;
     private long targetFileLastModifiedMillis;
     private List<String> contentsOfOriginalFile;
     // number of chars for each line in js file, including newline code
     private List<Integer> numOfCharsForLine;
 
-    public UnifiedDiffGenerator(File file) {
+    protected UnifiedDiffGenerator(File file) {
         if (!file.exists()) {
             throw new IllegalArgumentException("specified file: '"
                      + file + "' does not exist.");
@@ -164,7 +164,7 @@ public class UnifiedDiffGenerator {
      *                        of the list corresponds to an each line.
      * @return unified diff-formatted string that representing mutation
      */
-    public String generateUnifiedDiff(
+    protected String generateUnifiedDiff(
             AstNode mutatedNode, List<String> mutatingContent) {
         return generateUnifiedDiffHeader()
                 + generateUnifiedDiffBody(mutatedNode, mutatingContent);
