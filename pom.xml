@@ -5,9 +5,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>src.jp.gr.java_conf.daisy.ajax_mutator</groupId>
   <artifactId>AjaxMutator</artifactId>
-    <packaging>jar</packaging>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>AjaxMutator</name>
+  <packaging>jar</packaging>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>AjaxMutator</name>
   <description>Mutation testing for Ajax applications</description>
   <dependencies>
     <dependency>
@@ -53,14 +53,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-            <archive>
-                <manifest>
-                    <addClasspath>true</addClasspath>
-                </manifest>
-            </archive>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+            </manifest>
+          </archive>
         </configuration>
         <version>2.4</version>
-    </plugin>
+      </plugin>
     </plugins>
   </build>
 </project>
