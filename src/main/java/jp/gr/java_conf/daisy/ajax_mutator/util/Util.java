@@ -1,15 +1,10 @@
 package jp.gr.java_conf.daisy.ajax_mutator.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.mozilla.javascript.ast.AstNode;
 
@@ -130,6 +125,37 @@ public class Util {
 
     public static String omitLineBreak(String string) {
         return string.replaceAll("(\r)?\n", "");
+    }
+
+    /**
+     * Convert line separator of given file to System's default line separator
+     * obtained by System.lineSeparator().
+     * @param file text file whose line separator can be converted.
+     */
+    public static void normalizeLineBreak(File file) {
+        List<String> lines = new ArrayList<String>();
+
+        // read from file
+        try {
+            Scanner scanner = new Scanner(new FileInputStream(file));
+            while (scanner.hasNext()) {
+                lines.add(scanner.nextLine());
+            }
+            scanner.close();
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to read file " + file);
+        }
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            for (String line: lines) {
+                writer.write(line);
+                writer.write(System.lineSeparator());
+            }
+            writer.close();
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to write file " + file);
+        }
     }
 
     public static String join(String[] arrayOfString) {
