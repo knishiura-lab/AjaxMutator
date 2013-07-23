@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,6 +17,8 @@ import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
 
 import org.mozilla.javascript.ast.AstRoot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Executor to apply mutation testing to target applications. <br>
@@ -26,21 +27,15 @@ import org.mozilla.javascript.ast.AstRoot;
  * @author Kazuki Nishiura
  */
 public class MutationTestConductor {
+    private static final Logger LOGGER
+            = LoggerFactory.getLogger(MutationTestConductor.class);
+
     private Context context = Context.INSTANCE;
     private boolean setup = false;
-    private final PrintStream outputStream;
     private ParserWithBrowser parser;
     private AstRoot astRoot;
     private boolean conducting;
     private int[] skipCount;
-
-    public MutationTestConductor() {
-        this(System.out);
-    }
-
-    public MutationTestConductor(PrintStream output) {
-        this.outputStream = output;
-    }
 
     /**
      * Setting information required for mutation testing. This method MUST be
@@ -59,7 +54,7 @@ public class MutationTestConductor {
             public void run() {
                 // restore backup
                 Util.copyFile(pathToBackupFile(), pathToJSFile);
-                System.out.println("backup file restored");
+                LOGGER.info("backup file restored");
             }
         });
         parser = ParserWithBrowser.getParser();
@@ -67,7 +62,7 @@ public class MutationTestConductor {
             FileReader fileReader = new FileReader(new File(pathToJSFile));
             astRoot = parser.parse(fileReader, targetURL, 1);
         } catch (IOException e) {
-            System.err.println("IOException: cannot parse AST.");
+            LOGGER.error("IOException: cannot parse AST.");
             return false;
         }
 
@@ -75,7 +70,7 @@ public class MutationTestConductor {
             astRoot.visit(visitor);
             setup = true;
         } else {
-            System.err.println("Cannot parse AST.");
+            LOGGER.error("Cannot parse AST.");
         }
         return setup;
     }
@@ -107,17 +102,17 @@ public class MutationTestConductor {
         int[] numberOfRandomizerCalled = new int[numberOfMaxMutants];
         for (Mutator mutator : mutators) {
             String mutationName = mutator.mutationName();
-            outputStream.println(mutationName + " ----------");
+            LOGGER.info(mutationName + " ----------");
             while (!mutator.isFinished() && conducting) {
                 boolean mutantsUnkilled = false;
                 trialId++;
-                outputStream.println("[" + trialId + "]");
+                LOGGER.info("[" + trialId + "]");
                 if (skipCount != null && skipCount[trialId] >= 0) {
                     skipLog[trialId] = skipCount[trialId];
                     Randomizer.increaseIndex(skipCount[trialId]);
                     numberOfMutants++;
                     mutator.skipMutation();
-                    outputStream.println("skiped");
+                    LOGGER.info("skiped");
                     continue;
                 }
                 String mutationInformation = mutator.applyMutation();
@@ -135,10 +130,10 @@ public class MutationTestConductor {
                     }
                     String message = testExecutor.getMessageOnLastExecution();
                     if (message != null)
-                        outputStream.println(message);
+                        LOGGER.info(message);
                     mutator.undoMutation();
                     numberOfMutants++;
-                    System.out.println((trialId + 1) + "/" + numberOfMaxMutants
+                    LOGGER.info((trialId + 1) + "/" + numberOfMaxMutants
                             + "|" + Math.floor(10000 * (trialId + 1) / numberOfMaxMutants) / 100
                             + "%");
                 }
@@ -157,9 +152,7 @@ public class MutationTestConductor {
             conducting = false;
         }
         long finishTimeMillis = System.currentTimeMillis();
-        outputStream.println();
-        outputStream.println("---------------------------------------------");
-        outputStream.println();
+        LOGGER.info("---------------------------------------------");
         StringBuilder detailedInfo = new StringBuilder();
         int numberOfUnkilledMutatns = 0;
         for (Map.Entry<String, List<String>> unkilledMutantsInfoEntry
@@ -174,31 +167,30 @@ public class MutationTestConductor {
             detailedInfo.append('\n');
         }
 
-        outputStream.println(numberOfUnkilledMutatns + " unkilled mutants "
+        LOGGER.info(numberOfUnkilledMutatns + " unkilled mutants "
                 + " among " + numberOfMutants + ", kill score is "
                 + Math.floor((1.0 - (1.0 * numberOfUnkilledMutatns / numberOfMaxMutants)) * 100) / 100);
 
-        outputStream.println(detailedInfo.toString());
+        LOGGER.info(detailedInfo.toString());
 
         // restore backup
         Util.copyFile(pathToBackupFile(), context.getJsPath());
-        System.out.println("Randomizer log: "
+        LOGGER.info("Randomizer log: "
                 + Arrays.toString(Randomizer.getReturnedValues()));
-        System.out.println("skip log: " + Arrays.toString(skipLog));
-        System.out.println("finished! "
+        LOGGER.info("skip log: " + Arrays.toString(skipLog));
+        LOGGER.info("finished! "
                 + (finishTimeMillis - startTimeMillis) / 1000.0 + " sec.");
     }
 
     private int calcMaxNumOfMutations(Set<Mutator> mutators) {
         int numberOfMaxMutants = 0;
-        outputStream.println("-------Number of mutations------");
+        LOGGER.info("-------Number of mutations------");
         for (Mutator mutator: mutators) {
             numberOfMaxMutants += mutator.numberOfMutation();
-            outputStream.println(
+            LOGGER.info(
                     mutator.mutationName() + ": " + mutator.numberOfMutation());
         }
-        outputStream.println("Total: " + numberOfMaxMutants);
-        outputStream.println();
+        LOGGER.info("Total: " + numberOfMaxMutants);
         return numberOfMaxMutants;
     }
 
@@ -233,7 +225,7 @@ public class MutationTestConductor {
                     if (!conducting || isQuitCommand(reader.readLine()))
                         break;
                 } catch (InterruptedException e) {
-                    System.out.println("I/O thread interrupt, "
+                    LOGGER.info("I/O thread interrupt, "
                             + "which may mean program successfully finished");
                     break;
                 } catch (IOException e) {
@@ -242,14 +234,14 @@ public class MutationTestConductor {
                 }
             }
             conducting = false;
-            System.out.println("thread finish");
+            LOGGER.info("thread finish");
         }
 
         private boolean isQuitCommand(String command) {
             if (null == command || "q".equals(command))
                 return true;
 
-            System.out.println(command);
+            LOGGER.info(command);
             return false;
         }
     }
