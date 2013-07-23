@@ -40,13 +40,14 @@ public class MutationFileWriter {
 
     /**
      * Create a file that represents mutation.
-     * @param astNode AST node in the original program that is to be replaced.
-     * @param mutatingContents A part of program that is intended to replace
-     *                         ast node.
+     * @param mutation see {@link Mutation}.
      * @return File object for the generated file if it was successfully
      * created, otherwise, null is returned.
      */
-    public File writeToFile(AstNode astNode, String mutatingContents) {
+
+    public File writeToFile(Mutation mutation) {
+        AstNode originalNode = mutation.getOriginalNode();
+        String mutatingContent = mutation.getMutatingContent();
         String generatedFilePath = destinationDirectory + File.separator
                 + fileNamePrefix + generatedFileID + EXTENSION;
         File file = createNewFile(generatedFilePath);
@@ -57,8 +58,8 @@ public class MutationFileWriter {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write(diffGenerator.generateUnifiedDiff(
-                    astNode,
-                    Arrays.asList(mutatingContents.split(System.lineSeparator()))
+                    originalNode,
+                    Arrays.asList(mutatingContent.split(System.lineSeparator()))
             ));
             writer.close();
         } catch (IOException e) {
