@@ -3,17 +3,49 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutation_generator;
 import com.google.common.annotations.VisibleForTesting;
 import org.mozilla.javascript.ast.AstNode;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * @author Kazuki Nishiura
  */
 public class DiffFileGenerator {
+    private String fileName;
+    private long targetFileLastModifiedMillis;
+    private List<String> contentsOfOriginalFile;
+    // number of chars for each line in js file, including newline code
+    private List<Integer> numOfCharsForLine;
+
+    public DiffFileGenerator(File file) {
+        if (!file.exists()) {
+            throw new IllegalArgumentException("specified file: '"
+                     + file + "' does not exist.");
+        }
+        fileName = file.getName();
+        targetFileLastModifiedMillis = file.lastModified();
+
+        try {
+            readTargetFileByScanner(new Scanner(file));
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void readTargetFileByScanner(Scanner scanner) {
+        contentsOfOriginalFile = new ArrayList<String>();
+        numOfCharsForLine = new ArrayList<Integer>();
+        while (scanner.hasNext()) {
+            String line = scanner.nextLine();
+            contentsOfOriginalFile.add(line);
+            numOfCharsForLine.add(line.length());
+        }
+    }
 
     /**
-     * @param contentsOfOriginalFile contents of original file which will be
-     *                               applied generated patch. Each element
-     *                               corresponds to each line of the file.
      * @param mutationStartLine The index of line where mutation starts. In this
      *                          context, index starts from 1; if the first line
      *                          is a target of mutation, this argument must be
@@ -31,10 +63,10 @@ public class DiffFileGenerator {
      */
     @VisibleForTesting
     protected String generateUnifiedDiffBodyFromExactIndices(
-            List<String> contentsOfOriginalFile, int mutationStartLine,
-            int numOfLinesForMutation, int positionOfStartPoint,
-            int positionOfEndPoint, List<String> mutatingContent
-    ) {
+            int mutationStartLine, int numOfLinesForMutation,
+            int positionOfStartPoint, int positionOfEndPoint,
+            List<String> mutatingContent)
+    {
         StringBuilder builder = new StringBuilder();
         // First line (e.g., "@@ -2,3 +2,5 @@"
         builder.append("@@ -").append(mutationStartLine);
@@ -76,19 +108,14 @@ public class DiffFileGenerator {
     }
 
     /**
-     * @param contentsOfOriginalFile contents of original file which will be
-     *                               applied generated patch. Each element
-     *                               corresponds to each line of the file.
-     * @param numOfCharsForLine number of characters in each line in contents
-     *                          of the original file.
      * @param mutatedNode AstNode that represents mutation target
      * @param mutatingContent a new content that may include some comment
      *                        denoting here is auto-assigned code. Each element
      *                        of the list corresponds to an each line.
      * @return unified diff-formatted string that representing mutation
      */
-    public String generateUnifiedDiffBody(
-            List<String> contentsOfOriginalFile, List<Integer> numOfCharsForLine,
+    @VisibleForTesting
+    protected String generateUnifiedDiffBody(
             AstNode mutatedNode, List<String> mutatingContent) {
         int absolutePosition = mutatedNode.getAbsolutePosition();
         int startLine = 0;
@@ -109,8 +136,34 @@ public class DiffFileGenerator {
         }
         int endIndex = absoluteEndPosition - sumLength;
 
-        return generateUnifiedDiffBodyFromExactIndices(contentsOfOriginalFile,
-                startLine + 1, endLine - startLine + 1, startIndex, endIndex,
-                mutatingContent);
+        return generateUnifiedDiffBodyFromExactIndices(startLine + 1,
+                endLine - startLine + 1, startIndex, endIndex, mutatingContent);
+    }
+
+    private String generateUnifiedDiffHeader() {
+        StringBuilder builder = new StringBuilder();
+        long currentTimeMillis = System.currentTimeMillis();
+        SimpleDateFormat format
+                = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss.SSSS00000");
+        builder.append("--- ").append(fileName).append("\t")
+                .append(format.format(targetFileLastModifiedMillis)).append(' ')
+                .append(System.lineSeparator());
+        builder.append("+++ ").append(fileName).append("\t")
+                .append(format.format(currentTimeMillis)).append(' ')
+                .append(System.lineSeparator());
+        return builder.toString();
+    }
+
+    /**
+     * @param mutatedNode AstNode that represents mutation target
+     * @param mutatingContent a new content that may include some comment
+     *                        denoting here is auto-assigned code. Each element
+     *                        of the list corresponds to an each line.
+     * @return unified diff-formatted string that representing mutation
+     */
+    public String generateUnifiedDiff(
+            AstNode mutatedNode, List<String> mutatingContent) {
+        return generateUnifiedDiffHeader()
+                + generateUnifiedDiffBody(mutatedNode, mutatingContent);
     }
 }

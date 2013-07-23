@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mozilla.javascript.ast.AstNode;
 
+import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -18,22 +20,21 @@ import static org.junit.Assert.assertEquals;
  */
 public class DiffFileGeneratorTest {
     private DiffFileGenerator generator;
-    private List<String> contentsOfOriginalFile
-            = readResourceAndSplitLines("/mutation_generator/original.txt");
 
     @Before
-    public void setup() {
-        generator = new DiffFileGenerator();
+    public void setup() throws Exception {
+        URI resourceUri = this.getClass()
+                .getResource("/mutation_generator/original.txt").toURI();
+        generator = new DiffFileGenerator(new File(resourceUri));
     }
 
     @Test
     public void testDiffBodyFromIndicesForMutatingSingleLine() {
         String output = generator.generateUnifiedDiffBodyFromExactIndices(
-                contentsOfOriginalFile,
                 1,
                 1,
                 0,
-                contentsOfOriginalFile.get(0).length(),
+                "var a = 200;".length(),
                 ImmutableList.of("var a = 100;")
         );
         assertSameContentInFile(
@@ -43,11 +44,10 @@ public class DiffFileGeneratorTest {
     @Test
     public void testDiffBodyFromIndicesForMutatingReplaceMultipleLines() {
         String output = generator.generateUnifiedDiffBodyFromExactIndices(
-                contentsOfOriginalFile,
                 5,
                 3,
                 "      .addEventListener('click', ".length(),
-                contentsOfOriginalFile.get(6).length() - 2,
+                "      });".length() - 2,
                 ImmutableList.of(
                         "function(event) {",
                         "         var identifier = \"main\";",
@@ -62,19 +62,12 @@ public class DiffFileGeneratorTest {
 
     @Test
     public void testDiffBodyForMutatingSingleLine() {
-        List<Integer> numOfCharsForLine = new ArrayList<Integer>();
-        for (int i = 0; i < contentsOfOriginalFile.size(); i++) {
-            numOfCharsForLine.add(contentsOfOriginalFile.get(i).length());
-        }
-
         AstNode mockNode = EasyMock.createMock(AstNode.class);
         EasyMock.expect(mockNode.getAbsolutePosition()).andReturn(0);
         EasyMock.expect(mockNode.getLength()).andReturn(12);
         EasyMock.replay(mockNode);
 
         String output = generator.generateUnifiedDiffBody(
-                contentsOfOriginalFile,
-                numOfCharsForLine,
                 mockNode,
                 ImmutableList.of("var a = 100;"));
         assertSameContentInFile(
@@ -83,19 +76,12 @@ public class DiffFileGeneratorTest {
 
     @Test
     public void testDiffBodyForMutatingReplaceMultipleLines() {
-        List<Integer> numOfCharsForLine = new ArrayList<Integer>();
-        for (int i = 0; i < contentsOfOriginalFile.size(); i++) {
-            numOfCharsForLine.add(contentsOfOriginalFile.get(i).length());
-        }
-
         AstNode mockNode = EasyMock.createMock(AstNode.class);
         EasyMock.expect(mockNode.getAbsolutePosition()).andReturn(117);
         EasyMock.expect(mockNode.getLength()).andReturn(58);
         EasyMock.replay(mockNode);
 
         String output = generator.generateUnifiedDiffBody(
-                contentsOfOriginalFile,
-                numOfCharsForLine,
                 mockNode,
                 ImmutableList.of(
                         "function(event) {",
