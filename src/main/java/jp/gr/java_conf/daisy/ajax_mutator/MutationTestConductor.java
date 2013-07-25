@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import difflib.DiffUtils;
+import difflib.Patch;
+import difflib.PatchFailedException;
+import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.MutationFileInformation;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
@@ -35,6 +39,7 @@ public class MutationTestConductor {
     private ParserWithBrowser parser;
     private AstRoot astRoot;
     private boolean conducting;
+    private String pathToJsFile;
     private int[] skipCount;
 
     /**
@@ -46,6 +51,7 @@ public class MutationTestConductor {
     public boolean setup(
             final String pathToJSFile, String targetURL, MutateVisitor visitor) {
         setup = false;
+        this.pathToJsFile = pathToJSFile;
         context.registerJsPath(pathToJSFile);
         // create backup file
         Util.copyFile(pathToJSFile, pathToBackupFile());
@@ -180,6 +186,23 @@ public class MutationTestConductor {
         LOGGER.info("skip log: " + Arrays.toString(skipLog));
         LOGGER.info("finished! "
                 + (finishTimeMillis - startTimeMillis) / 1000.0 + " sec.");
+    }
+
+    private boolean applyMutationFile(
+            List<String> original, MutationFileInformation fileInfo) {
+        Patch patch = DiffUtils.parseUnifiedDiff(
+                Util.readFromFile(fileInfo.getAbsolutePath()));
+        try {
+            List mutated = patch.applyTo(original);
+            Util.writeToFile(pathToJsFile,
+                    Util.join((String[]) mutated.toArray(new String[0]),
+                            System.lineSeparator()));
+        } catch (PatchFailedException e) {
+            LOGGER.error("Applying mutation file '{}' failed.",
+                    fileInfo.getFileName());
+            return false;
+        }
+        return true;
     }
 
     private int calcMaxNumOfMutations(Set<Mutator> mutators) {
