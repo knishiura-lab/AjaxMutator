@@ -14,8 +14,8 @@ import java.util.Map;
 public class MutationListManager {
     private static final String MUTATION_LIST_FILE_NAME = "mutation_list.csv";
 
-    List<String> mutationTitles = new ArrayList<String>();
-    Map<String, List<MutationFileInformation>> mutationFiles
+    private List<String> mutationTitles = new ArrayList<String>();
+    private Map<String, List<MutationFileInformation>> mutationFiles
             = new HashMap<String, List<MutationFileInformation>>();
     private String reportOutputDir;
 
@@ -39,6 +39,18 @@ public class MutationListManager {
      */
     public Map<String, List<MutationFileInformation>> getMutationFileInformationList() {
         return mutationFiles;
+    }
+
+    public int getNumberOfUnkilledMutants() {
+        int total = 0;
+        for (List<MutationFileInformation> fileInfoList: mutationFiles.values()) {
+            for (MutationFileInformation fileInfo: fileInfoList) {
+                if (!fileInfo.isKilled()) {
+                    total++;
+                }
+            }
+        }
+        return total;
     }
 
     private String generateContentsOfMutationReport() {

@@ -2,9 +2,7 @@ package jp.gr.java_conf.daisy.ajax_mutator.util;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import org.mozilla.javascript.ast.AstNode;
 
@@ -85,6 +83,7 @@ public class Util {
         try {
             writer = new FileWriter(new File(pathToFile));
             writer.write(content);
+            writer.flush();
         } catch (IOException e) {
             System.err.println("IOException" + e.getMessage());
             return false;
@@ -156,6 +155,15 @@ public class Util {
         } catch (IOException e) {
             throw new IllegalStateException("Failed to write file " + file);
         }
+    }
+
+    public static String join(Collection c) {
+        StringBuilder builder = new StringBuilder();
+        Iterator itr = c.iterator();
+        while (itr.hasNext()){
+            builder.append(itr.next());
+        }
+        return builder.toString();
     }
 
     public static String join(String[] arrayOfString) {

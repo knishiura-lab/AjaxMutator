@@ -56,6 +56,10 @@ public class Request extends Mutatable {
         return requestMethod;
     }
 
+    public AstNode getRequestMethodNode() {
+        return methodNode;
+    }
+
     public void replaceUrl(AstNode newUrl) {
         replace(url, newUrl);
     }

@@ -7,11 +7,11 @@ import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.MutationTestConductor;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventTargetMutator;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.EventTypeMutator;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 
 import com.google.common.collect.ImmutableSet;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.EventTargetRAMutator;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.EventTypeRAMutator;
 
 /**
  * Sample class to apply mutation analysis.
@@ -22,7 +22,7 @@ public class EventMutatorExample {
     public static void main(String[] args) {
         MutationTestConductor conductor = new MutationTestConductor();
 
-        MutateVisitorBuilder builder = new MutateVisitorBuilder();
+        MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
         builder.setEventAttacherDetectors(
                 ImmutableSet.<EventAttacherDetector>of(new AddEventDetector()));
         MutateVisitor visitor = builder.build();
@@ -31,8 +31,8 @@ public class EventMutatorExample {
 
         Set<EventAttachment> eventAttachments = visitor.getEventAttachments();
         Set<Mutator> mutators = ImmutableSet.<Mutator>of(
-                new EventTargetMutator(eventAttachments, System.out),
-                new EventTypeMutator(eventAttachments, System.out));
+                new EventTargetRAMutator(eventAttachments),
+                new EventTypeRAMutator(eventAttachments));
 
         conductor.conductWithJunit4(mutators, LoginTest.class);
     }

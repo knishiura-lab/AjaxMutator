@@ -13,11 +13,6 @@ public class Mutation {
     private final AstNode originalNode;
     private final String mutatingContent;
 
-    public Mutation(AstNode originalNode, AstNode mutatingContent) {
-        this.originalNode = originalNode;
-        this.mutatingContent = mutatingContent.toSource();
-    }
-
     public Mutation(AstNode originalNode, String mutatingContent) {
         this.originalNode = originalNode;
         this.mutatingContent = mutatingContent;

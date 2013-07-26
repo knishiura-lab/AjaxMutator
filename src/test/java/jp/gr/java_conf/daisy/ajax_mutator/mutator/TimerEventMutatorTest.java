@@ -1,14 +1,21 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.TimerEventDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.TimerEventAttachment;
+
+import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.Mutation;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.TimerEventCallbackRAMutator;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.TimerEventDurationRAMutator;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
 import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
 import org.junit.Test;
 import org.mozilla.javascript.ast.AstRoot;
 
+import java.util.Collection;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -17,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 public class TimerEventMutatorTest extends MutatorTestBase {
     private String[] callbacks;
     private String[] durations;
+    private Collection<TimerEventAttachment> timerEventAttachments;
 
     @Override
     public void prepare() {
@@ -32,71 +40,31 @@ public class TimerEventMutatorTest extends MutatorTestBase {
         MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
         builder.setTimerEventDetectors(attacherDetector);
         visitor = builder.build();
+        timerEventAttachments = visitor.getTimerEventAttachmentExpressions();
     }
 
     @Test
-    public void testTimerDurationMutator() {
-        Mutator mutator = new TimerEventDurationMutator(
-                visitor.getTimerEventAttachmentExpressions());
-        assertFalse(mutator.isFinished());
-        mutator.applyMutation();
-        String[] outputs = ast.toSource().split("\n");
-        assertEquals(setTimeout(callbacks[0], durations[1], true), outputs[0]);
-        assertEquals(inputs[1], outputs[1]);
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        outputs = ast.toSource().split("\n");
-        assertEquals(inputs[0], outputs[0]);
-        assertEquals("window." + setTimeout(callbacks[1], durations[0], false),
-                outputs[1]);
-        undoAndAssert(mutator);
+    public void testTimerDurationRAMutator() {
+        Mutator mutator = new TimerEventDurationRAMutator(timerEventAttachments);
+        Mutation mutation;
+        mutation = mutator.generateMutation(
+                Iterables.get(timerEventAttachments, 0));
+        assertEquals(durations[1], mutation.getMutatingContent());
+        mutation = mutator.generateMutation(
+                Iterables.get(timerEventAttachments, 1));
+        assertEquals(durations[0], mutation.getMutatingContent());
     }
 
     @Test
-    public void testTimerCallbackMutator() {
-        Mutator mutator = new TimerEventCallbackMutator(
-                visitor.getTimerEventAttachmentExpressions());
-        assertFalse(mutator.isFinished());
-        mutator.applyMutation();
-        String[] outputs = ast.toSource().split("\n");
-        assertEquals(setTimeout(callbacks[1], durations[0], true), outputs[0]);
-        assertEquals(inputs[1], outputs[1]);
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        outputs = ast.toSource().split("\n");
-        assertEquals(inputs[0], outputs[0]);
-        assertEquals("window." + setTimeout(callbacks[0], durations[1], false),
-                outputs[1]);
-        undoAndAssert(mutator);
-    }
-
-    @Test
-    public void testNesting() {
-        String nestingCalls =
-                "setTimeout(function() { "
-                + "setTimeout(function() {"
-                + "   $('#quizzy_q' + curQuestion + '_exp').fadeIn(fadeSpeed);"
-                + "  setTimeout(function() {"
-                + "    $('#quizzy_q' + curQuestion + '_foot_nxt').attr('disabled', false).fadeIn(fadeSpeed);"
-                + "}, nextFadeInWait);}, expFadeInWait)}, slideUpWait);";
-        System.out.println(nestingCalls);
-        MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
-        builder.setTimerEventDetectors(ImmutableSet.of(new TimerEventDetector()));
-        MutateVisitor visitor = builder.build();
-        AstRoot astRoot = StringToAst.parseAstRoot(nestingCalls);
-        astRoot.visit(visitor);
-        Mutator mutator = new TimerEventCallbackMutator(visitor.getTimerEventAttachmentExpressions());
-        Randomizer.initializeWithMockValues(new double[] {1, 0, 0});
-        mutator.applyMutation();
-        astRoot.toSource();
-        mutator.undoMutation();
-        mutator.applyMutation();
-        astRoot.toSource();
-        mutator.undoMutation();
-        mutator.applyMutation();
-        astRoot.toSource();
-        mutator.undoMutation();
-        Randomizer.setMockMode(false);
+    public void testTimerCallbackRAMutator() {
+        Mutator mutator = new TimerEventCallbackRAMutator(timerEventAttachments);
+        Mutation mutation;
+        mutation = mutator.generateMutation(
+                Iterables.get(timerEventAttachments, 0));
+        assertEquals(callbacks[1], mutation.getMutatingContent());
+        mutation = mutator.generateMutation(
+                Iterables.get(timerEventAttachments, 1));
+        assertEquals(callbacks[0], mutation.getMutatingContent());
     }
 
     private String setTimeout(String func, String duration, boolean recurcive) {

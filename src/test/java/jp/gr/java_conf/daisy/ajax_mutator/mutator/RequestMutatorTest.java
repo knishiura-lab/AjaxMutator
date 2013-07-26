@@ -2,10 +2,17 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import com.google.common.collect.ImmutableSet;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
+import com.google.common.collect.Iterables;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryRequestDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
+import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.Mutation;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.RequestMethodRAMutator;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.RequestOnSuccessHandlerRAMutator;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.RequestUrlRAMutator;
 import org.junit.Test;
+
+import java.util.Collection;
 
 import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAstRoot;
 import static org.junit.Assert.assertEquals;
@@ -14,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 public class RequestMutatorTest extends MutatorTestBase {
     private String[] urls;
     private String[] callbacks;
+    private Collection<Request> requests;
 
     @Override
     public void prepare() {
@@ -27,72 +35,51 @@ public class RequestMutatorTest extends MutatorTestBase {
                 jQueryGet(urls[0], callbacks[0], null),
                 jQueryPost(urls[1], callbacks[1], "{hoge: 'fuga'}")
         };
+        requests = visitor.getRequests();
     }
 
     @Test
-    public void testRequestUrlMutator() {
-        Mutator mutator = new RequestUrlMutator(visitor.getRequests());
-        assertFalse(mutator.isFinished());
-        mutator.applyMutation();
-        String[] outputs = ast.toSource().split("\n");
-        assertEquals(jQueryGet(urls[1], callbacks[0], null), outputs[0]);
-        assertEquals(inputs[1], outputs[1]);
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        outputs = ast.toSource().split("\n");
-        assertEquals(inputs[0], outputs[0]);
-        assertEquals(jQueryPost(urls[0], callbacks[1], "{hoge: 'fuga'}"),
-                outputs[1]);
-        undoAndAssert(mutator);
+    public void testRequestUrlRAMutator() {
+        Mutator mutator = new RequestUrlRAMutator(requests);
+        Mutation mutation;
+        mutation = mutator.generateMutation(Iterables.get(requests, 0));
+        assertEquals(urls[1], mutation.getMutatingContent());
+        mutation = mutator.generateMutation(Iterables.get(requests, 1));
+        assertEquals(urls[0], mutation.getMutatingContent());
     }
 
     @Test
     public void testRequestOnSuccessCallbackMutator() {
-        Mutator mutator = new RequestOnSuccessHandlerMutator(
-                visitor.getRequests());
-        assertFalse(mutator.isFinished());
-        mutator.applyMutation();
-        String[] outputs = ast.toSource().split("\n");
-        assertEquals(jQueryGet(urls[0], callbacks[1], null), outputs[0]);
-        assertEquals(inputs[1], outputs[1]);
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        outputs = ast.toSource().split("\n");
-        assertEquals(inputs[0], outputs[0]);
-        assertEquals(jQueryPost(urls[1], callbacks[0], "{hoge: 'fuga'}"),
-                outputs[1]);
-        undoAndAssert(mutator);
+        Mutator mutator = new RequestOnSuccessHandlerRAMutator(requests);
+        Mutation mutation;
+        mutation = mutator.generateMutation(Iterables.get(requests, 0));
+        assertEquals(callbacks[1], mutation.getMutatingContent());
+        mutation = mutator.generateMutation(Iterables.get(requests, 1));
+        assertEquals(callbacks[0], mutation.getMutatingContent());
     }
 
     @Test
-    public void testRequestMethodMutator() {
-        Mutator mutator = new RequestMethodMutator(visitor.getRequests());
-        assertFalse(mutator.isFinished());
-        mutator.applyMutation();
-        String[] outputs = ast.toSource().split("\n");
-        assertEquals(jQueryPost(urls[0], callbacks[0], null), outputs[0]);
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        outputs = ast.toSource().split("\n");
-        assertEquals(
-                jQueryGet(urls[1], callbacks[1], "{hoge: 'fuga'}"), outputs[1]);
-        undoAndAssert(mutator);
+    public void testRequestMethodRAMutator() {
+        Mutator mutator = new RequestMethodRAMutator(requests);
+        Mutation mutation;
+        mutation = mutator.generateMutation(Iterables.get(requests, 0));
+        assertEquals("post", mutation.getMutatingContent());
+        mutation = mutator.generateMutation(Iterables.get(requests, 1));
+        assertEquals("get", mutation.getMutatingContent());
+
     }
 
     @Test
     public void testRequestMethodMutatorForAjaxMethod() {
         prepare();
-        ast = parseAstRoot("$.ajax('fuga.php', {type: 'PUT'});");
+        ast = parseAstRoot(
+                "$.ajax('fuga.php', {type: 'PUT'});$.get('hoge.php', callback);");
         ast.visit(visitor);
-        Mutator mutator = new RequestMethodMutator(visitor.getRequests());
-        mutator.applyMutation();
-        assertEquals(
-                "$.ajax('fuga.php', {type: 'GET'});",
-                ast.toSource().trim());
-        mutator.undoMutation();
-        assertEquals(
-                "$.ajax('fuga.php', {type: 'PUT'});",
-                ast.toSource().trim());
+        Mutator mutator = new RequestMethodRAMutator(visitor.getRequests());
+        Mutation mutation;
+        mutation = mutator.generateMutation(
+                Iterables.get(visitor.getRequests(), 0));
+        assertEquals("\"GET\"", mutation.getMutatingContent());
     }
 
     private String jQueryRequest(

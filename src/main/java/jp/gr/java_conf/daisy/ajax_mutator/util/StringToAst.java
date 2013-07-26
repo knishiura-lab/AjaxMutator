@@ -54,29 +54,50 @@ public class StringToAst {
         return parseAsType(PropertyGet.class, javaScriptSnippet);
     }
 
-    public static AstNode createParentNode(AstNode node, JSType domType) {
+    public static String createParentNodeAsString(AstNode node, JSType domType) {
         StringBuilder builder = new StringBuilder();
         builder.append("(").append(node.toSource()).append(")");
         if (domType == JSType.DOM_ELEMENT) {
             builder.append(".parentElement");
-            return parseAsPropertyGet(builder.toString());
         } else if (domType == JSType.JQUERY_OBJECT) {
             builder.append(".parent()");
-            return parseAsFunctionCall(builder.toString());
+        } else {
+            throw new IllegalArgumentException(domType + " is not supported.");
+        }
+        return builder.toString();
+    }
+
+    public static AstNode createParentNode(AstNode node, JSType domType) {
+        if (domType == JSType.DOM_ELEMENT) {
+            return parseAsPropertyGet(createParentNodeAsString(node, domType));
+        } else if (domType == JSType.JQUERY_OBJECT) {
+            return parseAsFunctionCall(createParentNodeAsString(node, domType));
+        } else {
+            throw new IllegalArgumentException(domType + " is not supported.");
+        }
+    }
+
+    public static String createChildNodeAsString(AstNode node, JSType domType) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("(").append(node.toSource()).append(")");
+        if (domType == JSType.DOM_ELEMENT) {
+            builder.append(".children[0]");
+            return builder.toString();
+        } else if (domType == JSType.JQUERY_OBJECT) {
+            builder.append(".children(':first')");
+            return builder.toString();
         } else {
             throw new IllegalArgumentException(domType + " is not supported.");
         }
     }
 
     public static AstNode createChildNode(AstNode node, JSType domType) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("(").append(node.toSource()).append(")");
         if (domType == JSType.DOM_ELEMENT) {
-            builder.append(".children[0]");
-            return parseAsType(ElementGet.class, builder.toString());
+            return parseAsType(
+                    ElementGet.class,
+                    createChildNodeAsString(node, domType));
         } else if (domType == JSType.JQUERY_OBJECT) {
-            builder.append(".children(':first')");
-            return parseAsFunctionCall(builder.toString());
+            return parseAsFunctionCall(createChildNodeAsString(node, domType));
         } else {
             throw new IllegalArgumentException(domType + " is not supported.");
         }

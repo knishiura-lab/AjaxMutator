@@ -1,117 +1,52 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Mutatable;
-import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
-
+import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.Mutation;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 import org.mozilla.javascript.ast.AstNode;
 
 /**
- * Abstract implementation of {@code Mutator} which replacing part of Mutatable
- * by something.
+ * Basic implementation for {@link Mutator}
  *
  * @author Kazuki Nishiura
  */
-public abstract class AbstractMutator<T extends Mutatable> implements Mutator {
-    protected PrintStream stream;
-    protected List<T> mutationTargets;
-    protected int targetIndex = 0;
-    protected static PrintStream DEFAULT_STREAM = System.out;
+public abstract class AbstractMutator<T extends Mutatable>
+        implements Mutator<T> {
+    Class<? extends T> applicableClass;
 
-    protected AbstractMutator(Collection<T> mutationTargets) {
-        this(mutationTargets, DEFAULT_STREAM);
+    public AbstractMutator(Class<? extends T> applicableClass) {
+        this.applicableClass = applicableClass;
     }
 
-    protected AbstractMutator(Collection<T> mutationTargets,
-            PrintStream printStream) {
-        this.stream = printStream;
-        this.mutationTargets = new ArrayList<T>(mutationTargets);
+    public boolean isApplicable(Class c) {
+        return applicableClass.isAssignableFrom(c);
     }
 
     /**
-     * @param parent Subclass of {@link Mutatable} part of which to be mutated.
-     * @param replacingNode node that replace part of {@code parent}.
+     * @return Simple (Human understandable) name of the mutation class produced
+     * by this mutator.
      */
-    abstract protected void replaceFocusedNodeOf(
-            T parent, AstNode replacingNode);
-
-    /**
-     * @return node that can replace a part of mutation target. When appropriate
-     *         node do not exist or cannot be found, returns null.
-     */
-    abstract protected AstNode selectReplacingCandidate(T mutationTarget);
-
-    @Override
-    public String applyMutation() {
-        T mutationTarget = mutationTargets.get(targetIndex);
-        AstNode replacingNode = selectReplacingCandidate(mutationTarget);
-        if (replacingNode == null) {
-            System.out.println("mutation is not applied to: ");
-            System.out.println(mutationTarget.toString());
-            targetIndex++;
-            return null;
-        }
-        String mutationInformation = mutationInformation(mutationTarget,
-                replacingNode);
-        if (stream != null)
-            stream.println(mutationInformation);
-        replaceFocusedNodeOf(mutationTarget, replacingNode);
-        return mutationInformation;
-    }
-
-    @Override
-    public void undoMutation() {
-        Mutatable mutationTarget = mutationTargets.get(targetIndex);
-        mutationTarget.undoLastReplace();
-        targetIndex++;
-    }
-
-    @Override
-    public void skipMutation() {
-        targetIndex++;
-    }
-
-    @Override
-    public boolean isFinished() {
-        return mutationTargets.size() <= targetIndex;
-    }
-
-    @Override
-    public int numberOfMutation() {
-        return mutationTargets.size();
+    public String mutationName() {
+        return this.getClass().getSimpleName().replace("Mutator", "Mutation");
     }
 
     /**
-     * output mutation information to PrintStream pointed by {@code stream}.
+     * Generate mutation for given original Node. Mutation consist of two parts:
+     * mutated node, and mutating content.
+     * Mutated node is an originalNode itself or it's subnode and which is
+     * mutated. Mutating content is a something that replaces mutated node.
+     *
+     * @param originalNode node which is a target for mutation.
+     * @return Mutation for given node or part of given node.
      */
-    protected String mutationInformation(T target, AstNode replacingNode) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("mutate '");
-        builder.append(target);
-        builder.append("\" (at line ");
-        builder.append(target.getAstNode().getLineno());
-        builder.append(") \n  -> '");
-        builder.append(Util.oneLineStringOf(replacingNode));
-        builder.append("'");
-        builder.append(" (at line ").append(replacingNode.getLineno());
-        return builder.append(")").toString();
-    }
+    public abstract Mutation generateMutation(T originalNode);
 
     /**
      * Determine the equality of given to AstNodes in the context of mutator.
      * Subclass may want to override this method to create only meaningful
      * mutants.
      */
-    protected boolean ifEquals(AstNode node1, AstNode node2) {
+    protected boolean isEqual(AstNode node1, AstNode node2) {
         return node1.toSource().equals(node2.toSource());
-    }
-
-    @Override
-    public String mutationName() {
-        return this.getClass().getSimpleName().replace("Mutator", "Mutation");
     }
 }
