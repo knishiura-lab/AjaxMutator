@@ -3,10 +3,18 @@ package jp.gr.java_conf.daisy.ajax_mutator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.google.common.collect.UnmodifiableIterator;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.AbstractDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.MutationPointDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.*;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventListenerDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AttachEventDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.TimerEventDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryAttributeModificationDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryDOMSelectionDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryEventAttachmentDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryRequestDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.*;
 
 import org.mozilla.javascript.ast.Assignment;
@@ -187,5 +195,58 @@ public class MutateVisitor implements NodeVisitor {
                     .append(str.replaceAll("\n", "\n" + spaceBeforeContent))
                     .append(System.lineSeparator());
         }
+    }
+
+    /**
+     * @return Builder instance with no configuration.
+     */
+    public static MutateVisitorBuilder emptyBuilder() {
+        return new MutateVisitorBuilder();
+    }
+
+    /**
+     * @return Builder instance with typical detector configurations.
+     */
+    public static MutateVisitorBuilder defaultBuilder() {
+        MutateVisitorBuilder builder = new MutateVisitorBuilder();
+        builder.setAttributeModificationDetectors(
+                ImmutableSet.of(new AttributeAssignmentDetector()));
+        builder.setDomAppendingDetectors(
+                ImmutableSet.of(new AppendChildDetector()));
+        builder.setDomCreationDetectors(
+                ImmutableSet.of(new CreateElementDetector()));
+        builder.setDomRemovalDetectors(
+                ImmutableSet.of(new RemoveChildDetector()));
+        builder.setDomSelectionDetectors(
+                ImmutableSet.of(new DOMSelectionDetector()));
+        builder.setEventAttacherDetectors(
+                ImmutableSet.<EventAttacherDetector>of(
+                        new AddEventListenerDetector(), new AttachEventDetector()));
+        builder.setTimerEventDetectors(
+                ImmutableSet.of(new TimerEventDetector()));
+        return builder;
+    }
+
+    public static MutateVisitorBuilder defaultJqueryBuilder() {
+        MutateVisitorBuilder builder = new MutateVisitorBuilder();
+        builder.setAttributeModificationDetectors(
+                ImmutableSet.of(
+                        new AttributeAssignmentDetector(), new JQueryAttributeModificationDetector()));
+        builder.setDomAppendingDetectors(
+                ImmutableSet.of(new AppendChildDetector()));
+        builder.setDomCreationDetectors(
+                ImmutableSet.of(new CreateElementDetector()));
+        builder.setDomRemovalDetectors(
+                ImmutableSet.of(new RemoveChildDetector()));
+        builder.setDomSelectionDetectors(
+                ImmutableSet.of(new JQueryDOMSelectionDetector()));
+        builder.setEventAttacherDetectors(
+                ImmutableSet.<EventAttacherDetector>of(
+                        new JQueryEventAttachmentDetector()));
+        builder.setTimerEventDetectors(
+                ImmutableSet.of(new TimerEventDetector()));
+        builder.setRequestDetectors(
+                ImmutableSet.of( new JQueryRequestDetector()));
+        return builder;
     }
 }

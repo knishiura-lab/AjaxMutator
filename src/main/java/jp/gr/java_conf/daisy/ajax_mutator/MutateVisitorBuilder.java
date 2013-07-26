@@ -26,6 +26,10 @@ public class MutateVisitorBuilder {
     private Set<? extends AbstractDetector<Request>> requestDetectors
             = Collections.emptySet();
 
+    protected MutateVisitorBuilder() {
+
+    }
+
     public MutateVisitor build() {
         return new MutateVisitor(eventAttacherDetectors, timerEventDetectors,
                 domCreationDetectors, attributeModificationDetectors,

@@ -1,6 +1,7 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import com.google.common.collect.ImmutableSet;
+import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventListenerDetector;
@@ -27,7 +28,7 @@ public class EventMutatorTest extends MutatorTestBase {
 
         Set<EventAttacherDetector> attacherDetector = ImmutableSet
                 .of((EventAttacherDetector) new AddEventListenerDetector());
-        MutateVisitorBuilder builder = new MutateVisitorBuilder();
+        MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
         builder.setEventAttacherDetectors(attacherDetector);
         visitor = builder.build();
     }

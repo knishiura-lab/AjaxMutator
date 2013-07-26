@@ -1,6 +1,7 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import com.google.common.collect.ImmutableSet;
+import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.AppendChildDetector;
 import org.junit.Test;
@@ -20,7 +21,7 @@ public class DOMAppendingMutatorTest extends MutatorTestBase {
         for (int i = 0; i < 2; i++)
             inputs[i] = appendChild(appendTo[i], appendedElements[i]);
 
-        MutateVisitorBuilder builder = new MutateVisitorBuilder();
+        MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
         builder.setDomAppendingDetectors(
                 ImmutableSet.of(new AppendChildDetector()));
         visitor = builder.build();
