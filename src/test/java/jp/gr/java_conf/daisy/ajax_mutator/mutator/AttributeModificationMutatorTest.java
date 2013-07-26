@@ -20,7 +20,7 @@ public class AttributeModificationMutatorTest extends MutatorTestBase {
 
     @Override
     void prepare() {
-        MutateVisitorBuilder builder = new MutateVisitorBuilder();
+        MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
         builder.setAttributeModificationDetectors(ImmutableSet.of(
                 new AttributeAssignmentDetector(),
                 new JQueryAttributeModificationDetector()));
@@ -79,7 +79,7 @@ public class AttributeModificationMutatorTest extends MutatorTestBase {
                 "$elm1.width(100);"
                 + "$elm2.attr('disabled', false);"
                 + "$elm3.height(200);";
-        MutateVisitorBuilder builder = new MutateVisitorBuilder();
+        MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
         builder.setAttributeModificationDetectors(
                 ImmutableSet.of(new JQueryAttributeModificationDetector()));
         MutateVisitor visitor = builder.build();

@@ -29,7 +29,7 @@ public class TimerEventMutatorTest extends MutatorTestBase {
 
         Set<TimerEventDetector> attacherDetector = ImmutableSet
                 .of(new TimerEventDetector());
-        MutateVisitorBuilder builder = new MutateVisitorBuilder();
+        MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
         builder.setTimerEventDetectors(attacherDetector);
         visitor = builder.build();
     }
@@ -80,7 +80,7 @@ public class TimerEventMutatorTest extends MutatorTestBase {
                 + "    $('#quizzy_q' + curQuestion + '_foot_nxt').attr('disabled', false).fadeIn(fadeSpeed);"
                 + "}, nextFadeInWait);}, expFadeInWait)}, slideUpWait);";
         System.out.println(nestingCalls);
-        MutateVisitorBuilder builder = new MutateVisitorBuilder();
+        MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
         builder.setTimerEventDetectors(ImmutableSet.of(new TimerEventDetector()));
         MutateVisitor visitor = builder.build();
         AstRoot astRoot = StringToAst.parseAstRoot(nestingCalls);

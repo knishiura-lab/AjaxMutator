@@ -1,6 +1,7 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import com.google.common.collect.ImmutableSet;
+import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.DOMSelectionDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryDOMSelectionDetector;
@@ -26,7 +27,7 @@ public class DOMSelectionMutatorTest extends MutatorTestBase {
         for (int i = 0; i < 3; i++)
             inputs[i] = selectors[i] + operations[i];
         inputs[3] = "var hoge= $('#fuga');";
-        MutateVisitorBuilder builder = new MutateVisitorBuilder();
+        MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
         builder.setDomSelectionDetectors(ImmutableSet.of(
                 new DOMSelectionDetector(), new JQueryDOMSelectionDetector()));
         visitor = builder.build();

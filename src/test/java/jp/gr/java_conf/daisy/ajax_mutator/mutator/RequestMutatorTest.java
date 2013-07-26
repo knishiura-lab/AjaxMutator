@@ -1,6 +1,7 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import com.google.common.collect.ImmutableSet;
+import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryRequestDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
@@ -18,7 +19,7 @@ public class RequestMutatorTest extends MutatorTestBase {
     public void prepare() {
         urls = new String[] { "'hoge.php'", "url" };
         callbacks = new String[] { "func1", "func2" };
-        MutateVisitorBuilder builder = new MutateVisitorBuilder();
+        MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
         builder.setRequestDetectors(
                 ImmutableSet.of(new JQueryRequestDetector()));
         visitor = builder.build();
