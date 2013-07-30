@@ -8,6 +8,9 @@ import java.io.InputStreamReader;
 
 import java.util.*;
 
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import difflib.DiffUtils;
 import difflib.Patch;
 import difflib.PatchFailedException;
@@ -36,8 +39,9 @@ public class MutationTestConductor {
     private static final Logger LOGGER
             = LoggerFactory.getLogger(MutationTestConductor.class);
 
-    MutationFileWriter mutationFileWriter;
-    MutationListManager mutationListManager;
+    private MutationFileWriter mutationFileWriter;
+    private MutationListManager mutationListManager;
+    private Multimap<String, String> unkilledMutantsInfo;
     private Context context = Context.INSTANCE;
     private boolean setup = false;
     private ParserWithBrowser parser;
@@ -62,14 +66,7 @@ public class MutationTestConductor {
         Util.normalizeLineBreak(jsFile);
         mutationFileWriter = new MutationFileWriter(jsFile);
         Util.copyFile(pathToJSFile, pathToBackupFile());
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                // restore backup
-                Util.copyFile(pathToBackupFile(), pathToJSFile);
-                System.out.println("backup file restored");
-            }
-        });
+
         parser = ParserWithBrowser.getParser();
         try {
             FileReader fileReader = new FileReader(jsFile);
@@ -99,82 +96,28 @@ public class MutationTestConductor {
      * </ol>
      */
     public void conduct(TestExecutor testExecutor, Set<Mutator> mutators) {
-        Map<String, List<String>> unkilledMutantsInfo
-            = new HashMap<String, List<String>>();
+        unkilledMutantsInfo = ArrayListMultimap.create();
         checkIfSetuped();
-        double startTimeMillis = System.currentTimeMillis();
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.start();
 
         mutationListManager = new MutationListManager(
                 mutationFileWriter.getDestinationDirectory());
         generateMutationFiles(visitor, mutators);
         mutationListManager.generateMutationListFile();
 
-        // applying it.
-        int numberOfAppliedMutation = 0;
-        int numberOfMaxMutants
-                = mutationListManager.getNumberOfUnkilledMutants();
         conducting = true;
-        Thread commandReceiver = new Thread(new CommandReceiver());
-        commandReceiver.start();
-        List<String> original = Util.readFromFile(pathToJsFile);
-        Map<String, List<MutationFileInformation>> mutationFiles
-                = mutationListManager.getMutationFileInformationList();
-        for (String mutationDescription: mutationFiles.keySet()) {
-            LOGGER.info("Start applying {}", mutationDescription);
-            for (MutationFileInformation mutationFileInformation:
-                    mutationFiles.get(mutationDescription)) {
-                if (mutationFileInformation.isKilled()
-                        || !applyMutationFile(original, mutationFileInformation)) {
-                    continue;
-                }
-                numberOfAppliedMutation++;
-                if (testExecutor.execute()) { // This mutants cannot be killed
-                    LOGGER.info("mutant {} is not be killed", mutationDescription);
-                } else {
-                    mutationFileInformation.setKilled(true);
-                }
-                String message = testExecutor.getMessageOnLastExecution();
-                if (message != null) {
-                    LOGGER.info(message);
-                }
-                logProgress(numberOfAppliedMutation, numberOfMaxMutants);
-            }
-            // execution can be canceled from outside.
-            if (!conducting) {
-                break;
-            }
-        }
-        if (conducting) {
-            commandReceiver.interrupt();
-            conducting = false;
-        }
+        addShutdownHookToRestoreBackup();
+        int numberOfAppliedMutation = applyMutationAnalysis(testExecutor);
+        stopwatch.stop();
         LOGGER.info("Updating mutation list file...");
         mutationListManager.generateMutationListFile();
 
-        long finishTimeMillis = System.currentTimeMillis();
-        LOGGER.info("---------------------------------------------");
-        StringBuilder detailedInfo = new StringBuilder();
-        int numberOfUnkilledMutatns = 0;
-        for (Map.Entry<String, List<String>> unkilledMutantsInfoEntry
-                : unkilledMutantsInfo.entrySet()) {
-            numberOfUnkilledMutatns
-                += unkilledMutantsInfoEntry.getValue().size();
-            detailedInfo.append(unkilledMutantsInfoEntry.getKey()).append(": ")
-                .append(unkilledMutantsInfoEntry.getValue().size()).append('\n');
-            for (String info: unkilledMutantsInfoEntry.getValue()){
-                detailedInfo.append(info).append('\n');
-            }
-            detailedInfo.append('\n');
-        }
-
-        LOGGER.info(detailedInfo.toString());
-        LOGGER.info(numberOfUnkilledMutatns + " unkilled mutants "
-                + " among " + numberOfAppliedMutation + ", kill score is "
-                + Math.floor((1.0 - (1.0 * numberOfUnkilledMutatns / numberOfMaxMutants)) * 100) / 100);
+        logExecutionDetail(numberOfAppliedMutation);
         LOGGER.info("restoring backup file...");
         Util.copyFile(pathToBackupFile(), context.getJsPath());
         LOGGER.info("finished! "
-                + (finishTimeMillis - startTimeMillis) / 1000.0 + " sec.");
+                + stopwatch.elapsedMillis() / 1000.0 + " sec.");
     }
 
     private void generateMutationFiles(
@@ -235,6 +178,48 @@ public class MutationTestConductor {
         }
     }
 
+    private int applyMutationAnalysis(TestExecutor testExecutor) {
+        int numberOfAppliedMutation = 0;
+        int numberOfMaxMutants
+                = mutationListManager.getNumberOfUnkilledMutants();
+        Thread commandReceiver = new Thread(new CommandReceiver());
+        commandReceiver.start();
+        List<String> original = Util.readFromFile(pathToJsFile);
+        Map<String, List<MutationFileInformation>> mutationFiles
+                = mutationListManager.getMutationFileInformationList();
+        for (String mutationDescription: mutationFiles.keySet()) {
+            LOGGER.info("Start applying {}", mutationDescription);
+            for (MutationFileInformation mutationFileInformation:
+                    mutationFiles.get(mutationDescription)) {
+                if (mutationFileInformation.isKilled()
+                        || !applyMutationFile(original, mutationFileInformation)) {
+                    continue;
+                }
+                numberOfAppliedMutation++;
+                if (testExecutor.execute()) { // This mutants cannot be killed
+                    unkilledMutantsInfo.put(mutationDescription, mutationFileInformation.toString());
+                    LOGGER.info("mutant {} is not be killed", mutationDescription);
+                } else {
+                    mutationFileInformation.setKilled(true);
+                }
+                String message = testExecutor.getMessageOnLastExecution();
+                if (message != null) {
+                    LOGGER.info(message);
+                }
+                logProgress(numberOfAppliedMutation, numberOfMaxMutants);
+            }
+            // execution can be canceled from outside.
+            if (!conducting) {
+                break;
+            }
+        }
+        if (conducting) {
+            commandReceiver.interrupt();
+            conducting = false;
+        }
+        return numberOfAppliedMutation;
+    }
+
     private void logProgress(int finished, int total) {
         LOGGER.info("{} in {} finished: {}%", finished, total,
                 Math.floor(finished / total * 1000) / 10);
@@ -268,6 +253,40 @@ public class MutationTestConductor {
         if (!setup)
             throw new IllegalStateException(
                     "You 'must' call setup method before you use.");
+    }
+
+    private void logExecutionDetail(int numberOfAppliedMutation) {
+        LOGGER.info("---------------------------------------------");
+        StringBuilder detailedInfo = new StringBuilder();
+        int numberOfUnkilledMutatns = 0;
+        for (String key: unkilledMutantsInfo.keySet()) {
+            numberOfUnkilledMutatns += unkilledMutantsInfo.get(key).size();
+            detailedInfo.append(key).append(": ")
+                    .append(unkilledMutantsInfo.get(key).size())
+                    .append(System.lineSeparator());
+            for (String info: unkilledMutantsInfo.get(key)) {
+                detailedInfo.append(info).append(System.lineSeparator());
+            }
+            detailedInfo.append(System.lineSeparator());
+        }
+
+         int numberOfMaxMutants
+                = mutationListManager.getNumberOfUnkilledMutants();
+        LOGGER.info(detailedInfo.toString());
+        LOGGER.info(numberOfUnkilledMutatns + " unkilled mutants "
+                + " among " + numberOfAppliedMutation + ", kill score is "
+                + Math.floor((1.0 - (1.0 * numberOfUnkilledMutatns / numberOfMaxMutants)) * 100) / 100);
+    }
+
+    private void addShutdownHookToRestoreBackup() {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                // restore backup
+                Util.copyFile(pathToBackupFile(), pathToJsFile);
+                System.out.println("backup file restored");
+            }
+        });
     }
 
     private class CommandReceiver implements Runnable {
