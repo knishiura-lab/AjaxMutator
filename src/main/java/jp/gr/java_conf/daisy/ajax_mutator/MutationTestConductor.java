@@ -197,6 +197,10 @@ public class MutationTestConductor {
 
     private void generateMutationFiles(
             Set<? extends Mutatable> mutatables, Set<Mutator> mutators) {
+        if (mutatables.size() == 0) {
+            return;
+        }
+
         Set<Mutator> applicableMutator = new HashSet<Mutator>();
         Mutatable aMutatable = Iterables.get(mutatables, 0);
         LOGGER.info("try to create mutations for {}. {} elements exist.",
