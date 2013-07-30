@@ -5,6 +5,7 @@ import org.mozilla.javascript.ast.AstNode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,12 @@ class UnifiedDiffGenerator {
         } catch (FileNotFoundException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    protected UnifiedDiffGenerator(String fileName, long fileLastModified, InputStream stream) {
+        this.fileName = fileName;
+        targetFileLastModifiedMillis = fileLastModified;
+        readTargetFileByScanner(new Scanner(stream));
     }
 
     private void readTargetFileByScanner(Scanner scanner) {
