@@ -6,10 +6,10 @@ import org.junit.Before;
 import org.mozilla.javascript.ast.AstRoot;
 
 import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAstRoot;
-import static org.junit.Assert.assertEquals;
 
 /**
- * Base class for testing subclasses of {@code Mutator}.
+ * Base class for testing subclasses of {@code Mutator}. This class provide
+ * common setups; parsing inputs into AST and visit it to collect mutators..
  * 
  * @author Kazuki Nishiura
  */
@@ -29,7 +29,7 @@ public abstract class MutatorTestBase {
      * fields. <br>
      * Note that this method is called in the Constructor.
      */
-    abstract void prepare();
+    protected abstract void prepare();
 
     /**
      * @throws IllegalStateException
@@ -47,12 +47,5 @@ public abstract class MutatorTestBase {
     public void before() {
         ast = parseAstRoot(Util.join(inputs));
         ast.visit(visitor);
-    }
-
-    protected void undoAndAssert(Mutator mutator) {
-        mutator.undoMutation();
-        String[] outputs = ast.toSource().split("\n");
-        for (int i = 0; i < inputs.length; i++)
-            assertEquals(inputs[0], outputs[0]);
     }
 }

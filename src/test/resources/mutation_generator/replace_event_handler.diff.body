@@ -1,0 +1,9 @@
+@@ -5,3 +5,5 @@
+-      .addEventListener('click', function() {
+-         console.log('item clicked');
+-      });
++      .addEventListener('click', function(event) {
++         var identifier = "main";
++         console.log(event.target);
++         console.log(document.getElementById(identifier));
++      });

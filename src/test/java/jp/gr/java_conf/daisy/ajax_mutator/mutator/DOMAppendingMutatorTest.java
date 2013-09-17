@@ -2,19 +2,24 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import com.google.common.collect.ImmutableSet;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
+import com.google.common.collect.Iterables;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.AppendChildDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMAppending;
+import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.Mutation;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.AppendedDOMRAMutator;
 import org.junit.Test;
 
+import java.util.Collection;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 public class DOMAppendingMutatorTest extends MutatorTestBase {
     private String[] appendTo;
     private String[] appendedElements;
 
     @Override
-    void prepare() {
+    protected void prepare() {
         appendTo = new String[] {"element", "document.getElementById('hoge')"};
         appendedElements = new String[] {"document.createElement('p')", "elm"};
         inputs = new String[2];
@@ -28,19 +33,14 @@ public class DOMAppendingMutatorTest extends MutatorTestBase {
     }
 
     @Test
-    public void testAppendedElementMutator() {
-        Mutator mutator = new AppendedDOMMutator(visitor.getDomAppendings());
-        assertFalse(mutator.isFinished());
-        mutator.applyMutation();
-        String[] outputs = ast.toSource().split("\n");
-        assertEquals(appendChild(appendTo[0], appendedElements[1]), outputs[0]);
-        assertEquals(inputs[1], outputs[1]);
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        outputs = ast.toSource().split("\n");
-        assertEquals(inputs[0], outputs[0]);
-        assertEquals(appendChild(appendTo[1], appendedElements[0]), outputs[1]);
-        undoAndAssert(mutator);
+    public void testAppendedElementRAMutator() {
+        Collection<DOMAppending> domAppendings = visitor.getDomAppendings();
+        Mutator mutator = new AppendedDOMRAMutator(visitor.getDomAppendings());
+        Mutation mutation
+                = mutator.generateMutation(Iterables.get(domAppendings, 0));
+        assertEquals("elm", mutation.getMutatingContent());
+        mutation = mutator.generateMutation(Iterables.get(domAppendings, 1));
+        assertEquals("document.createElement('p')", mutation.getMutatingContent());
     }
 
     private String appendChild(String appendTo, String appendedElement) {

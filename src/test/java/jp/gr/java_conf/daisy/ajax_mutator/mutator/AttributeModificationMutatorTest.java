@@ -1,25 +1,27 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.AttributeAssignmentDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryAttributeModificationDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
-import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
-import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
+import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.Mutation;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.AttributeModificationTargetRAMutator;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.AttributeModificationValueRAMutator;
 import org.junit.Test;
-import org.mozilla.javascript.ast.AstRoot;
+
+import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 public class AttributeModificationMutatorTest extends MutatorTestBase {
     private String[] targetAttributes;
     private String[] assignedValues;
 
     @Override
-    void prepare() {
+    public void prepare() {
         MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
         builder.setAttributeModificationDetectors(ImmutableSet.of(
                 new AttributeAssignmentDetector(),
@@ -33,72 +35,33 @@ public class AttributeModificationMutatorTest extends MutatorTestBase {
     }
 
     @Test
-    public void testAttributeModificationAttributeMutator() {
-        Mutator mutator = new AttributeModificationTargetAttributeMutator(
-                visitor.getAttributeModifications());
-        assertFalse(mutator.isFinished());
-        mutator.applyMutation();
-        String[] outputs = ast.toSource().split("\n");
-        assertEquals(
-                getJQueryAssignment(targetAttributes[1], assignedValues[0]),
-                outputs[0]);
-        assertEquals(inputs[1], outputs[1]);
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        outputs = ast.toSource().split("\n");
-        assertEquals(inputs[0], outputs[0]);
-        assertEquals(
-                getAssignment(targetAttributes[0], assignedValues[1]),
-                outputs[1]);
-        undoAndAssert(mutator);
+    public void testAttributeModificationAttributeRAMutator() {
+        Collection<AttributeModification> attributeModifications
+                = visitor.getAttributeModifications();
+        Mutator mutator = new AttributeModificationTargetRAMutator(
+                attributeModifications);
+        AttributeModification modification;
+        modification = Iterables.get(attributeModifications, 0);
+        Mutation mutation = mutator.generateMutation(modification);
+        assertEquals(targetAttributes[1], mutation.getMutatingContent());
+        modification = Iterables.get(attributeModifications, 1);
+        mutation = mutator.generateMutation(modification);
+        assertEquals(targetAttributes[0], mutation.getMutatingContent());
     }
 
     @Test
-    public void testAttributeModificationValueMutator() {
-        Mutator mutator = new AttributeModificationValueMutator(
-                visitor.getAttributeModifications());
-        assertFalse(mutator.isFinished());
-        mutator.applyMutation();
-        String[] outputs = ast.toSource().split("\n");
-        assertEquals(
-                getJQueryAssignment(targetAttributes[0], assignedValues[1]),
-                outputs[0]);
-        assertEquals(inputs[1], outputs[1]);
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        outputs = ast.toSource().split("\n");
-        assertEquals(inputs[0], outputs[0]);
-        assertEquals(getAssignment(targetAttributes[1], assignedValues[0]),
-                outputs[1]);
-        undoAndAssert(mutator);
-    }
-
-    @Test
-    public void testAttributeModificationAttributeMutatorForJQueryShortcuts() {
-        String jQueryAttrModifications =
-                "$elm1.width(100);"
-                + "$elm2.attr('disabled', false);"
-                + "$elm3.height(200);";
-        MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
-        builder.setAttributeModificationDetectors(
-                ImmutableSet.of(new JQueryAttributeModificationDetector()));
-        MutateVisitor visitor = builder.build();
-        AstRoot astRoot = StringToAst.parseAstRoot(jQueryAttrModifications);
-        astRoot.visit(visitor);
-        Mutator mutator = new AttributeModificationTargetAttributeMutator(
-                visitor.getAttributeModifications());
-        Randomizer.initializeWithMockValues(new double[] {2, 0, 1});
-        assertFalse(mutator.isFinished());
-        mutator.applyMutation();
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        assertEquals("$elm1.width(100);$elm2.attr('disabled', false);"
-                + "$elm3.attr('disabled', 200);", Util.omitLineBreak(astRoot));
-        undoAndAssert(mutator);
-        assertEquals(jQueryAttrModifications, Util.omitLineBreak(astRoot));
-        Randomizer.setMockMode(false);
+    public void testAttributeModificationValueRAMutator() {
+        Collection<AttributeModification> attributeModifications
+                = visitor.getAttributeModifications();
+        Mutator mutator = new AttributeModificationValueRAMutator(
+                attributeModifications);
+        AttributeModification modification;
+        modification = Iterables.get(attributeModifications, 0);
+        Mutation mutation = mutator.generateMutation(modification);
+        assertEquals(assignedValues[1], mutation.getMutatingContent());
+        modification = Iterables.get(attributeModifications, 1);
+        mutation = mutator.generateMutation(modification);
+        assertEquals(assignedValues[0],mutation.getMutatingContent());
     }
 
     private String getJQueryAssignment(String attribute, String value) {
