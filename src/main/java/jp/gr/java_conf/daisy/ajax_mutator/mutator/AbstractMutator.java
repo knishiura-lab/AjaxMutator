@@ -2,7 +2,6 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Mutatable;
 import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.Mutation;
-import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 import org.mozilla.javascript.ast.AstNode;
 
 /**
@@ -18,6 +17,9 @@ public abstract class AbstractMutator<T extends Mutatable>
         this.applicableClass = applicableClass;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean isApplicable(Class c) {
         return applicableClass.isAssignableFrom(c);
     }
