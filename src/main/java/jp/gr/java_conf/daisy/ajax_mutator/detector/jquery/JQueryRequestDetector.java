@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableSet;
  */
 public class JQueryRequestDetector extends AbstractDetector<Request> {
     private static final String AJAX_METHOD = "ajax";
-    private static final Set<String> AJAX_SHORTCUT_METHODS
+    public static final Set<String> AJAX_SHORTCUT_METHODS
         = ImmutableSet.of("get", "post", "getJSON");
 
     private AstNode successHandler;

@@ -5,20 +5,26 @@ import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventListenerDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.EventCallbackRAMutator;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.EventTargetRAMutator;
+import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.EventTypeRAMutator;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class EventMutatorTest extends MutatorTestBase {
+    Collection<EventAttachment> eventAttachments;
     private String[] targets;
     private String[] events;
     private String[] callbacks;
 
     @Override
-    void prepare() {
+    protected void prepare() {
         targets = new String[] { "element", "document.getElementById('hoge')" };
         events = new String[] { "'blur'", "'click'" };
         callbacks = new String[] { "func1", "func2" };
@@ -31,55 +37,25 @@ public class EventMutatorTest extends MutatorTestBase {
         MutateVisitorBuilder builder = MutateVisitor.emptyBuilder();
         builder.setEventAttacherDetectors(attacherDetector);
         visitor = builder.build();
+        eventAttachments = visitor.getEventAttachments();
     }
 
     @Test
-    public void testEventTargetMutator() {
-        Mutator mutator = new EventTargetMutator(visitor.getEventAttachments());
-        assertFalse(mutator.isFinished());
-        mutator.applyMutation();
-        String[] outputs = ast.toSource().split("\n");
-        assertChanged(1, 0, 0, outputs[0]);
-        assertEquals(inputs[1], outputs[1]);
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        outputs = ast.toSource().split("\n");
-        assertEquals(inputs[0], outputs[0]);
-        assertChanged(0, 1, 1, outputs[1]);
-        undoAndAssert(mutator);
+    public void testEventTargetRAMutator() {
+        Mutator mutator = new EventTargetRAMutator(eventAttachments);
+
     }
 
     @Test
     public void testEventTypeMutator() {
-        Mutator mutator = new EventTypeMutator(visitor.getEventAttachments());
-        assertFalse(mutator.isFinished());
-        mutator.applyMutation();
-        String[] outputs = ast.toSource().split("\n");
-        assertChanged(0, 1, 0, outputs[0]);
-        assertEquals(inputs[1], outputs[1]);
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        outputs = ast.toSource().split("\n");
-        assertEquals(inputs[0], outputs[0]);
-        assertChanged(1, 0, 1, outputs[1]);
-        undoAndAssert(mutator);
+        Mutator mutator = new EventTypeRAMutator(eventAttachments);
+
     }
 
     @Test
     public void testEventCallbackMutator() {
-        Mutator mutator = new EventCallbackMutator(
-                visitor.getEventAttachments());
-        assertFalse(mutator.isFinished());
-        mutator.applyMutation();
-        String[] outputs = ast.toSource().split("\n");
-        assertChanged(0, 0, 1, outputs[0]);
-        assertEquals(inputs[1], outputs[1]);
-        undoAndAssert(mutator);
-        mutator.applyMutation();
-        outputs = ast.toSource().split("\n");
-        assertEquals(inputs[0], outputs[0]);
-        assertChanged(1, 1, 0, outputs[1]);
-        undoAndAssert(mutator);
+        Mutator mutator = new EventCallbackRAMutator(eventAttachments);
+
     }
 
     private String addEventListner(String target, String event, String callback) {
