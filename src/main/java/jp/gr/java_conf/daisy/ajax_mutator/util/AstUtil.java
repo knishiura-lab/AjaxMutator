@@ -2,6 +2,8 @@ package jp.gr.java_conf.daisy.ajax_mutator.util;
 
 import org.mozilla.javascript.ast.AstNode;
 
+import java.util.Set;
+
 public class AstUtil {
     private AstUtil () {}
 
@@ -31,6 +33,28 @@ public class AstUtil {
                 return ret;
             }
             node = node.getParent();
+        }
+        return null;
+    }
+
+    /**
+     * return nearest parent node whose type is one of specified ones.
+     * @param isStrict if true, raise exception when no element is found. Otherwise just return null.
+     */
+    public static AstNode parentOfAnyTypes(AstNode node, Set<Class> types, boolean isStrict) {
+        AstNode originalCopy = node;
+        while (node != null) {
+            for (Class type: types) {
+                if (type.isInstance(node)) {
+                    return node;
+
+                }
+            }
+            node = node.getParent();
+        }
+        if (isStrict) {
+            throw new IllegalArgumentException("Cannot find parent of type " + types + " from "
+                    + originalCopy.toSource() + "(" + originalCopy.getClass().getSimpleName() + ")");
         }
         return null;
     }
