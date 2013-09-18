@@ -1,8 +1,8 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import com.google.common.collect.ImmutableSet;
-import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import com.google.common.collect.Iterables;
+import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryRequestDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
@@ -10,13 +10,14 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.Mutation;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.RequestMethodRAMutator;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.RequestOnSuccessHandlerRAMutator;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among.RequestUrlRAMutator;
+import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
 import org.junit.Test;
 
 import java.util.Collection;
 
 import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAstRoot;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 public class RequestMutatorTest extends MutatorTestBase {
     private String[] urls;
@@ -80,6 +81,27 @@ public class RequestMutatorTest extends MutatorTestBase {
         mutation = mutator.generateMutation(
                 Iterables.get(visitor.getRequests(), 0));
         assertEquals("\"GET\"", mutation.getMutatingContent());
+    }
+
+    @Test
+    public void testCallbackReplacingMutatorForAjax() {
+        prepare();
+        ast = parseAstRoot(
+                "$.ajax('fuga.php', {success: handleSuccess, error: function(e){console.log(e);}});"
+                        + "$.post('just-put.php', {data: someValue});");
+        ast.visit(visitor);
+        Mutator mutator = new ReplacingAjaxCallbackMutator();
+        Mutation mutation;
+        mutation = mutator.generateMutation(Iterables.get(visitor.getRequests(), 0));
+        assertEquals(
+                StringToAst.parseAsFunctionCall("$.ajax('fuga.php', {success: handleSuccess,"
+                        + " error: function(e){console.log(e);}});").toSource(),
+                mutation.getOriginalNode().toSource());
+        assertEquals(
+                StringToAst.parseAsFunctionCall("$.ajax('fuga.php', "
+                        + "{success: function(e){console.log(e);}, error: handleSuccess});").toSource(),
+                mutation.getMutatingContent());
+        assertNull(mutator.generateMutation(Iterables.get(visitor.getRequests(), 1)));
     }
 
     private String jQueryRequest(
