@@ -1,10 +1,7 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutatable;
 
-import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
-
 import org.mozilla.javascript.ast.AstNode;
-import org.mozilla.javascript.ast.Name;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -58,32 +55,6 @@ public class Request extends Mutatable {
 
     public AstNode getRequestMethodNode() {
         return methodNode;
-    }
-
-    public void replaceUrl(AstNode newUrl) {
-        replace(url, newUrl);
-    }
-
-    public void replaceOnSuccessCallback(AstNode newCallback) {
-        replace(successHanlder, newCallback);
-    }
-
-    public void replaceMethod(RequestMethod newMethod) {
-        String rawSource = methodNode.toSource();
-        // We want to replace method as same case as original.
-        String replacedSource =
-                rawSource.replaceFirst(requestMethod.name(), newMethod.name());
-        if (rawSource.equals(replacedSource)) {
-            replacedSource = rawSource.replaceFirst(
-                    requestMethod.name().toLowerCase(),
-                    newMethod.name().toLowerCase()
-            );
-        }
-        AstNode newMethodNode = StringToAst.parseAsType(
-                methodNode.getClass(), replacedSource);
-        replace(methodNode, newMethodNode);
-        methodNode = newMethodNode;
-        requestMethod = newMethod;
     }
 
     @Override

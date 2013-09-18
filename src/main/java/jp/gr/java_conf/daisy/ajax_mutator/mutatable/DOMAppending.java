@@ -35,8 +35,4 @@ public class DOMAppending extends Mutatable {
                 .append(appendTarget.toSource()).append("]");
         return builder.toString();
     }
-
-    public void replaceAppendedDOM(AstNode newDOM) {
-        replace(appendedDom, newDOM);
-    }
 }

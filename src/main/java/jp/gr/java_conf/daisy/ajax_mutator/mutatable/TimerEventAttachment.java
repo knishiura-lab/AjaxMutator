@@ -34,14 +34,6 @@ public class TimerEventAttachment extends Mutatable {
         return duration;
     }
 
-    public void replaceCallback(AstNode newCallback) {
-        replace(callback, newCallback);
-    }
-
-    public void replaceDuration(AstNode newDuration) {
-        replace(duration, newDuration);
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

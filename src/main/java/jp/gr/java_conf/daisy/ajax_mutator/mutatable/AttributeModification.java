@@ -1,15 +1,9 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutatable;
 
-import java.util.Set;
-
-import jp.gr.java_conf.daisy.ajax_mutator.util.AstUtil;
-import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
-
-import org.mozilla.javascript.ast.AstNode;
-import org.mozilla.javascript.ast.FunctionCall;
-import org.mozilla.javascript.ast.Name;
-
 import com.google.common.collect.ImmutableSet;
+import org.mozilla.javascript.ast.AstNode;
+
+import java.util.Set;
 
 /**
  * Dom attribute modification such as element.id = 'anotherId'
@@ -49,35 +43,6 @@ public class AttributeModification extends Mutatable {
 
     public AstNode getAttributeValue() {
         return attributeValue;
-    }
-
-    public void replaceAttributeValue(AstNode newValue) {
-        replace(attributeValue, newValue);
-    }
-
-    public void replaceAttribute(AstNode newAttribute) {
-        if (usingJQueryShortcut) {
-            if ((newAttribute instanceof Name)
-                    && JQUERY_ATTR_SHORTCUTS.contains(
-                            ((Name) newAttribute).getIdentifier())) {
-                replace(targetAttribute, newAttribute);
-            } else {
-                StringBuilder builder = new StringBuilder();
-                builder.append(targetDom.toSource())
-                    .append(".attr(")
-                    .append(newAttribute.toSource()).append(", ")
-                    .append(attributeValue.toSource()).append(")");
-                AstNode newNode = StringToAst.parseAsFunctionCall(builder.toString());
-                replace(AstUtil.parentOfType(
-                        targetDom.getParent(), FunctionCall.class), newNode);
-            }
-        } else {
-            replace(targetAttribute, newAttribute);
-        }
-    }
-
-    public void replaceTargetDOM(AstNode newTarget) {
-        replace(targetDom, newTarget);
     }
 
     @Override
