@@ -104,6 +104,20 @@ public class RequestMutatorTest extends MutatorTestBase {
         assertNull(mutator.generateMutation(Iterables.get(visitor.getRequests(), 1)));
     }
 
+    @Test
+    public void testPassBlankResponseMutator() {
+        prepare();
+        ast = parseAstRoot("$.getJSON('fuga.php', handleSuccess);");
+        ast.visit(visitor);
+        Mutator mutator = new FakeBlankResponseBodyMutator();
+        Mutation mutation;
+        mutation = mutator.generateMutation(Iterables.get(visitor.getRequests(), 0));
+        assertEquals("handleSuccess", mutation.getOriginalNode().toSource());
+        assertEquals(
+                "function(data, textStatus, jqXHR) {(handleSuccess).apply(this, [/* blank response mutation */'', textStatus, jqXHR]);}",
+                mutation.getMutatingContent());
+    }
+
     private String jQueryRequest(
             String methodName, String url, String callback, String data) {
         return "$." + methodName + "(" + url + ", " + (data != null ? data +

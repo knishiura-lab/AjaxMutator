@@ -8,17 +8,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Request extends Mutatable {
-    AstNode url;
-    AstNode successHanlder;
-    AstNode failureHandler;
-    AstNode methodNode;
-    RequestMethod requestMethod;
-    ResponseType responseType;
-    AstNode parameters;
+    private AstNode url;
+    private AstNode successHanlder;
+    private AstNode failureHandler;
+    private AstNode methodNode;
+    private RequestMethod requestMethod;
+    private ResponseType responseType;
+    private AstNode parameters;
+    private Type type;
 
     public Request(AstNode node, AstNode url, AstNode successHandler,
             AstNode failureHandler, AstNode methodNode,
-            ResponseType responseType, AstNode parameters) {
+            ResponseType responseType, AstNode parameters, Type type) {
         super(node);
         this.url = url;
         this.successHanlder = successHandler;
@@ -27,6 +28,7 @@ public class Request extends Mutatable {
         requestMethod = parseRequestMethod(methodNode);
         this.responseType = responseType;
         this.parameters = parameters;
+        this.type = type;
     }
 
     public AstNode getUrl() {
@@ -57,6 +59,10 @@ public class Request extends Mutatable {
         return methodNode;
     }
 
+    public Type getType() {
+        return type;
+    }
+
     @Override
     public String toString() {
         return new StringBuilder()
@@ -76,6 +82,10 @@ public class Request extends Mutatable {
         /* We cannot know what request method is used if it is
            specified as variable and will be determined at run-time. */
         UNKNOWN
+    }
+
+    public enum Type {
+        JQUERY, UNKNOWN
     }
 
     private RequestMethod parseRequestMethod(AstNode requestMethodNode) {

@@ -1,21 +1,13 @@
 package jp.gr.java_conf.daisy.ajax_mutator.detector.jquery;
 
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.ImmutableSet;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.AbstractDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request.ResponseType;
+import org.mozilla.javascript.ast.*;
 
-import org.mozilla.javascript.ast.AstNode;
-import org.mozilla.javascript.ast.FunctionCall;
-import org.mozilla.javascript.ast.Name;
-import org.mozilla.javascript.ast.ObjectLiteral;
-import org.mozilla.javascript.ast.ObjectProperty;
-import org.mozilla.javascript.ast.PropertyGet;
-import org.mozilla.javascript.ast.StringLiteral;
-
-import com.google.common.collect.ImmutableSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Detector that detect jQuery's requests, which include $.ajax(url, param),
@@ -67,7 +59,7 @@ public class JQueryRequestDetector extends AbstractDetector<Request> {
                         parseParams(settings);
                         return new Request(functionCall, url, successHandler,
                                 failureHandler, requestMethodNode, responseType,
-                                data);
+                                data, Request.Type.JQUERY);
                     }
                 } else if (AJAX_SHORTCUT_METHODS.contains(methodNameString)) {
                     if (arguments.get(1) instanceof ObjectLiteral) {
@@ -85,7 +77,7 @@ public class JQueryRequestDetector extends AbstractDetector<Request> {
 
                     return new Request(functionCall, arguments.get(0),
                             successHandler, failureHandler, methodName,
-                            responseType, data);
+                            responseType, data, Request.Type.JQUERY);
                 }
             }
         }
