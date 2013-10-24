@@ -69,14 +69,30 @@ public class MutationListManager {
         return builder.toString();
     }
 
-    public String getGeneratedFileName() {
-        return MUTATION_LIST_FILE_NAME;
-    }
-
     public boolean generateMutationListFile() {
         return Util.writeToFile(
-                reportOutputDir + File.separator + MUTATION_LIST_FILE_NAME,
+                getMutationListFilePath(),
                 generateContentsOfMutationReport()
         );
+    }
+
+    public void readExistingMutationListFile() {
+        List<String> lines = Util.readFromFile(getMutationListFilePath());
+        String title = null;
+        for (String line: lines) {
+            String[] elms = line.split(",");
+            if (elms.length == 2) {
+                title = elms[0];
+                mutationTitles.add(title);
+                mutationFiles.put(title, new ArrayList<MutationFileInformation>());
+                continue;
+            }
+            mutationFiles.get(title).add(new MutationFileInformation(
+                    elms[0], elms[2], elms[1].equals("killed")));
+        }
+    }
+
+    private String getMutationListFilePath() {
+        return reportOutputDir + File.separator + MUTATION_LIST_FILE_NAME;
     }
 }

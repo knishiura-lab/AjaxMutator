@@ -85,26 +85,22 @@ public class MutationTestConductor {
     public void generateMutationsAndApplyTest(TestExecutor testExecutor, Set<Mutator> mutators) {
         unkilledMutantsInfo = ArrayListMultimap.create();
         checkIfSetuped();
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.start();
+        Stopwatch stopwatch = new Stopwatch().start();
 
-        mutationListManager = new MutationListManager(
-                mutationFileWriter.getDestinationDirectory());
+        mutationListManager = new MutationListManager(mutationFileWriter.getDestinationDirectory());
         generateMutationFiles(visitor, mutators);
         mutationListManager.generateMutationListFile();
 
-        conducting = true;
-        addShutdownHookToRestoreBackup();
-        int numberOfAppliedMutation = applyMutationAnalysis(testExecutor);
-        stopwatch.stop();
-        LOGGER.info("Updating mutation list file...");
-        mutationListManager.generateMutationListFile();
+        applyMutationAnalysis(testExecutor, stopwatch);
+    }
 
-        logExecutionDetail(numberOfAppliedMutation);
-        LOGGER.info("restoring backup file...");
-        Util.copyFile(pathToBackupFile(), context.getJsPath());
-        LOGGER.info("finished! "
-                + stopwatch.elapsedMillis() / 1000.0 + " sec.");
+    public void mutationAnalysisUsingExistingMutations(TestExecutor testExecutor) {
+        mutationListManager = new MutationListManager(mutationFileWriter.getDestinationDirectory());
+        mutationListManager.readExistingMutationListFile();
+        unkilledMutantsInfo = ArrayListMultimap.create();
+
+        checkIfSetuped();
+        applyMutationAnalysis(testExecutor, new Stopwatch().start());
     }
 
     private void generateMutationFiles(
@@ -164,6 +160,20 @@ public class MutationTestConductor {
                 );
             }
         }
+    }
+
+    private void applyMutationAnalysis(TestExecutor testExecutor, Stopwatch runningStopwatch) {
+        conducting = true;
+        addShutdownHookToRestoreBackup();
+        int numberOfAppliedMutation = applyMutationAnalysis(testExecutor);
+        runningStopwatch.stop();
+        LOGGER.info("Updating mutation list file...");
+        mutationListManager.generateMutationListFile();
+
+        logExecutionDetail(numberOfAppliedMutation);
+        LOGGER.info("restoring backup file...");
+        Util.copyFile(pathToBackupFile(), context.getJsPath());
+        LOGGER.info("finished! " + runningStopwatch.elapsedMillis() / 1000.0 + " sec.");
     }
 
     private int applyMutationAnalysis(TestExecutor testExecutor) {
