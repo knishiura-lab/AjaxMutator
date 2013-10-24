@@ -1,33 +1,26 @@
 package jp.gr.java_conf.daisy.ajax_mutator;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import java.util.*;
-
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import difflib.DiffUtils;
 import difflib.Patch;
 import difflib.PatchFailedException;
-import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.MutationFileInformation;
-
-import com.google.common.collect.Iterables;
-
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Mutatable;
-import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.*;
-
+import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.Mutation;
+import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.MutationFileInformation;
+import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.MutationFileWriter;
+import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.MutationListManager;
 import jp.gr.java_conf.daisy.ajax_mutator.mutator.Mutator;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Randomizer;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
-
 import org.mozilla.javascript.ast.AstRoot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.util.*;
 
 /**
  * Executor to apply mutation testing to target applications. <br>
@@ -87,15 +80,9 @@ public class MutationTestConductor {
     }
 
     /**
-     * Apply next mutation testing.
-     * <ol>
-     * <li>Apply mutation operator to target applications</li>
-     * <li>Execute test by using testExecutor passed in arguments</li>
-     * <li>Repair last applied mutation</li>
-     * <li>Repeat until all possible mutation operation executed</li>
-     * </ol>
+     * Generate mutation files corresponding to given {@link Mutator}, and then running test.
      */
-    public void conduct(TestExecutor testExecutor, Set<Mutator> mutators) {
+    public void generateMutationsAndApplyTest(TestExecutor testExecutor, Set<Mutator> mutators) {
         unkilledMutantsInfo = ArrayListMultimap.create();
         checkIfSetuped();
         Stopwatch stopwatch = new Stopwatch();
@@ -243,10 +230,6 @@ public class MutationTestConductor {
             return false;
         }
         return true;
-    }
-
-    public void conductWithJunit4(Set<Mutator> mutators, Class<?>... classes) {
-        conduct(new JUnitExecutor(classes), mutators);
     }
 
     private void checkIfSetuped() {
