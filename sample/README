@@ -1,5 +1,0 @@
-Files in this folder are samples using AjaxMutator.
-
-[LoginTest](https://github.com/knishiura-lab/AjaxMutator/blob/master/sample/src/main/java/jp/gr/java_conf/daisy/ajax_mutator/sample/LoginTest.java)
- is an example class to apply mutation analysis for
- [AjaxLogin](http://www.jamesdam.com/ajax_login/login.html).
