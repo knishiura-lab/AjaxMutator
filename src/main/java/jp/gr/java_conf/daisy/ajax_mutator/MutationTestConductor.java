@@ -208,8 +208,8 @@ public class MutationTestConductor {
     }
 
     private void logProgress(int finished, int total) {
-        LOGGER.info("{} in {} finished: {}%", finished, total,
-                Math.floor(finished / total * 1000) / 10);
+        LOGGER.info("{} in {} finished: {} %", finished, total,
+                Math.floor(finished * 1000.0 / total) / 10);
     }
 
     /**
