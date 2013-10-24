@@ -1,0 +1,164 @@
+  /* helpful stuffs:  
+  * { outline: 2px dotted red }
+  * * { outline: 2px dotted green }
+  * * * { outline: 2px dotted orange }
+  * * * * { outline: 2px dotted blue }
+  * * * * * { outline: 1px solid red }
+  * * * * * * { outline: 1px solid green }
+  * * * * * * * { outline: 1px solid orange }
+  * * * * * * * * { outline: 1px solid blue }
+*/
+
+#quizzy {
+  font-family:"Palatino", "Times", serif;
+  background: #f7f7f7;
+  border: 1px solid #f4f4f4;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  
+  /*
+   * NOTE: using position: absolute is ok here, but
+   * it will BREAK jquery loading (and your user won't be
+   * shown that data is loading). If you're ok with that
+   * go ahead. This doesn't break ie compatibility btw.
+   */
+}
+
+#quizzy p {
+  margin: 0px;
+}
+
+
+/*pick quiz screen*/
+#quizzy_load {
+  overflow: hidden;
+}
+
+#quizzy_load h1 {
+  margin: 2px;
+  text-align: center;
+  font-size: 16pt;
+}
+
+.quizzy_quiz_desc {
+  margin: 0px 3px 0px 23px;
+  padding: 2px;
+  border: solid 1px #e0e0e0;
+  background: #efefef;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+.quizzy_load_body {
+  height: 90%;
+}
+
+.quizzy_load_foot {
+  height: 10%;
+  text-align:right;
+  padding: 3px;
+}
+
+.quizzy_title{
+  text-align: center;
+  vertical-align: middle;
+  font-size: 18pt;
+  font-weight:bold;
+  border-bottom: solid 1px #999999;
+}
+
+/*question pane */
+
+.quizzy_q_opt_val {
+  float:none;
+  margin-left: 21px;
+}
+
+.quizzy_opt_best {
+  color: #00C800;
+  font-weight: bold;
+}
+
+.quizzy_opt_worst {
+  color: #B90000;
+}
+
+.quizzy_opt_mid {
+  color: #804000;
+}
+
+/*Completed Screen*/
+.quizzy_result h1 {
+  font-weight: bolder;
+  text-align: center;
+  font-size: 23pt;
+  margin: 2px 0px 2px 0px;
+}
+
+.quizzy_result span {
+  font-size: 16pt;
+  font-weight: bolder;
+}
+
+.quizzy_result_grade {
+  font-size: 20pt;
+}
+
+.quizzy_result_img {
+  text-align: center;
+}
+
+.quizzy_result_rank {
+  font-weight: bolder;
+  text-align: center;
+  font-size: 21pt;
+  margin: 2px 0px 2px 0px;
+}
+
+.quizzy_result_foot {
+  margin-top: 10px;
+  text-align: center;
+}
+
+/*Loading styling*/
+.loading {
+    background: #AAAAAA;
+    color: black;
+    font-weight: bold;
+    padding: 3px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+.loading-img, .loading-element {
+    background: transparent;
+    padding: 0px;
+}
+.loading.top {
+    -moz-border-radius-topleft: 0px;
+    -moz-border-radius-topright: 0px;
+    -webkit-border-top-left-radius: 0px;
+    -webkit-border-top-right-radius: 0px;
+}
+.loading.left {
+    -moz-border-radius-topleft: 0px;
+    -moz-border-radius-bottomleft: 0px;
+    -webkit-border-top-left-radius: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+}
+.loading.bottom {
+    -moz-border-radius-bottomleft: 0px;
+    -moz-border-radius-bottomright: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    -webkit-border-bottom-right-radius: 0px;
+}
+.loading.right {
+    -moz-border-radius-topright: 0px;
+    -moz-border-radius-bottomright: 0px;
+    -webkit-border-top-right-radius: 0px;
+    -webkit-border-bottom-right-radius: 0px;
+}
+.loading-masked { overflow: hidden; }
+.loading-error {
+    color: #FFF;
+    background: red;
+}

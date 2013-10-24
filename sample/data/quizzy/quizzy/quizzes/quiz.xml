@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<quizzes>
+  <quiz>
+    <title>About Japan</title>
+    <description>
+      <text>Some quizzes about Japan</text>
+      <img src="a.png" alt="a" />
+    </description>
+    <grading>
+      <range start="0" end="50">
+        <grade>B</grade>
+        <rank>Rank</rank>
+        <img src="b.png" alt="b" />
+      </range>
+      <range start="50" end="100">
+        <grade>A</grade>
+        <rank>Rank</rank>>
+        <img src="a.png" alt="a" />
+      </range>
+    </grading>
+    <question>
+      <text>What is the capital of Japan ?</text>
+        <img src="b.png" alt="a" />
+      <option>
+        <text>Tokyo</text>
+        <score>15</score>
+        <explanation>
+          <text>Yes, it is.</text>
+        <img src="a.png" alt="a" />
+        </explanation>
+      </option>
+      <option>
+        <text>Kyoto</text>
+        <score>0</score>
+        <explanation>
+          <text>It isn't ;(</text>
+        </explanation>
+      </option>
+      <option>
+        <text>Mie</text>
+        <score>0</score>
+        <explanation>
+          <text>I hope so, but it isn't.</text>
+        </explanation>
+      </option>
+    </question><question>
+      <text>Among following events, which one is on August?</text>
+      <option>
+        <text>Setsubun</text>
+        <score>5</score>
+        <explanation>
+          <text>It's on February</text>
+        </explanation>
+      </option>
+      <option>
+        <text>Obon</text>
+        <score>30</score>
+        <explanation>
+          <text>Exactly.</text>
+        </explanation>
+      </option>
+      <option>
+        <text>Tanabata</text>
+        <score>15</score>
+        <explanation>
+          <text>Usually, it's July 7th.</text>
+        </explanation>
+      </option>
+    </question>
+  </quiz>
+  
+  <quiz>
+    <title>Another Quiz</title>
+    <description>
+      <text>Under construction</text>
+    </description>
+  </quiz>
+</quizzes>
