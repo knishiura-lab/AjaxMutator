@@ -1,0 +1,3 @@
+Sample Test Case using WebDriver to test quizzy web application. We will explain how to use
+AjaxMutator by referring this project, but this project itself is independent from AjaxMutator.
+It's just a typical test case.
