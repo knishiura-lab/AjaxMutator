@@ -6,13 +6,18 @@
     <groupId>src.jp.gr.java_conf.daisy.ajax_mutator</groupId>
     <artifactId>AjaxMutator-sample</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>AjaxMutator</name>
-    <description>Mutation testing for Ajax applications</description>
+    <name>AjaxMutatorSample</name>
+    <description>This is a sample project to demonstrate the useage of AjaxMutator</description>
     <dependencies>
         <dependency>
             <groupId>src.jp.gr.java_conf.daisy.ajax_mutator</groupId>
             <artifactId>AjaxMutator</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>src.jp.gr.java_conf.daisy.ajax_mutator</groupId>
+          <artifactId>AjaxMutator-sample_test_case</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -32,7 +37,7 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>2.28.0</version>
+            <version>2.37.1</version>
         </dependency>
     </dependencies>
     <build>
