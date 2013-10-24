@@ -120,6 +120,7 @@ public class MutationTestConductor {
         generateMutationFiles(visitor.getDomAppendings(), mutators);
         generateMutationFiles(visitor.getDomSelections(), mutators);
         generateMutationFiles(visitor.getDomRemovals(), mutators);
+        generateMutationFiles(visitor.getAttributeModifications(), mutators);
 
         LOGGER.debug("Random values used for generating mutations: "
                 + Arrays.toString(Randomizer.getReturnedValues()));
