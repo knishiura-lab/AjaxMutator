@@ -49,6 +49,11 @@ public abstract class AbstractMutator<T extends Mutatable>
      * mutants.
      */
     protected boolean isEqual(AstNode node1, AstNode node2) {
+        if (node1 == null && node2 == null) {
+            return true;
+        } else if (node1 == null || node2 == null) {
+            return false;
+        }
         return node1.toSource().equals(node2.toSource());
     }
 }
