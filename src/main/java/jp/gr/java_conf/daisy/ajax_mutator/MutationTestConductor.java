@@ -40,6 +40,7 @@ public class MutationTestConductor {
     private ParserWithBrowser parser;
     private AstRoot astRoot;
     private boolean conducting;
+    private boolean dryRun;
     private MutateVisitor visitor;
     private String pathToJsFile;
 
@@ -80,6 +81,19 @@ public class MutationTestConductor {
     }
 
     /**
+     * Check how many mutants are generated and so on.
+     *
+     * @return Mapping of mutator classes and how many times it should be applied.
+     */
+    public Map<Mutator, Integer>  dryRun(Set<Mutator> mutators) {
+        dryRun = true;
+        checkIfSetuped();
+        mutationListManager = new MutationListManager(mutationFileWriter.getDestinationDirectory());
+        generateMutationFiles(visitor, mutators);
+        return numOfMutation;
+    }
+
+    /**
      * Generate mutation files corresponding to given {@link Mutator}, and then running test.
      */
     public void generateMutationsAndApplyTest(TestExecutor testExecutor, Set<Mutator> mutators) {
@@ -103,8 +117,11 @@ public class MutationTestConductor {
         applyMutationAnalysis(testExecutor, new Stopwatch().start());
     }
 
-    private void generateMutationFiles(
+    private Map<Mutator, Integer> numOfMutation;
+    private Map<Mutator, Integer> generateMutationFiles(
             MutateVisitor visitor, Set<Mutator> mutators) {
+        numOfMutation = new HashMap<Mutator, Integer>();
+
         // Events
         generateMutationFiles(visitor.getEventAttachments(), mutators);
         generateMutationFiles(
@@ -120,6 +137,7 @@ public class MutationTestConductor {
 
         LOGGER.debug("Random values used for generating mutations: "
                 + Arrays.toString(Randomizer.getReturnedValues()));
+        return numOfMutation;
     }
 
     private void generateMutationFiles(
@@ -139,12 +157,17 @@ public class MutationTestConductor {
         }
 
         for (Mutator mutator: applicableMutator) {
+            numOfMutation.put(mutator, 0);
             LOGGER.info("using {}", mutator.mutationName());
             for (Mutatable mutatable: mutatables) {
                 Mutation mutation = mutator.generateMutation(mutatable);
                 if (mutation == null) {
                     LOGGER.info("Cannot create mutation for {} by using {}",
                             mutatable, mutator.mutationName());
+                    continue;
+                }
+                numOfMutation.put(mutator, numOfMutation.get(mutator) + 1);
+                if (dryRun) {
                     continue;
                 }
                 File generatedFile = mutationFileWriter.writeToFile(mutation);
