@@ -59,6 +59,9 @@ public abstract class AbstractReplacingAmongMutator<T extends Mutatable>
     }
 
     private boolean include(AstNode mayParent, AstNode mayChild) {
+        if (mayParent == null || mayChild == null) {
+            return false;
+        }
         boolean parentStartsBeforeChild
                 = mayParent.getAbsolutePosition() < mayChild.getAbsolutePosition();
         boolean parentEndsAfterChild
