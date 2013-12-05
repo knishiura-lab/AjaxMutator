@@ -212,7 +212,7 @@ public class MutationTestConductor {
             LOGGER.info("Start applying {}", mutationDescription);
             for (MutationFileInformation mutationFileInformation:
                     mutationFiles.get(mutationDescription)) {
-                if (mutationFileInformation.isKilled()
+                if (mutationFileInformation.canBeSkipped()
                         || !applyMutationFile(original, mutationFileInformation)) {
                     continue;
                 }
@@ -221,7 +221,7 @@ public class MutationTestConductor {
                     unkilledMutantsInfo.put(mutationDescription, mutationFileInformation.toString());
                     LOGGER.info("mutant {} is not be killed", mutationDescription);
                 } else {
-                    mutationFileInformation.setKilled(true);
+                    mutationFileInformation.setState(MutationFileInformation.State.KILLED);
                 }
                 String message = testExecutor.getMessageOnLastExecution();
                 if (message != null) {

@@ -45,7 +45,7 @@ public class MutationListManager {
         int total = 0;
         for (List<MutationFileInformation> fileInfoList: mutationFiles.values()) {
             for (MutationFileInformation fileInfo: fileInfoList) {
-                if (!fileInfo.isKilled()) {
+                if (fileInfo.getState() == MutationFileInformation.State.NON_EQUIVALENT_LIVE) {
                     total++;
                 }
             }
@@ -88,7 +88,7 @@ public class MutationListManager {
                 continue;
             }
             mutationFiles.get(title).add(new MutationFileInformation(
-                    elms[0], elms[2], elms[1].equals("killed")));
+                    elms[0], elms[2], MutationFileInformation.State.fromString(elms[1])));
         }
     }
 
