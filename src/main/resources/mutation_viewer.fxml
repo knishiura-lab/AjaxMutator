@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<SplitPane dividerPositions="0.23809523809523808" focusTraversable="true" prefHeight="600.0"
+           prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+  <items>
+    <AnchorPane maxHeight="3000.0" maxWidth="2000.0" minHeight="0.0" minWidth="0.0"
+                prefHeight="600.0" prefWidth="200.0">
+      <children>
+        <ListView fx:id="mutationList" maxHeight="3000.0" maxWidth="2000.0" prefHeight="600.0"
+                  prefWidth="200.0"/>
+      </children>
+    </AnchorPane>
+    <AnchorPane maxHeight="3000.0" maxWidth="2000.0" minHeight="0.0" minWidth="0.0"
+                prefHeight="600.0" prefWidth="600.0">
+      <children>
+        <Label fx:id="mutationDetail" maxHeight="3000.0" maxWidth="2000.0" prefHeight="600.0"
+               prefWidth="600.0"/>
+      </children>
+    </AnchorPane>
+  </items>
+</SplitPane>
