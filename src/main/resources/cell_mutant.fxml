@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox prefHeight="50.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      maxHeight="3000" maxWidth="2000" fx:id="container" >
+  <children>
+    <Label fx:id="mutantName" text="" />
+    <Label fx:id="status" text="" />
+  </children>
+</HBox>
