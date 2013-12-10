@@ -2,10 +2,12 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutation_viewer;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.MutationFileInformation;
 import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.MutationListManager;
@@ -20,25 +22,33 @@ public class MutationViewerController implements Initializable {
     @FXML
     private ToggleButton toggleButtonUnkilled;
     @FXML
+    private Button saveButton;
+    @FXML
     private TreeView mutationTreeView;
     @FXML
     private Label mutationDetail;
 
-    private final String pathToMutantsDirectory;
     // JavaFX doesn't provide filter for TreeView, we need to modify the data structure directory.
     // list below is for storing original data removed during filter-like operation.
+    private final MutationListManager mutationListManager;
     private List<DeletionUnit> deletions = new ArrayList<DeletionUnit>();
 
     public MutationViewerController(String pathToMutantsDirectory) {
-        this.pathToMutantsDirectory = pathToMutantsDirectory;
+        mutationListManager = new MutationListManager(pathToMutantsDirectory);
+        mutationListManager.readExistingMutationListFile();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         initToggleButtons();
 
-        MutationListManager mutationListManager = new MutationListManager(pathToMutantsDirectory);
-        mutationListManager.readExistingMutationListFile();
+        saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                mutationListManager.generateMutationListFile();
+            }
+        });
+
         TreeItem<CellItem> root = new TreeItem<CellItem>();
         root.setExpanded(true);
         for (Map.Entry<String, List<MutationFileInformation>> entry: mutationListManager.getMutationFileInformationList().entrySet()) {

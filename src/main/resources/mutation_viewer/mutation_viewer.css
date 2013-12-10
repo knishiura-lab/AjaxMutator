@@ -1,3 +1,20 @@
+.saveButton {
+  -fx-border-image-source: url('file.png');
+  -fx-border-image-slice: 5 5 5 5 fill;
+  -fx-border-image-width: 5;
+  -fx-border-image-repeat: stretch;
+  -fx-border-color: null;
+  -fx-background-color: null;
+}
+
+.saveButton:hover {
+  -fx-border-image-source: url('file_hover.png');
+}
+
+.saveButton:pressed {
+  -fx-border-image-source: url('file_pressed.png');
+}
+
 .mutant {
   -fx-padding: 3 0 3 0;
 }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import java.net.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.Pane?>
-<?import java.net.URL?>
+<?import javafx.scene.layout.*?>
+
 <SplitPane dividerPositions="0.25" focusTraversable="true" maxHeight="-Infinity"
            maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0"
            prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
@@ -15,16 +16,18 @@
             <ToggleButton fx:id="toggleButtonAll" mnemonicParsing="false" text="All"/>
             <ToggleButton fx:id="toggleButtonUnkilled" mnemonicParsing="false"
                           text="Non-equivalent Unkilled"/>
+            <Button fx:id="saveButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0"
+                    styleClass="saveButton"/>
           </items>
         </ToolBar>
       </top>
       <center>
-        <TreeView styleClass="mutantList" fx:id="mutationTreeView" />
+        <TreeView fx:id="mutationTreeView" styleClass="mutantList"/>
       </center>
     </BorderPane>
     <Pane prefHeight="200.0" prefWidth="200.0">
       <children>
-        <Label fx:id="mutationDetail" maxHeight="3000.0" maxWidth="2000.0" />
+        <Label fx:id="mutationDetail" maxHeight="3000.0" maxWidth="2000.0"/>
       </children>
     </Pane>
   </items>
