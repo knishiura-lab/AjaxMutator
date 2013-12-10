@@ -16,7 +16,7 @@ public class MutationViewer extends Application {
     @Override
     public void start(Stage stage) throws Exception{
         checkArgs();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/mutation_viewer.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/mutation_viewer/mutation_viewer.fxml"));
         loader.setController(new MutationViewerController(
                 getParameters().getNamed().get(MUTANTS_DIRECTORY_KEY)));
         Parent root = (Parent) loader.load();

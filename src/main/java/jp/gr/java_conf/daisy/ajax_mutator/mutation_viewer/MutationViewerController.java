@@ -148,7 +148,7 @@ public class MutationViewerController implements Initializable {
             if (cellItem instanceof CellItemForMutationCategory) {
                 MutationCategoryCellController controller
                         = new MutationCategoryCellController((CellItemForMutationCategory) cellItem);
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/cell_category.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/mutation_viewer/cell_category.fxml"));
                 loader.setController(controller);
                 try {
                     loader.load();
@@ -159,7 +159,7 @@ public class MutationViewerController implements Initializable {
             } else if (cellItem instanceof CellItemForMutant) {
                 MutantCellController controller
                         = new MutantCellController((CellItemForMutant) cellItem);
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/cell_mutant.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/mutation_viewer/cell_mutant.fxml"));
                 loader.setController(controller);
                 try {
                     loader.load();
