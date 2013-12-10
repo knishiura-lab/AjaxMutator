@@ -16,7 +16,11 @@ public class CellItemForMutant implements CellItem {
 
     @Override
     public String getDisplayName() {
-        return mutationFileInformation.getFileName() + "(" + mutationFileInformation.getKilledStatusAsString() + ")";
+        return "#" + mutationFileInformation.getFileName().replace("mutant", "").replace(".diff", "");
+    }
+
+    public MutationFileInformation.State getState() {
+        return mutationFileInformation.getState();
     }
 
     public String getContent() {

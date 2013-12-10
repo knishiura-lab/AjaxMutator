@@ -4,9 +4,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import java.net.URL?>
-<SplitPane dividerPositions="0.23809523809523808" focusTraversable="true" maxHeight="-Infinity"
-           maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
-           prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<SplitPane dividerPositions="0.25" focusTraversable="true" maxHeight="-Infinity"
+           maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0"
+           prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <items>
     <BorderPane prefHeight="598.0" prefWidth="227.0">
       <top>
@@ -19,14 +19,12 @@
         </ToolBar>
       </top>
       <center>
-        <TreeView styleClass="mutantList" fx:id="mutationTreeView" prefHeight="200.0"
-                  prefWidth="200.0"/>
+        <TreeView styleClass="mutantList" fx:id="mutationTreeView" />
       </center>
     </BorderPane>
     <Pane prefHeight="200.0" prefWidth="200.0">
       <children>
-        <Label fx:id="mutationDetail" maxHeight="3000.0" maxWidth="2000.0" prefHeight="600.0"
-               prefWidth="600.0"/>
+        <Label fx:id="mutationDetail" maxHeight="3000.0" maxWidth="2000.0" />
       </children>
     </Pane>
   </items>

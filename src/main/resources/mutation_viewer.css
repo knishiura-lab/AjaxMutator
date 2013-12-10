@@ -1,0 +1,19 @@
+.mutant {
+  -fx-padding: 3 0 3 0;
+}
+
+.mutant .mutantName {
+  -fx-padding: 0 3 0 0;
+}
+
+.mutant .checkBox{
+  -fx-padding: 0 5 0 5;
+}
+
+.mutant .killed {
+  -fx-text-fill: #6f6f6f;
+}
+
+.mutant .unkilled {
+  -fx-font-weight: bold;
+}

@@ -4,9 +4,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox styleClass="mutant" fx:id="container" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" >
+<HBox fx:id="container" styleClass="mutant" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <Label fx:id="mutantName" text="" />
-    <Label fx:id="status" text="" />
+    <Label fx:id="mutantName" styleClass="mutantName" text="name" minWidth="40" />
+    <CheckBox fx:id="equivalentCheckBox" styleClass="checkBox" mnemonicParsing="false" text="equivalent" />
+    <Label fx:id="isKilledText" styleClass="isKilledText" text="killed" />
   </children>
 </HBox>
