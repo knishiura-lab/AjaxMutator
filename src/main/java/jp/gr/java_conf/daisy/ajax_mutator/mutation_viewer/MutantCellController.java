@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.MutationFileInformation;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -49,8 +50,12 @@ public class MutantCellController implements Initializable {
         equivalentCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+                if (newValue == null) {
+                    return;
+                }
                 // If mutant is equivalent, we don't care if it's killed or not.
                 isKilledText.setVisible(!newValue);
+                mutant.setState(newValue ? MutationFileInformation.State.EQUIVALENT : MutationFileInformation.State.EQUIVALENT);
             }
         });
     }

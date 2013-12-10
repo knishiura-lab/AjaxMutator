@@ -23,6 +23,10 @@ public class CellItemForMutant implements CellItem {
         return mutationFileInformation.getState();
     }
 
+    public void setState(MutationFileInformation.State state) {
+        mutationFileInformation.setState(state);
+    }
+
     public String getContent() {
         try {
             return Files.toString(new File(mutationFileInformation.getAbsolutePath()), Charset.defaultCharset());
