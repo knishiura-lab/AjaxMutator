@@ -27,7 +27,6 @@ public class MutationCategoryCellController implements Initializable {
     }
 
     public HBox getContainer() {
-        System.out.println(container + " | " + categoryName + " | " + numOfMutants);
         return container;
     }
 }

@@ -2,27 +2,27 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutation_viewer;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.util.Callback;
 import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.MutationFileInformation;
 import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.MutationListManager;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 public class MutationViewerController implements Initializable {
     @FXML
-    private ListView mutationList;
+    private ToggleButton toggleButtonAll;
+    @FXML
+    private ToggleButton toggleButtonUnkilled;
+    @FXML
+    private TreeView mutationTreeView;
     @FXML
     private Label mutationDetail;
 
@@ -34,41 +34,55 @@ public class MutationViewerController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        initToggleButtons();
+
         MutationListManager mutationListManager = new MutationListManager(pathToMutantsDirectory);
         mutationListManager.readExistingMutationListFile();
-        List<CellItem> cellItems = new ArrayList<CellItem>();
+        TreeItem<CellItem> root = new TreeItem<CellItem>();
+        root.setExpanded(true);
         for (Map.Entry<String, List<MutationFileInformation>> entry: mutationListManager.getMutationFileInformationList().entrySet()) {
             if (entry.getValue().size() == 0) {
                 continue;
             }
-            cellItems.add(new CellItemForMutationCategory(entry.getKey(), entry.getValue()));
+
+            TreeItem<CellItem> category = new TreeItem<CellItem>(
+                    new CellItemForMutationCategory(entry.getKey(), entry.getValue()));
+            root.getChildren().add(category);
             for (MutationFileInformation info: entry.getValue()) {
-                cellItems.add(new CellItemForMutant(info));
+                category.getChildren().add(new TreeItem<CellItem>(new CellItemForMutant(info)));
             }
+            category.setExpanded(true);
         }
-        mutationList.setItems(FXCollections.observableArrayList(cellItems));
-        mutationList.setCellFactory(new Callback<ListView<CellItem>, MutationListCell>() {
+        mutationTreeView.setShowRoot(false);
+        mutationTreeView.setRoot(root);
+        mutationTreeView.setCellFactory(new Callback<TreeView, TreeCell>() {
             @Override
-            public MutationListCell call(ListView listView) {
+            public MutationListCell call(TreeView treeView) {
                 return new MutationListCell();
             }
         });
-        mutationList.getSelectionModel().selectedItemProperty().addListener(
-                new ChangeListener<CellItem>() {
-                    public void changed(ObservableValue<? extends CellItem> observableValue,
-                                        CellItem oldValue, CellItem newValue) {
-                        if (newValue instanceof CellItemForMutationCategory) {
-                            mutationList.getSelectionModel().select(mutationList.getSelectionModel().getSelectedIndex());
-                            return;
-                        }
-
-                        mutationDetail.setText(((CellItemForMutant) newValue).getContent());
-                    }
-                });
-        mutationList.getSelectionModel().selectFirst();
+        mutationTreeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        mutationTreeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<CellItem>>() {
+            @Override
+            public void changed(ObservableValue<? extends TreeItem<CellItem>> observableValue,
+                                TreeItem<CellItem> oldValue, TreeItem<CellItem> newValue) {
+                if (newValue.getValue() instanceof CellItemForMutationCategory) {
+                    mutationDetail.setText(newValue.getValue().getDisplayName());
+                    return;
+                }
+                mutationDetail.setText(((CellItemForMutant) newValue.getValue()).getContent());
+            }
+        });
     }
 
-    private class MutationListCell extends ListCell<CellItem> {
+    private void initToggleButtons() {
+        ToggleGroup group = new ToggleGroup();
+        toggleButtonAll.setToggleGroup(group);
+        toggleButtonUnkilled.setToggleGroup(group);
+        toggleButtonAll.setSelected(true);
+    }
+
+    private class MutationListCell extends TreeCell<CellItem> {
         @Override
         protected void updateItem(CellItem cellItem, boolean isEmpty) {
             super.updateItem(cellItem, isEmpty);

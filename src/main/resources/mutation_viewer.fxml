@@ -1,25 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<SplitPane dividerPositions="0.23809523809523808" focusTraversable="true" prefHeight="600.0"
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import java.net.URL?>
+<SplitPane dividerPositions="0.23809523809523808" focusTraversable="true" maxHeight="-Infinity"
+           maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
            prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <items>
-    <AnchorPane maxHeight="3000.0" maxWidth="2000.0" minHeight="0.0" minWidth="0.0"
-                prefHeight="600.0" prefWidth="200.0">
-      <children>
-        <ListView fx:id="mutationList" maxHeight="3000.0" maxWidth="2000.0" prefHeight="600.0"
+    <BorderPane prefHeight="598.0" prefWidth="227.0">
+      <top>
+        <ToolBar xmlns:fx="http://javafx.com/fxml">
+          <items>
+            <ToggleButton fx:id="toggleButtonAll" mnemonicParsing="false" text="All"/>
+            <ToggleButton fx:id="toggleButtonUnkilled" mnemonicParsing="false"
+                          text="Non-equivalent Unkilled"/>
+          </items>
+        </ToolBar>
+      </top>
+      <center>
+        <TreeView styleClass="mutantList" fx:id="mutationTreeView" prefHeight="200.0"
                   prefWidth="200.0"/>
-      </children>
-    </AnchorPane>
-    <AnchorPane maxHeight="3000.0" maxWidth="2000.0" minHeight="0.0" minWidth="0.0"
-                prefHeight="600.0" prefWidth="600.0">
+      </center>
+    </BorderPane>
+    <Pane prefHeight="200.0" prefWidth="200.0">
       <children>
         <Label fx:id="mutationDetail" maxHeight="3000.0" maxWidth="2000.0" prefHeight="600.0"
                prefWidth="600.0"/>
       </children>
-    </AnchorPane>
+    </Pane>
   </items>
+
+  <stylesheets>
+    <URL value="@mutation_viewer.css"/>
+  </stylesheets>
 </SplitPane>
