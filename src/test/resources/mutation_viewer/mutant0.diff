@@ -1,0 +1,25 @@
+--- quizzy.js	2013-12-05 11:53:35.000000000 
++++ quizzy.js	2013-12-05 11:53:37.087900000 
+@@ -59,15 +59,7 @@
+-		$('.quizzy_quiz_lbl').click(function () {
+-			// ユーザがある選択肢をクリックした場合
+-			//the user clicked on one of the options
+-			// IDの取得
+-			//get the id
+-			var thisId = $(this).attr('id');
+-			
+-			// IDからそのインデックスを習得(計算)し，selOpt変数にインデックスを代入
+-			//hack out the index and set selOpt to it
+-			var selQuiz = thisId.substring(thisId.lastIndexOf("lbl") + 3) * 1;
+-			
+-			// ラジオボタンが選択されている状態にする
+-			//make sure that the radio button is selected
+-			$('#quizzy_quiz_opt'+selQuiz).click();
+-		});
++		$('.quizzy_quiz_lbl').click(function() {
++  var thisId = $(this).attr('id');
++  var selQuiz = thisId.substring(thisId.lastIndexOf("opt") + 3) * 1;
++  $('.quizzy_quiz_desc[id!=quizzy_quiz_desc' + selQuiz + ']').slideUp(slideSpeed, function() {
++  $('#quizzy_quiz_desc' + selQuiz).slideDown(slideSpeed);
++});
++});
