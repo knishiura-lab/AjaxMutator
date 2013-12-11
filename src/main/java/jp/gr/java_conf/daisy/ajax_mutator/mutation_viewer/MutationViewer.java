@@ -11,6 +11,7 @@ import javafx.stage.Stage;
  */
 public class MutationViewer extends Application {
     private static final String WINDOW_TITLE = "AjaxMutator - MutationViewer";
+    private static final String BASE_DIRECTORY_KEY = "base_dir";
     private static final String MUTANTS_DIRECTORY_KEY = "mutants_dir";
 
     @Override
@@ -18,7 +19,8 @@ public class MutationViewer extends Application {
         checkArgs();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/mutation_viewer/mutation_viewer.fxml"));
         loader.setController(new MutationViewerController(
-                getParameters().getNamed().get(MUTANTS_DIRECTORY_KEY)));
+                getParameters().getNamed().get(MUTANTS_DIRECTORY_KEY),
+                getParameters().getNamed().get(BASE_DIRECTORY_KEY)));
         Parent root = (Parent) loader.load();
         stage.setTitle(WINDOW_TITLE);
         stage.setScene(new Scene(root));
@@ -29,6 +31,10 @@ public class MutationViewer extends Application {
         if (!getParameters().getNamed().containsKey(MUTANTS_DIRECTORY_KEY)) {
             throw new IllegalArgumentException("You must specify the directory of mutants as following parameter\n" +
                     "'--" + MUTANTS_DIRECTORY_KEY + "=(path)");
+        }
+        if (!getParameters().getNamed().containsKey(BASE_DIRECTORY_KEY)) {
+            throw new IllegalArgumentException("You must specify base directory as following parameter\n" +
+                    "'--" + BASE_DIRECTORY_KEY + "=(path)");
         }
     }
 

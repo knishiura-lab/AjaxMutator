@@ -28,6 +28,14 @@ class UnifiedDiffParser {
             return startLine;
         }
 
+        public String getLines() {
+            if (originalLines.size() == 1) {
+                return Integer.toString(startLine);
+            } else {
+                return startLine + "-" + (startLine + originalLines.size() - 1);
+            }
+        }
+
         public List<String> getOriginalLines() {
             return originalLines;
         }

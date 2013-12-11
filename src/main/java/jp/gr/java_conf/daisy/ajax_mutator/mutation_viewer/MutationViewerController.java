@@ -3,21 +3,34 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutation_viewer;
 import com.google.common.base.Joiner;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.util.Callback;
 import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.MutationFileInformation;
 import jp.gr.java_conf.daisy.ajax_mutator.mutation_generator.MutationListManager;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
 public class MutationViewerController implements Initializable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MutationViewerController.class);
+    private final String pathToBaseDir;
     @FXML
     private ToggleButton toggleButtonAll;
     @FXML
@@ -29,16 +42,23 @@ public class MutationViewerController implements Initializable {
     @FXML
     private Label fileInfo;
     @FXML
-    private Label mutationDetail;
+    private WebView mutationDetail;
+    @FXML
+    private ScrollPane mutationDetailScrollPane;
+    @FXML
+    private AnchorPane mutationDetailAnchorPane;
+    private UnifiedDiffParser.Mutation mutation;
+    private List<String> originalFileContents;
 
     // JavaFX doesn't provide filter for TreeView, we need to modify the data structure directory.
     // list below is for storing original data removed during filter-like operation.
     private final MutationListManager mutationListManager;
     private List<DeletionUnit> deletions = new ArrayList<DeletionUnit>();
 
-    public MutationViewerController(String pathToMutantsDirectory) {
+    public MutationViewerController(String pathToMutantsDirectory, String pathToBaseDirectory) {
         mutationListManager = new MutationListManager(pathToMutantsDirectory);
         mutationListManager.readExistingMutationListFile();
+        this.pathToBaseDir = pathToBaseDirectory;
     }
 
     @Override
@@ -76,28 +96,49 @@ public class MutationViewerController implements Initializable {
             }
         });
         mutationTreeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        setupDetailWebView();
         mutationTreeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<CellItem>>() {
             @Override
             public void changed(ObservableValue<? extends TreeItem<CellItem>> observableValue,
                                 TreeItem<CellItem> oldValue, TreeItem<CellItem> newValue) {
                 if (newValue == null || newValue.getValue() == null) {
-                    mutationDetail.setText("");
+                    mutationDetail.getEngine().load("about:blank");
                     return;
                 }
                 if (newValue.getValue() instanceof CellItemForMutationCategory) {
                     fileInfo.setText(newValue.getValue().getDisplayName());
-                    mutationDetail.setText("");
+                    mutationDetail.getEngine().load("about:blank");
                     return;
                 }
-                String content = ((CellItemForMutant) newValue.getValue()).getContent();
+                CellItemForMutant item = (CellItemForMutant) newValue.getValue();
+                String content = item.getContent();
                 UnifiedDiffParser parser = new UnifiedDiffParser();
-                UnifiedDiffParser.Mutation mutation
-                        = parser.parse(Arrays.asList(content.split(System.lineSeparator())));
+                mutation = parser.parse(Arrays.asList(content.split(System.lineSeparator())));
                 fileInfo.setText(getFileInfo(mutation));
-                mutationDetail.setText(Joiner.on("\n").join(mutation.getOriginalLines())
-                + "\n\n" + Joiner.on("\n").join(mutation.getMutatedLines()));
+                originalFileContents = new ArrayList<String>();
+                try {
+                    File originalFile = new File(
+                            pathToBaseDir + File.separator + mutation.getFileName());
+                    Scanner scanner = new Scanner(new FileInputStream(originalFile));
+                    while (scanner.hasNext()) {
+                        originalFileContents.add(scanner.nextLine());
+                    }
+                } catch (FileNotFoundException e) {
+                    LOGGER.error("Fail to open file " + mutation.getFileName() + " under " + pathToBaseDir);
+                }
+                mutationDetail.getEngine().load(getClass().getResource(
+                        "/mutation_viewer/mutation_detail_template.html").toExternalForm() + "#originalContentHeader");
             }
         });
+
+        mutationDetailScrollPane.viewportBoundsProperty().addListener(
+                (ChangeListener<? super Bounds>) new ChangeListener<Bounds>() {
+                    @Override public void changed(ObservableValue<? extends Bounds> observableValue,
+                                                  Bounds oldBounds, Bounds newBounds) {
+                        mutationDetailAnchorPane.setPrefSize(newBounds.getWidth(), newBounds.getHeight());
+                    }
+                });
+
     }
 
     private void initToggleButtons() {
@@ -124,13 +165,11 @@ public class MutationViewerController implements Initializable {
 
     private String getFileInfo(UnifiedDiffParser.Mutation mutation) {
         StringBuilder builder = new StringBuilder();
-        builder.append(mutation.getFileName()).append("    line" + mutation.getStartLine());
+        builder.append(mutation.getFileName()).append("    line").append(mutation.getLines()).append(" ");
         if (mutation.getOriginalLines().size() == 1) {
-            builder.append(" is");
+            builder.append("is");
         } else {
-            builder.append("-")
-                    .append(mutation.getStartLine() + mutation.getOriginalLines().size() - 1)
-                    .append(" are");
+            builder.append("are");
         }
         return builder.append(" mutated").toString();
     }
@@ -172,6 +211,42 @@ public class MutationViewerController implements Initializable {
                 indexOfCategory++;
             }
         }
+    }
+
+    private void setupDetailWebView() {
+        final WebEngine engine = mutationDetail.getEngine();
+        engine.setJavaScriptEnabled(true);
+        engine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
+            @Override
+            public void changed(ObservableValue<? extends Worker.State> observableValue, Worker.State state, Worker.State newState) {
+                LOGGER.info("state changed" +  newState + engine.getLocation());
+                if (newState == Worker.State.SUCCEEDED ) {
+                    List<String> contentsBeforeMutation = originalFileContents.subList(
+                            0,
+                            mutation.getStartLine() - 1);
+                    List<String> contentsAfterMutation = originalFileContents.subList(
+                            mutation.getStartLine() + mutation.getOriginalLines().size() - 1,
+                            originalFileContents.size());
+                    engine.executeScript(
+                            "var myTask = setInterval(function() {"
+                            + "if (document.readyState !== 'complete') return;"
+                            + "clearInterval(myTask);       "
+                            + "new MutationDetailViewer()"
+                            + ".setFileName(\"" + mutation.getFileName() + "\")"
+                            + ".setLines(\"" + mutation.getLines() + "\")"
+                            + ".setOriginal(\"" + escapeAndJoin(mutation.getOriginalLines())+ "\")"
+                            + ".setMutated(\"" + escapeAndJoin(mutation.getMutatedLines()) + "\")"
+                            + ".setContentBeforeMutation(\"" + escapeAndJoin(contentsBeforeMutation) + "\")"
+                            + ".setContentAfterMutation(\"" + escapeAndJoin(contentsAfterMutation) + "\");"
+                            + "document.body.style.visibility = 'visible';"
+                            + "}, 100);");
+                }
+            }
+        });
+    }
+
+    private String escapeAndJoin(List<String> jsSentences) {
+        return StringEscapeUtils.escapeEcmaScript(Joiner.on("<br>").join(jsSentences));
     }
 
     private class MutationListCell extends TreeCell<CellItem> {

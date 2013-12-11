@@ -4,6 +4,7 @@
 <?import java.net.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
 
 <SplitPane dividerPositions="0.25" focusTraversable="true" maxHeight="-Infinity"
            maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0"
@@ -32,16 +33,13 @@
                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
       </top>
       <center>
-        <ScrollPane xmlns:fx="http://javafx.com/fxml">
+        <ScrollPane fx:id="mutationDetailScrollPane" xmlns:fx="http://javafx.com/fxml">
           <content>
-            <AnchorPane>
+            <AnchorPane fx:id="mutationDetailAnchorPane">
               <children>
-                <VBox AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                  <children>
-                    <Label fx:id="mutationDetail" maxHeight="3000.0" maxWidth="2000.0"
-                           text="content"/>
-                  </children>
-                </VBox>
+                <WebView fx:id="mutationDetail" AnchorPane.bottomAnchor="0.0"
+                         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                         AnchorPane.topAnchor="0.0"/>
               </children>
             </AnchorPane>
           </content>
