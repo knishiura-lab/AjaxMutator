@@ -7,7 +7,8 @@
 
 <SplitPane dividerPositions="0.25" focusTraversable="true" maxHeight="-Infinity"
            maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0"
-           prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+           prefWidth="1200.0" xmlns="http://javafx.com/javafx/8"
+           xmlns:fx="http://javafx.com/fxml/1">
   <items>
     <BorderPane prefHeight="598.0" prefWidth="227.0">
       <top>
@@ -25,11 +26,28 @@
         <TreeView fx:id="mutationTreeView" styleClass="mutantList"/>
       </center>
     </BorderPane>
-    <Pane prefHeight="200.0" prefWidth="200.0">
-      <children>
-        <Label fx:id="mutationDetail" maxHeight="3000.0" maxWidth="2000.0"/>
-      </children>
-    </Pane>
+    <BorderPane prefHeight="200.0" prefWidth="200.0">
+      <top>
+        <Label fx:id="fileInfo" styleClass="fileInfoLabel" AnchorPane.leftAnchor="0.0"
+               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+      </top>
+      <center>
+        <ScrollPane xmlns:fx="http://javafx.com/fxml">
+          <content>
+            <AnchorPane>
+              <children>
+                <VBox AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <children>
+                    <Label fx:id="mutationDetail" maxHeight="3000.0" maxWidth="2000.0"
+                           text="content"/>
+                  </children>
+                </VBox>
+              </children>
+            </AnchorPane>
+          </content>
+        </ScrollPane>
+      </center>
+    </BorderPane>
   </items>
 
   <stylesheets>

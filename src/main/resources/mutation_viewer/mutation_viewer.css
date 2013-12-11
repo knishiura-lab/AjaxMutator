@@ -1,3 +1,5 @@
+/*  Right pane */
+/* -- Menu -- */
 .saveButton {
   -fx-border-image-source: url('file.png');
   -fx-border-image-slice: 5 5 5 5 fill;
@@ -15,6 +17,7 @@
   -fx-border-image-source: url('file_pressed.png');
 }
 
+/* -- TreeView -- */
 .mutant {
   -fx-padding: 3 0 3 0;
 }
@@ -33,4 +36,9 @@
 
 .mutant .unkilled {
   -fx-font-weight: bold;
+}
+
+/* Left pane */
+.fileInfoLabel {
+  -fx-padding: 5;
 }

@@ -1,5 +1,6 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutation_viewer;
 
+import com.google.common.base.Joiner;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -25,6 +26,8 @@ public class MutationViewerController implements Initializable {
     private Button saveButton;
     @FXML
     private TreeView mutationTreeView;
+    @FXML
+    private Label fileInfo;
     @FXML
     private Label mutationDetail;
 
@@ -82,10 +85,17 @@ public class MutationViewerController implements Initializable {
                     return;
                 }
                 if (newValue.getValue() instanceof CellItemForMutationCategory) {
-                    mutationDetail.setText(newValue.getValue().getDisplayName());
+                    fileInfo.setText(newValue.getValue().getDisplayName());
+                    mutationDetail.setText("");
                     return;
                 }
-                mutationDetail.setText(((CellItemForMutant) newValue.getValue()).getContent());
+                String content = ((CellItemForMutant) newValue.getValue()).getContent();
+                UnifiedDiffParser parser = new UnifiedDiffParser();
+                UnifiedDiffParser.Mutation mutation
+                        = parser.parse(Arrays.asList(content.split(System.lineSeparator())));
+                fileInfo.setText(getFileInfo(mutation));
+                mutationDetail.setText(Joiner.on("\n").join(mutation.getOriginalLines())
+                + "\n\n" + Joiner.on("\n").join(mutation.getMutatedLines()));
             }
         });
     }
@@ -110,6 +120,19 @@ public class MutationViewerController implements Initializable {
                 }
             }
         });
+    }
+
+    private String getFileInfo(UnifiedDiffParser.Mutation mutation) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(mutation.getFileName()).append("    line" + mutation.getStartLine());
+        if (mutation.getOriginalLines().size() == 1) {
+            builder.append(" is");
+        } else {
+            builder.append("-")
+                    .append(mutation.getStartLine() + mutation.getOriginalLines().size() - 1)
+                    .append(" are");
+        }
+        return builder.append(" mutated").toString();
     }
 
     synchronized private void restoreLastDeletion() {
