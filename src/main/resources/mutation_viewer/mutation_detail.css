@@ -1,0 +1,50 @@
+body {
+  padding: 0;
+  margin: 0;
+  font-family: monospace;
+  color: #111;
+}
+
+#container {
+  border: 1px solid #cfcfcf;
+  max-width: 100em;
+}
+
+.sectionHeader, .editor {
+  padding: 10px;
+}
+
+.sectionHeader {
+  text-align: center;
+}
+
+.editor {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+#originalFileHeader {
+  border-bottom: 1px solid #d3d3d3;
+}
+
+#originalContentHeader {
+  background-color: #ffabab;
+}
+
+#originalContent {
+  background-color: #fcd3d3;
+  color: #000;
+}
+
+#originalToMutatedArrow {
+  text-align: center;
+}
+
+#mutatedContentHeader {
+  background-color: #b2ffcf;
+}
+
+#mutatedContent {
+  background-color: #cfffe0;
+  color: #000;
+}
