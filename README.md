@@ -28,6 +28,9 @@ And then, you can compile AjaxMutator by
 See [/sample](https://github.com/knishiura-lab/AjaxMutator/tree/master/sample) to check how to use
 AjaxMutator by running example.
 
+### License
+MIT
+
 ### Publication
 **Mutation Analysis for JavaScript Web Applications Testing**  
 Kazuki Nishiura, Yuta Maezawa, Hironori Washizaki and Shinichi Honiden  
