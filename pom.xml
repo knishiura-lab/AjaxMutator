@@ -92,6 +92,11 @@
         </configuration>
         <version>2.4</version>
       </plugin>
+      <plugin>
+        <groupId>com.zenjava</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>2.0</version>
+      </plugin>
     </plugins>
   </build>
 </project>
