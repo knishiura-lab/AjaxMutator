@@ -20,6 +20,8 @@
                           text="Non-equivalent Unkilled"/>
             <Button fx:id="saveButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0"
                     styleClass="saveButton"/>
+            <Button fx:id="reloadButton" mnemonicParsing="false" styleClass="reloadButton"
+                    text="Reload"/>
           </items>
         </ToolBar>
       </top>

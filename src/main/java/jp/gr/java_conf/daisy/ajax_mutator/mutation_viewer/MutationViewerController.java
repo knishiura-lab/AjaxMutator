@@ -38,6 +38,8 @@ public class MutationViewerController implements Initializable {
     @FXML
     private Button saveButton;
     @FXML
+    private Button reloadButton;
+    @FXML
     private TreeView mutationTreeView;
     @FXML
     private Label fileInfo;
@@ -71,30 +73,15 @@ public class MutationViewerController implements Initializable {
                 mutationListManager.generateMutationListFile();
             }
         });
-
-        TreeItem<CellItem> root = new TreeItem<CellItem>();
-        root.setExpanded(true);
-        for (Map.Entry<String, List<MutationFileInformation>> entry: mutationListManager.getMutationFileInformationList().entrySet()) {
-            if (entry.getValue().size() == 0) {
-                continue;
-            }
-
-            TreeItem<CellItem> category = new TreeItem<CellItem>(
-                    new CellItemForMutationCategory(entry.getKey(), entry.getValue()));
-            root.getChildren().add(category);
-            for (MutationFileInformation info: entry.getValue()) {
-                category.getChildren().add(new TreeItem<CellItem>(new CellItemForMutant(info)));
-            }
-            category.setExpanded(true);
-        }
-        mutationTreeView.setShowRoot(false);
-        mutationTreeView.setRoot(root);
-        mutationTreeView.setCellFactory(new Callback<TreeView, TreeCell>() {
+        reloadButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
-            public MutationListCell call(TreeView treeView) {
-                return new MutationListCell();
+            public void handle(MouseEvent mouseEvent) {
+                mutationListManager.readExistingMutationListFile();
+                initMutationListTreeView();
             }
         });
+
+        initMutationListTreeView();
         mutationTreeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         setupDetailWebView();
         mutationTreeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<CellItem>>() {
@@ -159,6 +146,32 @@ public class MutationViewerController implements Initializable {
                 } else if (toggleButtonUnkilled.isSelected()) {
                     applyFilterByDeletion();
                 }
+            }
+        });
+    }
+
+    private void initMutationListTreeView() {
+        TreeItem<CellItem> root = new TreeItem<CellItem>();
+        root.setExpanded(true);
+        for (Map.Entry<String, List<MutationFileInformation>> entry: mutationListManager.getMutationFileInformationList().entrySet()) {
+            if (entry.getValue().size() == 0) {
+                continue;
+            }
+
+            TreeItem<CellItem> category = new TreeItem<CellItem>(
+                    new CellItemForMutationCategory(entry.getKey(), entry.getValue()));
+            root.getChildren().add(category);
+            for (MutationFileInformation info: entry.getValue()) {
+                category.getChildren().add(new TreeItem<CellItem>(new CellItemForMutant(info)));
+            }
+            category.setExpanded(true);
+        }
+        mutationTreeView.setShowRoot(false);
+        mutationTreeView.setRoot(root);
+        mutationTreeView.setCellFactory(new Callback<TreeView, TreeCell>() {
+            @Override
+            public MutationListCell call(TreeView treeView) {
+                return new MutationListCell();
             }
         });
     }
