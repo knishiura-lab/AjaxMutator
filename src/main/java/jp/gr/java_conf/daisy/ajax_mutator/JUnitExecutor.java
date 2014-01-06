@@ -1,15 +1,15 @@
 package jp.gr.java_conf.daisy.ajax_mutator;
 
+import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import org.junit.Test;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
 
 /**
  * TestExecutor for testclasses written in Junit4.
@@ -52,8 +52,13 @@ public class JUnitExecutor implements TestExecutor {
             messageBuilder.append(result.getFailureCount())
                 .append(" tests failed within ").append(result.getRunCount())
                 .append('\n');
-            for (Failure failure: result.getFailures())
+            for (Failure failure: result.getFailures()) {
+                if (failure.getDescription().getMethodName() == null) {
+                    testSucceed.put("setup or teardown", false);
+                    continue;
+                }
                 testSucceed.put(failure.getDescription().getMethodName(), false);
+            }
             for (Map.Entry<String, Boolean> entry: testSucceed.entrySet())
                 messageBuilder.append(entry.getValue() ? 'x' : 'o').append(' ');
             messageBuilder.append("o");
