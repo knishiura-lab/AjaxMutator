@@ -1,9 +1,6 @@
 package jp.gr.java_conf.daisy.ajax_mutator;
 
-import java.util.Set;
-import java.util.TreeSet;
-
-import com.google.common.collect.UnmodifiableIterator;
+import com.google.common.collect.ImmutableSet;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.AbstractDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.MutationPointDetector;
@@ -16,13 +13,13 @@ import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryDOMSelectionDete
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryEventAttachmentDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryRequestDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.*;
-
 import org.mozilla.javascript.ast.Assignment;
 import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.FunctionCall;
 import org.mozilla.javascript.ast.NodeVisitor;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Visitor for JavaScript's AST to get information needed to apply mutation
@@ -210,7 +207,7 @@ public class MutateVisitor implements NodeVisitor {
     public static MutateVisitorBuilder defaultBuilder() {
         MutateVisitorBuilder builder = new MutateVisitorBuilder();
         builder.setAttributeModificationDetectors(
-                ImmutableSet.of(new AttributeAssignmentDetector()));
+                ImmutableSet.of(new AttributeAssignmentDetector(), new SetAttributeDetector()));
         builder.setDomAppendingDetectors(
                 ImmutableSet.of(new AppendChildDetector()));
         builder.setDomCreationDetectors(
@@ -231,7 +228,8 @@ public class MutateVisitor implements NodeVisitor {
         MutateVisitorBuilder builder = new MutateVisitorBuilder();
         builder.setAttributeModificationDetectors(
                 ImmutableSet.of(
-                        new AttributeAssignmentDetector(), new JQueryAttributeModificationDetector()));
+                        new AttributeAssignmentDetector(), new SetAttributeDetector(),
+                        new JQueryAttributeModificationDetector()));
         builder.setDomAppendingDetectors(
                 ImmutableSet.of(new AppendChildDetector()));
         builder.setDomCreationDetectors(
