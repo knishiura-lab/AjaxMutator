@@ -55,6 +55,9 @@ public abstract class AbstractReplacingAmongMutator<T extends Mutatable>
                         focusedNode, formatAccordingTo(candidate, focusedNode));
             }
         }
+        if (getDefaultReplacingNode() != null && getDefaultReplacingNode().toSource() != focusedNode.toSource()) {
+            return new Mutation(focusedNode, formatAccordingTo(getDefaultReplacingNode(), focusedNode));
+        }
         return null;
     }
 
@@ -87,5 +90,15 @@ public abstract class AbstractReplacingAmongMutator<T extends Mutatable>
     protected String formatAccordingTo(
             AstNode mutatingNode, AstNode mutatedNode) {
         return mutatingNode.toSource();
+    }
+
+    /**
+     * Subclass can override this method to specify what should be used when no replacing candidate
+     * found. Default implementation returns null, i.e., no replacement occur.
+     *
+     * @return node that is used for replacement if no other replacing candidate found.
+     */
+    public AstNode getDefaultReplacingNode() {
+        return null;
     }
 }

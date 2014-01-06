@@ -2,14 +2,7 @@ package jp.gr.java_conf.daisy.ajax_mutator.util;
 
 import jp.gr.java_conf.daisy.ajax_mutator.JSType;
 import jp.gr.java_conf.daisy.ajax_mutator.ParserWithBrowser;
-
-import org.mozilla.javascript.ast.Assignment;
-import org.mozilla.javascript.ast.AstNode;
-import org.mozilla.javascript.ast.AstRoot;
-import org.mozilla.javascript.ast.ElementGet;
-import org.mozilla.javascript.ast.ExpressionStatement;
-import org.mozilla.javascript.ast.FunctionCall;
-import org.mozilla.javascript.ast.PropertyGet;
+import org.mozilla.javascript.ast.*;
 
 /**
  * Set of static method to create AstNode
@@ -32,9 +25,11 @@ public class StringToAst {
         AstRoot ast = parseAstRoot(javaScriptSnippet);
 
         try {
-            @SuppressWarnings("unchecked")
-            T ret = (T) ((ExpressionStatement) ast.getFirstChild()).getExpression();
-            return ret;
+            if (ast.getFirstChild() instanceof ExpressionStatement) {
+                return  (T) ((ExpressionStatement) ast.getFirstChild()).getExpression();
+            } else {
+                return  (T) ast.getFirstChild();
+            }
         } catch (ClassCastException e) {
             System.err.println(
                     javaScriptSnippet + " cannot parsed as " + type.getName());
@@ -46,12 +41,20 @@ public class StringToAst {
         return parseAsType(FunctionCall.class, javaScriptSnippet);
     }
 
+    public static FunctionNode parseAsFunctionNode(String javaScriptSnippet) {
+        return parseAsType(FunctionNode.class, javaScriptSnippet);
+    }
+
     public static Assignment parseAsAssignment(String javaScriptSnippet) {
         return parseAsType(Assignment.class, javaScriptSnippet);
     }
 
     public static PropertyGet parseAsPropertyGet(String javaScriptSnippet) {
         return parseAsType(PropertyGet.class, javaScriptSnippet);
+    }
+
+    public static StringLiteral parseAsStringLiteral(String javaScriptSnippet) {
+        return parseAsType(StringLiteral.class, javaScriptSnippet);
     }
 
     public static String createParentNodeAsString(AstNode node, JSType domType) {

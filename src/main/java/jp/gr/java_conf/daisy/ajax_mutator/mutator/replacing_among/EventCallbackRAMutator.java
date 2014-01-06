@@ -1,6 +1,7 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among;
 
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
+import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
 import org.mozilla.javascript.ast.AstNode;
 
 import java.util.Collection;
@@ -17,5 +18,10 @@ public class EventCallbackRAMutator
     @Override
     protected AstNode getFocusedNode(EventAttachment node) {
         return node.getCallback();
+    }
+
+    @Override
+    public AstNode getDefaultReplacingNode() {
+        return StringToAst.parseAsFunctionNode("function(){/* no-op function */}");
     }
 }

@@ -2,6 +2,7 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitor;
 import jp.gr.java_conf.daisy.ajax_mutator.MutateVisitorBuilder;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryRequestDetector;
@@ -47,6 +48,10 @@ public class RequestMutatorTest extends MutatorTestBase {
         assertEquals(urls[1], mutation.getMutatingContent());
         mutation = mutator.generateMutation(Iterables.get(requests, 1));
         assertEquals(urls[0], mutation.getMutatingContent());
+
+        mutator = new RequestUrlRAMutator(Sets.newHashSet(Iterables.limit(requests, 1)));
+        mutation = mutator.generateMutation(Iterables.get(requests, 0));
+        assertEquals("'http://google.com'", mutation.getMutatingContent());
     }
 
     @Test

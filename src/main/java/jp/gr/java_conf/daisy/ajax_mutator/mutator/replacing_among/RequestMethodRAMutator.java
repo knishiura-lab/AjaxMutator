@@ -2,6 +2,7 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutator.replacing_among;
 
 import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryRequestDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
+import jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst;
 import org.mozilla.javascript.ast.AstNode;
 import org.mozilla.javascript.ast.StringLiteral;
 
@@ -36,5 +37,10 @@ public class RequestMethodRAMutator
             return ((StringLiteral) mutatingNode).getValue();
         }
         return super.formatAccordingTo(mutatingNode, mutatedNode);
+    }
+
+    @Override
+    public AstNode getDefaultReplacingNode() {
+        return StringToAst.parseAsStringLiteral("'get'");
     }
 }
