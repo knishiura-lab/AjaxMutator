@@ -8,10 +8,7 @@ import jp.gr.java_conf.daisy.ajax_mutator.detector.dom_manipulation_detector.*;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AddEventListenerDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.AttachEventDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.TimerEventDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryAttributeModificationDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryDOMSelectionDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryEventAttachmentDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.JQueryRequestDetector;
+import jp.gr.java_conf.daisy.ajax_mutator.detector.jquery.*;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.*;
 import org.mozilla.javascript.ast.Assignment;
 import org.mozilla.javascript.ast.AstNode;
@@ -231,7 +228,7 @@ public class MutateVisitor implements NodeVisitor {
                         new AttributeAssignmentDetector(), new SetAttributeDetector(),
                         new JQueryAttributeModificationDetector()));
         builder.setDomAppendingDetectors(
-                ImmutableSet.of(new AppendChildDetector()));
+                ImmutableSet.of(new JQueryAppendDetector()));
         builder.setDomCreationDetectors(
                 ImmutableSet.of(new CreateElementDetector()));
         builder.setDomRemovalDetectors(

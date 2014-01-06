@@ -1,10 +1,7 @@
 package jp.gr.java_conf.daisy.ajax_mutator.detector.jquery;
 
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.AttributeModification;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.DOMSelection;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.EventAttachment;
-import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request;
+import jp.gr.java_conf.daisy.ajax_mutator.mutatable.*;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request.ResponseType;
 import org.junit.Test;
 
@@ -14,6 +11,23 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class JQueryDetectorTest {
+    @Test
+    public void testJQueryAppendDetector() {
+        JQueryAppendDetector detector = new JQueryAppendDetector();
+
+        DOMAppending domAppending = detector.detect(parseAsFunctionCall(
+                "$('#elm').append(child);"));
+        assertNotNull(domAppending);
+        assertEquals("$('#elm')", domAppending.getAppendTarget().toSource());
+        assertEquals("child", domAppending.getAppendedDom().toSource());
+
+        domAppending = detector.detect(parseAsFunctionCall(
+                "item.appendTo('body');"));
+        assertNotNull(domAppending);
+        assertEquals("'body'", domAppending.getAppendTarget().toSource());
+        assertEquals("item", domAppending.getAppendedDom().toSource());
+    }
+
     @Test
     public void testJQueryEventDetector() {
         EventAttacherDetector detector = new JQueryEventAttachmentDetector();
