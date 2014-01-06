@@ -49,6 +49,25 @@ public class UnifiedDiffParserTest {
                 mutation.getMutatedLines());
     }
 
+    @Test
+    public void testParseSingleLineFile() {
+        UnifiedDiffParser parser = new UnifiedDiffParser();
+        UnifiedDiffParser.Mutation mutation
+                = parser.parse(readResourceAndSplitLines("/mutation_viewer/mutant34.diff"));
+        assertEquals("p3.js", mutation.getFileName());
+        assertEquals(124, mutation.getStartLine());
+        assertEquals(
+                Arrays.asList(new String[] {
+                        "  $('body').append('<div class=\"box\" id=\"box_0\" name=\"boxName\"></div> ');"
+                }),
+                mutation.getOriginalLines());
+        assertEquals(
+                Arrays.asList(new String[] {
+                        "  $('body').append(newBox);"
+                }),
+                mutation.getMutatedLines());
+    }
+
     private List<String> readResourceAndSplitLines(String resourceName) {
         List<String> output = new ArrayList<String>();
         Scanner scanner = new Scanner(

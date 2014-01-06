@@ -1,0 +1,5 @@
+--- p3.js	2014-01-06 10:37:01.000000000 
++++ p3.js	2014-01-06 10:37:08.057500000 
+@@ -124 +124 @@
+-  $('body').append('<div class="box" id="box_0" name="boxName"></div> ');
++  $('body').append(newBox);
