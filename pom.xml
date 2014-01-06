@@ -6,7 +6,7 @@
   <groupId>src.jp.gr.java_conf.daisy.ajax_mutator</groupId>
   <artifactId>AjaxMutator</artifactId>
   <packaging>jar</packaging>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <name>AjaxMutator</name>
   <description>Mutation testing for Ajax applications</description>
   <dependencies>
