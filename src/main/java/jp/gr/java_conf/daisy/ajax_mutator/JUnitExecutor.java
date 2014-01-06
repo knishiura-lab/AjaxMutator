@@ -35,17 +35,18 @@ public class JUnitExecutor implements TestExecutor {
                     testMethods.add(method.getName());
             }
         }
-        Map<String, Boolean> testSucceed = new TreeMap<String, Boolean>();
+        Map<String, Boolean> testResults = new TreeMap<String, Boolean>();
         for (String methodName: testMethods)
-            testSucceed.put(methodName, true);
+            testResults.put(methodName, true);
 
         StringBuilder messageBuilder = new StringBuilder();
         if (result.wasSuccessful()) {
             messageBuilder.append("Test succeed (failed to kill mutants), ")
                 .append(result.getRunCount()).append(" tests ran.\n");
-            for (int i = 0; i < testSucceed.size(); i++)
-                messageBuilder.append("x ");
-            messageBuilder.append("x");
+            for (Map.Entry<String, Boolean> testResult: testResults.entrySet()) {
+                messageBuilder.append(testResult.getKey() + ":x, ");
+            }
+            messageBuilder.append("result: x");
             executionMessage = messageBuilder.toString();
             return true;
         } else {
@@ -54,14 +55,16 @@ public class JUnitExecutor implements TestExecutor {
                 .append('\n');
             for (Failure failure: result.getFailures()) {
                 if (failure.getDescription().getMethodName() == null) {
-                    testSucceed.put("setup or teardown", false);
+                    testResults.put("setup or teardown", false);
                     continue;
                 }
-                testSucceed.put(failure.getDescription().getMethodName(), false);
+                testResults.put(failure.getDescription().getMethodName(), false);
             }
-            for (Map.Entry<String, Boolean> entry: testSucceed.entrySet())
-                messageBuilder.append(entry.getValue() ? 'x' : 'o').append(' ');
-            messageBuilder.append("o");
+            for (Map.Entry<String, Boolean> entry: testResults.entrySet()) {
+                messageBuilder.append(entry.getKey()).append(':')
+                        .append(entry.getValue() ? 'x' : 'o').append(", ");
+            }
+            messageBuilder.append("result: o");
             executionMessage = messageBuilder.toString();
             return false;
         }
