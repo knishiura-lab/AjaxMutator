@@ -94,17 +94,22 @@ public class MutationTestConductor {
     }
 
     /**
-     * Generate mutation files corresponding to given {@link Mutator}, and then running test.
+     * Generate mutation files corresponding to given {@link Mutator}.
      */
-    public void generateMutationsAndApplyTest(TestExecutor testExecutor, Set<Mutator> mutators) {
+    public void generateMutations(Set<Mutator> mutators) {
         unkilledMutantsInfo = ArrayListMultimap.create();
         checkIfSetuped();
-        Stopwatch stopwatch = new Stopwatch().start();
-
         mutationListManager = new MutationListManager(mutationFileWriter.getDestinationDirectory());
         generateMutationFiles(visitor, mutators);
         mutationListManager.generateMutationListFile();
+    }
 
+    /**
+     * Generate mutation files corresponding to given {@link Mutator}, and then running test.
+     */
+    public void generateMutationsAndApplyTest(TestExecutor testExecutor, Set<Mutator> mutators) {
+        Stopwatch stopwatch = new Stopwatch().start();
+        generateMutations(mutators);
         applyMutationAnalysis(testExecutor, stopwatch);
     }
 
