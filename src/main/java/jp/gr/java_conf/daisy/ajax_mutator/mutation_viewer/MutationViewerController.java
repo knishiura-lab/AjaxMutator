@@ -259,7 +259,8 @@ public class MutationViewerController implements Initializable {
     }
 
     private String escapeAndJoin(List<String> jsSentences) {
-        return StringEscapeUtils.escapeEcmaScript(Joiner.on("<br>").join(jsSentences));
+        return StringEscapeUtils
+                .escapeEcmaScript(Joiner.on(System.lineSeparator()).join(jsSentences));
     }
 
     private class MutationListCell extends TreeCell<CellItem> {

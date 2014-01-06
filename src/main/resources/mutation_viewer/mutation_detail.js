@@ -1,33 +1,33 @@
 window.MutationDetailViewer = (function () {
     function MutationDeteilViewer() {
     }
-    MutationDeteilViewer.prototype.setHtmlById = function (html, id) {
-        document.getElementById(id).innerHTML = html;
+    MutationDeteilViewer.prototype.setTextById = function (content, id) {
+        document.getElementById(id).innerText = content;
         return this;
     };
 
     MutationDeteilViewer.prototype.setFileName = function (fileName) {
-        return this.setHtmlById(fileName, "fileName");
+        return this.setTextById(fileName, "fileName");
     };
 
     MutationDeteilViewer.prototype.setContentBeforeMutation = function (content) {
-        return this.setHtmlById(content, "originalFileHead");
+        return this.setTextById(content, "originalFileHead");
     };
 
     MutationDeteilViewer.prototype.setLines = function (lines) {
-        return this.setHtmlById("line " + lines, "modifiedLines");
+        return this.setTextById("line " + lines, "modifiedLines");
     };
 
     MutationDeteilViewer.prototype.setOriginal = function (original) {
-        return this.setHtmlById(original, "originalContent");
+        return this.setTextById(original, "originalContent");
     };
 
     MutationDeteilViewer.prototype.setMutated = function (mutated) {
-        return this.setHtmlById(mutated, "mutatedContent");
+        return this.setTextById(mutated, "mutatedContent");
     };
 
     MutationDeteilViewer.prototype.setContentAfterMutation = function (content) {
-        return this.setHtmlById(content, "originalFileFoot");
+        return this.setTextById(content, "originalFileFoot");
     };
     return MutationDeteilViewer;
 })();
