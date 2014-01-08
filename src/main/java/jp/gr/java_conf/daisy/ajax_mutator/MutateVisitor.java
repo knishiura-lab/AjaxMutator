@@ -232,7 +232,7 @@ public class MutateVisitor implements NodeVisitor {
         builder.setDomCreationDetectors(
                 ImmutableSet.of(new CreateElementDetector()));
         builder.setDomRemovalDetectors(
-                ImmutableSet.of(new RemoveChildDetector()));
+                ImmutableSet.of(new RemoveChildDetector(), new JQueryRemoveDetector()));
         builder.setDomSelectionDetectors(
                 ImmutableSet.of(new JQueryDOMSelectionDetector()));
         builder.setEventAttacherDetectors(
