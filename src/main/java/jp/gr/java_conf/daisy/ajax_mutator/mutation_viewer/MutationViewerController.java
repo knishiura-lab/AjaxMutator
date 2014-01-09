@@ -40,7 +40,7 @@ public class MutationViewerController implements Initializable {
     @FXML
     private Button reloadButton;
     @FXML
-    private TreeView mutationTreeView;
+    private TreeView<CellItem> mutationTreeView;
     @FXML
     private Label fileInfo;
     @FXML
@@ -119,7 +119,7 @@ public class MutationViewerController implements Initializable {
         });
 
         mutationDetailScrollPane.viewportBoundsProperty().addListener(
-                (ChangeListener<? super Bounds>) new ChangeListener<Bounds>() {
+                new ChangeListener<Bounds>() {
                     @Override public void changed(ObservableValue<? extends Bounds> observableValue,
                                                   Bounds oldBounds, Bounds newBounds) {
                         mutationDetailAnchorPane.setPrefSize(newBounds.getWidth(), newBounds.getHeight());
@@ -168,7 +168,7 @@ public class MutationViewerController implements Initializable {
         }
         mutationTreeView.setShowRoot(false);
         mutationTreeView.setRoot(root);
-        mutationTreeView.setCellFactory(new Callback<TreeView, TreeCell>() {
+        mutationTreeView.setCellFactory(new Callback<TreeView<CellItem>, TreeCell<CellItem>>() {
             @Override
             public MutationListCell call(TreeView treeView) {
                 return new MutationListCell();
@@ -188,7 +188,7 @@ public class MutationViewerController implements Initializable {
     }
 
     synchronized private void restoreLastDeletion() {
-        TreeItem root = mutationTreeView.getRoot();
+        TreeItem<CellItem> root = mutationTreeView.getRoot();
         mutationTreeView.setRoot(null);
         for (int i = deletions.size() - 1; i >= 0; i--) {
             DeletionUnit deletion = deletions.get(i);
@@ -198,6 +198,7 @@ public class MutationViewerController implements Initializable {
         mutationTreeView.setRoot(root);
     }
 
+    @SuppressWarnings("unchecked")
     synchronized private void applyFilterByDeletion() {
         TreeItem root = mutationTreeView.getRoot();
         List<TreeItem> categories = root.getChildren();
@@ -294,11 +295,11 @@ public class MutationViewerController implements Initializable {
     }
 
     private class DeletionUnit {
-        private final TreeItem deleted;
-        private final TreeItem deletedFrom;
+        private final TreeItem<CellItem> deleted;
+        private final TreeItem<CellItem> deletedFrom;
         private final int wasIndex;
 
-        private DeletionUnit(TreeItem deleted, TreeItem deletedFrom, int wasIndex) {
+        private DeletionUnit(TreeItem<CellItem> deleted, TreeItem<CellItem> deletedFrom, int wasIndex) {
             this.deleted = deleted;
             this.deletedFrom = deletedFrom;
             this.wasIndex = wasIndex;

@@ -165,6 +165,7 @@ public class MutationTestConductor {
             numOfMutation.put(mutator, 0);
             LOGGER.info("using {}", mutator.mutationName());
             for (Mutatable mutatable: mutatables) {
+                @SuppressWarnings("unchecked")
                 Mutation mutation = mutator.generateMutation(mutatable);
                 if (mutation == null) {
                     LOGGER.info("Cannot create mutation for {} by using {}",

@@ -20,6 +20,7 @@ public class StringToAst {
         return root;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends AstNode> T parseAsType(Class<T> type,
             String javaScriptSnippet) {
         AstRoot ast = parseAstRoot(javaScriptSnippet);
