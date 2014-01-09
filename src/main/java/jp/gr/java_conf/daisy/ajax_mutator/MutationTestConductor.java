@@ -165,6 +165,7 @@ public class MutationTestConductor {
             numOfMutation.put(mutator, 0);
             LOGGER.info("using {}", mutator.mutationName());
             for (Mutatable mutatable: mutatables) {
+                @SuppressWarnings("unchecked")
                 Mutation mutation = mutator.generateMutation(mutatable);
                 if (mutation == null) {
                     LOGGER.info("Cannot create mutation for {} by using {}",
@@ -259,10 +260,9 @@ public class MutationTestConductor {
         Patch patch = DiffUtils.parseUnifiedDiff(
                 Util.readFromFile(fileInfo.getAbsolutePath()));
         try {
-            List mutated = patch.applyTo(original);
+            List<?> mutated = patch.<String>applyTo(original);
             Util.writeToFile(pathToJsFile,
-                    Util.join((String[]) mutated.toArray(new String[0]),
-                            System.lineSeparator()));
+                    Util.join(mutated.toArray(new String[0]), System.lineSeparator()));
         } catch (PatchFailedException e) {
             LOGGER.error("Applying mutation file '{}' failed.",
                     fileInfo.getFileName());
