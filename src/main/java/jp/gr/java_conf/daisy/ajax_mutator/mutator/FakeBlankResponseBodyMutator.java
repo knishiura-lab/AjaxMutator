@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 public class FakeBlankResponseBodyMutator extends AbstractMutator<Request> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FakeBlankResponseBodyMutator.class);
 
-    FakeBlankResponseBodyMutator() {
+    public FakeBlankResponseBodyMutator() {
         super(Request.class);
     }
 
