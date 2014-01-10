@@ -265,7 +265,7 @@ public class MutationTestConductor {
                     Util.join(mutated.toArray(new String[0]), System.lineSeparator()));
         } catch (PatchFailedException e) {
             LOGGER.error("Applying mutation file '{}' failed.",
-                    fileInfo.getFileName());
+                    fileInfo.getFileName(), e);
             return false;
         }
         return true;
