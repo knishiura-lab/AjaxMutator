@@ -212,20 +212,19 @@ public class MutationTestConductor {
         Thread commandReceiver = new Thread(new CommandReceiver());
         commandReceiver.start();
         List<String> original = Util.readFromFile(pathToJsFile);
-        Map<String, List<MutationFileInformation>> mutationFiles
-                = mutationListManager.getMutationFileInformationList();
-        for (String mutationDescription: mutationFiles.keySet()) {
-            LOGGER.info("Start applying {}", mutationDescription);
+        List<String> nameOfMutations = mutationListManager.getListOfMutationName();
+        for (String description: nameOfMutations) {
+            LOGGER.info("Start applying {}", description);
             for (MutationFileInformation mutationFileInformation:
-                    mutationFiles.get(mutationDescription)) {
+                    mutationListManager.getMutationFileInformationList(description)) {
                 if (mutationFileInformation.canBeSkipped()
                         || !applyMutationFile(original, mutationFileInformation)) {
                     continue;
                 }
                 numberOfAppliedMutation++;
                 if (testExecutor.execute()) { // This mutants cannot be killed
-                    unkilledMutantsInfo.put(mutationDescription, mutationFileInformation.toString());
-                    LOGGER.info("mutant {} is not be killed", mutationDescription);
+                    unkilledMutantsInfo.put(description, mutationFileInformation.toString());
+                    LOGGER.info("mutant {} is not be killed", description);
                 } else {
                     mutationFileInformation.setState(MutationFileInformation.State.KILLED);
                 }

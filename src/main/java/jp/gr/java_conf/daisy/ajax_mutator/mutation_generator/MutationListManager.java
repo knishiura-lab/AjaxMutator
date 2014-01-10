@@ -3,10 +3,7 @@ package jp.gr.java_conf.daisy.ajax_mutator.mutation_generator;
 import jp.gr.java_conf.daisy.ajax_mutator.util.Util;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Kazuki Nishiura
@@ -33,12 +30,18 @@ public class MutationListManager {
     }
 
     /**
-     * @return Map whose key is description of the class of mutation, and whose
-     * value is a list of files. Each file corresponds to one mutation in that
-     * class.
+     * @return return of names that represents classes of mutations.
      */
-    public Map<String, List<MutationFileInformation>> getMutationFileInformationList() {
-        return mutationFiles;
+    public List<String> getListOfMutationName() {
+        return mutationTitles;
+    }
+
+    /**
+     * @param name String that represents an class of mutation. See {@link #getListOfMutationName()}.
+     * @return List of mutation file which belong to given class.
+     */
+    public List<MutationFileInformation> getMutationFileInformationList(String name) {
+        return mutationFiles.get(name);
     }
 
     public int getNumberOfUnkilledMutants() {

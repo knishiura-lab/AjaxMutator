@@ -153,15 +153,17 @@ public class MutationViewerController implements Initializable {
     private void initMutationListTreeView() {
         TreeItem<CellItem> root = new TreeItem<CellItem>();
         root.setExpanded(true);
-        for (Map.Entry<String, List<MutationFileInformation>> entry: mutationListManager.getMutationFileInformationList().entrySet()) {
-            if (entry.getValue().size() == 0) {
+        List<String> nameOfMutations = mutationListManager.getListOfMutationName();
+        for (String name: nameOfMutations) {
+            List<MutationFileInformation> mutations = mutationListManager.getMutationFileInformationList(name);
+            if (mutations.size() == 0) {
                 continue;
             }
 
             TreeItem<CellItem> category = new TreeItem<CellItem>(
-                    new CellItemForMutationCategory(entry.getKey(), entry.getValue()));
+                    new CellItemForMutationCategory(name, mutations));
             root.getChildren().add(category);
-            for (MutationFileInformation info: entry.getValue()) {
+            for (MutationFileInformation info: mutations) {
                 category.getChildren().add(new TreeItem<CellItem>(new CellItemForMutant(info)));
             }
             category.setExpanded(true);
