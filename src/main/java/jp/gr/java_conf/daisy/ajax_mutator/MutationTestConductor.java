@@ -1,5 +1,6 @@
 package jp.gr.java_conf.daisy.ajax_mutator;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
@@ -37,6 +38,7 @@ public class MutationTestConductor {
     private Multimap<String, String> unkilledMutantsInfo;
     private Context context = Context.INSTANCE;
     private boolean setup = false;
+    private int saveInformationInterval = Integer.MAX_VALUE;
     private ParserWithBrowser parser;
     private AstRoot astRoot;
     private boolean conducting;
@@ -222,6 +224,10 @@ public class MutationTestConductor {
                     continue;
                 }
                 numberOfAppliedMutation++;
+                if (numberOfAppliedMutation >= saveInformationInterval
+                        & (numberOfAppliedMutation % saveInformationInterval == 0)) {
+                    mutationListManager.generateMutationListFile();
+                }
                 if (testExecutor.execute()) { // This mutants cannot be killed
                     unkilledMutantsInfo.put(description, mutationFileInformation.toString());
                     LOGGER.info("mutant {} is not be killed", description);
@@ -347,5 +353,14 @@ public class MutationTestConductor {
 
     private String pathToBackupFile() {
         return context.getJsPath() + ".backup";
+    }
+
+    /**
+     * Specify the integer N that represents interval of saving mutation information; mutation file
+     * updated every N execution. Default value is Integer.MAX_VALUE.
+     */
+    public void setSaveInformationInterval(int saveInformationInterval) {
+        Preconditions.checkArgument(saveInformationInterval > 0, "interval must be positive integer.");
+        this.saveInformationInterval = saveInformationInterval;
     }
 }
