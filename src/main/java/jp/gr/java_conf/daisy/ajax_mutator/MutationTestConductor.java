@@ -219,6 +219,10 @@ public class MutationTestConductor {
             LOGGER.info("Start applying {}", description);
             for (MutationFileInformation mutationFileInformation:
                     mutationListManager.getMutationFileInformationList(description)) {
+                // execution can be canceled from outside.
+                if (!conducting) {
+                    break;
+                }
                 if (mutationFileInformation.canBeSkipped()
                         || !applyMutationFile(original, mutationFileInformation)) {
                     continue;
