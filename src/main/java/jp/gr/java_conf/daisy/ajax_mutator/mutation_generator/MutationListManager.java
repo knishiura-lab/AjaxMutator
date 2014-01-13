@@ -80,6 +80,7 @@ public class MutationListManager {
     }
 
     public void readExistingMutationListFile() {
+        clear();
         List<String> lines = Util.readFromFile(getMutationListFilePath());
         String title = null;
         for (String line: lines) {
@@ -93,6 +94,11 @@ public class MutationListManager {
             mutationFiles.get(title).add(new MutationFileInformation(
                     elms[0], elms[2], MutationFileInformation.State.fromString(elms[1])));
         }
+    }
+
+    private void clear() {
+        mutationTitles.clear();
+        mutationFiles.clear();
     }
 
     private String getMutationListFilePath() {
