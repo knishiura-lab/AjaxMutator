@@ -6,9 +6,7 @@ import jp.gr.java_conf.daisy.ajax_mutator.mutatable.Request.ResponseType;
 import org.junit.Test;
 
 import static jp.gr.java_conf.daisy.ajax_mutator.util.StringToAst.parseAsFunctionCall;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class JQueryDetectorTest {
     @Test
@@ -91,5 +89,14 @@ public class JQueryDetectorTest {
         assertEquals("$(this)", result.getTargetDom().toSource());
         assertEquals("'disabled'", result.getTargetAttribute().toSource());
         assertEquals("true", result.getAttributeValue().toSource());
+    }
+
+    @Test
+    public void testJQueryCloningDetector() {
+        JQueryCloneDetector detector = new JQueryCloneDetector();
+        DOMCloning result = detector.detect(parseAsFunctionCall(
+                "$('.hello').clone()"));
+        assertTrue(result != null);
+        assertEquals("$('.hello')", result.getTargetNode().toSource());
     }
 }
