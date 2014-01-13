@@ -124,6 +124,38 @@ public class MutationTestConductor {
         applyMutationAnalysis(testExecutor, new Stopwatch().start());
     }
 
+    public void tryToKillSpecificMutant(String mutationFileName, TestExecutor testExecutor) {
+        mutationListManager = new MutationListManager(mutationFileWriter.getDestinationDirectory());
+        mutationListManager.readExistingMutationListFile();
+        checkIfSetuped();
+
+        for (String description: mutationListManager.getListOfMutationName()) {
+            for (MutationFileInformation mutationFileInformation:
+                    mutationListManager.getMutationFileInformationList(description)) {
+                if (mutationFileInformation.getFileName().equals(mutationFileName)) {
+                    List<String> original = Util.readFromFile(pathToJsFile);
+                    if (!applyMutationFile(original, mutationFileInformation)) {
+                        return;
+                    }
+                    if (testExecutor.execute()) { // This mutants cannot be killed
+                        LOGGER.info("mutant {} is not be killed", description);
+                    } else {
+                        mutationFileInformation.setState(MutationFileInformation.State.KILLED);
+                        LOGGER.info("mutant {} is killed", description);
+                    }
+                    String message = testExecutor.getMessageOnLastExecution();
+                    if (message != null) {
+                        LOGGER.info(message);
+                    }
+
+                    mutationListManager.generateMutationListFile();
+                    return;
+                }
+            }
+        }
+        LOGGER.error("No mutant found for name " + mutationFileName);
+    }
+
     private Map<Mutator, Integer> numOfMutation;
     private Map<Mutator, Integer> generateMutationFiles(
             MutateVisitor visitor, Set<Mutator> mutators) {
