@@ -1,17 +1,17 @@
 package jp.gr.java_conf.daisy.ajax_mutator.mutation_generator;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.io.Resources;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.mozilla.javascript.ast.AstNode;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
@@ -94,24 +94,16 @@ public class UnifiedDiffGeneratorTest {
                 "/mutation_generator/replace_event_handler.diff.body", output);
     }
 
-    private List<String> readResourceAndSplitLines(String resourceName) {
-        List<String> output = new ArrayList<String>();
-        Scanner scanner = new Scanner(
-                this.getClass().getResourceAsStream(resourceName)
-        );
-        while (scanner.hasNext()) {
-            output.add(scanner.nextLine());
-        }
-        return output;
-    }
-
-    // Helper method to compare output with resource to (1) avoid new line code
-    // issue and (2) make debug easier by doing direct String comparison.
+    // Helper method to compare output with resource to make debug easier by doing direct
+    // String comparison.
     private void assertSameContentInFile(String resourcePath, String content) {
-        assertEquals(
-                StringUtils.join(
-                        readResourceAndSplitLines(resourcePath), System.lineSeparator()),
-                content
-        );
+        URL url = this.getClass().getResource(resourcePath);
+        String resourceContent = null;
+        try {
+            resourceContent = Resources.toString(url, Charsets.UTF_8);
+        } catch (IOException e) {
+
+        }
+        assertEquals(resourceContent, content);
     }
 }

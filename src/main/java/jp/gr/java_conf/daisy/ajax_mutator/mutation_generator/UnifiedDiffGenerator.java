@@ -109,7 +109,7 @@ class UnifiedDiffGenerator {
             }
             builder.append(mutatingContent.get(i));
             if (i == mutatingContent.size() - 1) {
-                builder.append(suffix);
+                builder.append(suffix).append(System.lineSeparator());
             } else {
                 builder.append(System.lineSeparator());
             }
