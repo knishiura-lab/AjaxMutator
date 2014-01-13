@@ -35,13 +35,21 @@ public class DOMManipulationDetectorTest {
     }
 
     @Test
+    public void cloneElementDetectorTest() {
+        CloneNodeDetector detector = new CloneNodeDetector();
+        DOMCloning result
+                = detector.detect(parseAsFunctionCall("element.cloneNode(false);"));
+        assertTrue(result != null);
+        assertEquals("element", result.getTargetNode().toSource());
+    }
+
+    @Test
     public void craeteElementDetectorTest() {
         CreateElementDetector detector = new CreateElementDetector();
         DOMCreation result
             = detector.detect(parseAsFunctionCall("document.createElement('div')"));
         assertTrue(result != null);
         assertEquals("div", ((StringLiteral) result.getTagName()).getValue());
-
     }
 
     @Test
