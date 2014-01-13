@@ -24,6 +24,10 @@ public class JUnitExecutor implements TestExecutor {
     private Map<String, Boolean> testResults;
     private String executionMessage;
 
+    public JUnitExecutor(Class<?>... targetClasses) {
+        this(true, targetClasses);
+    }
+
     public JUnitExecutor(boolean shouldRunAllTest, Class<?>... targetClasses) {
         this.shouldRunAllTest = shouldRunAllTest;
         this.targetClasses = targetClasses;
