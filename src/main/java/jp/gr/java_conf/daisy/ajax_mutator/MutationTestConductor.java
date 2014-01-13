@@ -149,6 +149,8 @@ public class MutationTestConductor {
                     }
 
                     mutationListManager.generateMutationListFile();
+                    LOGGER.info("restoring backup file...");
+                    Util.copyFile(pathToBackupFile(), context.getJsPath());
                     return;
                 }
             }
