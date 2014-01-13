@@ -1,12 +1,12 @@
 package jp.gr.java_conf.daisy.ajax_mutator;
 
-import java.util.Collections;
-import java.util.Set;
-
 import jp.gr.java_conf.daisy.ajax_mutator.detector.AbstractDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.EventAttacherDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.detector.event_detector.TimerEventDetector;
 import jp.gr.java_conf.daisy.ajax_mutator.mutatable.*;
+
+import java.util.Collections;
+import java.util.Set;
 
 public class MutateVisitorBuilder {
     private Set<EventAttacherDetector> eventAttacherDetectors
@@ -18,6 +18,8 @@ public class MutateVisitorBuilder {
     private Set<? extends AbstractDetector<AttributeModification>> attributeModificationDetectors
             = Collections.emptySet();
     private Set<? extends AbstractDetector<DOMAppending>> domAppendingDetectors
+            = Collections.emptySet();
+    private Set<? extends AbstractDetector<DOMCloning>> domCloningDetectors
             = Collections.emptySet();
     private Set<? extends AbstractDetector<DOMRemoval>> domRemovalDetectors
             = Collections.emptySet();
@@ -33,7 +35,7 @@ public class MutateVisitorBuilder {
     public MutateVisitor build() {
         return new MutateVisitor(eventAttacherDetectors, timerEventDetectors,
                 domCreationDetectors, attributeModificationDetectors,
-                domAppendingDetectors, domRemovalDetectors,
+                domAppendingDetectors, domCloningDetectors, domRemovalDetectors,
                 domSelectionDetectors, requestDetectors);
     }
 
@@ -60,6 +62,11 @@ public class MutateVisitorBuilder {
     public void setDomAppendingDetectors(
             Set<? extends AbstractDetector<DOMAppending>> domAppendingDetectors) {
         this.domAppendingDetectors = domAppendingDetectors;
+    }
+
+    public void setDomCloningDetectors(
+            Set<? extends AbstractDetector<DOMCloning>> domCloningDetectors) {
+        this.domCloningDetectors = domCloningDetectors;
     }
 
     public void setDomRemovalDetectors(
