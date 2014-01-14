@@ -99,4 +99,14 @@ public class JQueryDetectorTest {
         assertTrue(result != null);
         assertEquals("$('.hello')", result.getTargetNode().toSource());
     }
+
+    @Test
+    public void testJQueryReplaceWithDetector() {
+        JQueryReplaceWithDetector detector = new JQueryReplaceWithDetector();
+        DOMReplacement result = detector.detect(
+                parseAsFunctionCall("$(this).replaceWith(anotherElement)"));
+        assertTrue(result != null);
+        assertEquals("$(this)", result.getReplacedNode().toSource());
+        assertEquals("anotherElement", result.getReplacingNode().toSource());
+    }
 }

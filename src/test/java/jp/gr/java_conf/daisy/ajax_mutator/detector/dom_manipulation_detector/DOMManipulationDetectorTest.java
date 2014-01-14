@@ -79,4 +79,14 @@ public class DOMManipulationDetectorTest {
         result = detector.detect(parseAsAssignment("document.findElementById('hoge')['hidden'] = true;"));
         assertTrue(result != null);
     }
+
+    @Test
+    public void replaceChildDetectorTest() {
+        ReplaceChildDetector detector = new ReplaceChildDetector();
+        DOMReplacement result
+                = detector.detect(parseAsFunctionCall("elm.replaceChild(foo, elm.childNodes[0])"));
+        assertTrue(result != null);
+        assertEquals("foo", ((Name) result.getReplacedNode()).getIdentifier());
+        assertEquals("elm.childNodes[0]", result.getReplacingNode().toSource());
+    }
 }
