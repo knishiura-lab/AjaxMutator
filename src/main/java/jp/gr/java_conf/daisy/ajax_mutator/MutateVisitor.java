@@ -31,6 +31,8 @@ public class MutateVisitor implements NodeVisitor {
     private final ImmutableSet<? extends AbstractDetector<AttributeModification>> attributeModificationDetectors;
     private final ImmutableSet<? extends AbstractDetector<DOMAppending>> domAppendingDetectors;
     private final ImmutableSet<? extends AbstractDetector<DOMCloning>> domCloningDetectors;
+    private final ImmutableSet<? extends AbstractDetector<DOMNormalization>> domNormalizationDetectors;
+    private final ImmutableSet<? extends AbstractDetector<DOMReplacement>> domReplacementDetectors;
     private final ImmutableSet<? extends AbstractDetector<DOMRemoval>> domRemovalDetectors;
     private final ImmutableSet<? extends AbstractDetector<DOMSelection>> domSelectionDetectors;
     private final ImmutableSet<? extends AbstractDetector<Request>> requestDetectors;
@@ -44,6 +46,8 @@ public class MutateVisitor implements NodeVisitor {
         = new TreeSet<AttributeModification>();
     private final Set<DOMAppending> domAppendings = new TreeSet<DOMAppending>();
     private final Set<DOMCloning> domClonings = new TreeSet<DOMCloning>();
+    private final Set<DOMNormalization> domNormalizations = new TreeSet<DOMNormalization>();
+    private final Set<DOMReplacement> domReplacements = new TreeSet<DOMReplacement>();
     private final Set<DOMRemoval> domRemovals = new TreeSet<DOMRemoval>();
     private final Set<DOMSelection> domSelections = new TreeSet<DOMSelection>();
     private final Set<Request> requests = new TreeSet<Request>();
@@ -55,6 +59,8 @@ public class MutateVisitor implements NodeVisitor {
             Set<? extends AbstractDetector<AttributeModification>> attributeModificationDetectors,
             Set<? extends AbstractDetector<DOMAppending>> domAppendingDetectors,
             Set<? extends AbstractDetector<DOMCloning>> domCloningDetectors,
+            Set<? extends AbstractDetector<DOMNormalization>> domNormalizationDetectors,
+            Set<? extends AbstractDetector<DOMReplacement>> domReplacementDetectors,
             Set<? extends AbstractDetector<DOMRemoval>> domRemovalDetectors,
             Set<? extends AbstractDetector<DOMSelection>> domSelectionDetectors,
             Set<? extends AbstractDetector<Request>> requestDetectors) {
@@ -64,6 +70,8 @@ public class MutateVisitor implements NodeVisitor {
         this.attributeModificationDetectors = immutableCopyOf(attributeModificationDetectors);
         this.domAppendingDetectors = immutableCopyOf(domAppendingDetectors);
         this.domCloningDetectors = immutableCopyOf(domCloningDetectors);
+        this.domNormalizationDetectors = immutableCopyOf(domNormalizationDetectors);
+        this.domReplacementDetectors = immutableCopyOf(domReplacementDetectors);
         this.domRemovalDetectors = immutableCopyOf(domRemovalDetectors);
         this.domSelectionDetectors = immutableCopyOf(domSelectionDetectors);
         this.requestDetectors = immutableCopyOf(requestDetectors);
@@ -105,6 +113,10 @@ public class MutateVisitor implements NodeVisitor {
             detectAndAdd(detector, call, domAppendings);
         for (AbstractDetector<DOMCloning> detector: domCloningDetectors)
             detectAndAdd(detector, call, domClonings);
+        for (AbstractDetector<DOMNormalization> detector: domNormalizationDetectors)
+            detectAndAdd(detector, call, domNormalizations);
+        for (AbstractDetector<DOMReplacement> detector: domReplacementDetectors)
+            detectAndAdd(detector, call, domReplacements);
         for (AbstractDetector<DOMRemoval> detector : domRemovalDetectors)
             detectAndAdd(detector, call, domRemovals);
         for (AbstractDetector<DOMSelection> detector : domSelectionDetectors)
@@ -138,6 +150,14 @@ public class MutateVisitor implements NodeVisitor {
 
     public Set<DOMCloning> getDomClonings() {
         return domClonings;
+    }
+
+    public Set<DOMNormalization> getDomNormalizations() {
+        return domNormalizations;
+    }
+
+    public Set<DOMReplacement> getDomReplacements() {
+        return domReplacements;
     }
 
     public Set<DOMRemoval> getDomRemovals() {
@@ -219,6 +239,9 @@ public class MutateVisitor implements NodeVisitor {
                 ImmutableSet.of(new AppendChildDetector()));
         builder.setDomCreationDetectors(
                 ImmutableSet.of(new CreateElementDetector()));
+        builder.setDomCloningDetectors(ImmutableSet.of(new CloneNodeDetector()));
+        builder.setDomNormalizationDetectors(ImmutableSet.of(new DOMNormalizationDetector()));
+        builder.setDomReplacementDetectors(ImmutableSet.of(new ReplaceChildDetector()));
         builder.setDomRemovalDetectors(
                 ImmutableSet.of(new RemoveChildDetector()));
         builder.setDomSelectionDetectors(
@@ -241,6 +264,9 @@ public class MutateVisitor implements NodeVisitor {
                 ImmutableSet.of(new JQueryAppendDetector()));
         builder.setDomCreationDetectors(
                 ImmutableSet.of(new CreateElementDetector()));
+        builder.setDomCloningDetectors(ImmutableSet.of(new JQueryCloneDetector()));
+        builder.setDomNormalizationDetectors(ImmutableSet.of(new DOMNormalizationDetector()));
+        builder.setDomReplacementDetectors(ImmutableSet.of(new JQueryReplaceWithDetector()));
         builder.setDomRemovalDetectors(
                 ImmutableSet.of(new RemoveChildDetector(), new JQueryRemoveDetector()));
         builder.setDomSelectionDetectors(

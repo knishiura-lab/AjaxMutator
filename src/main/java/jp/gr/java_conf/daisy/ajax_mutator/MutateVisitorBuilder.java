@@ -21,6 +21,10 @@ public class MutateVisitorBuilder {
             = Collections.emptySet();
     private Set<? extends AbstractDetector<DOMCloning>> domCloningDetectors
             = Collections.emptySet();
+    private Set<? extends AbstractDetector<DOMNormalization>> domNormalizationDetectors
+            = Collections.emptySet();
+    private Set<? extends AbstractDetector<DOMReplacement>> domReplacementDetectors
+            = Collections.emptySet();
     private Set<? extends AbstractDetector<DOMRemoval>> domRemovalDetectors
             = Collections.emptySet();
     private Set<? extends AbstractDetector<DOMSelection>> domSelectionDetectors
@@ -34,9 +38,9 @@ public class MutateVisitorBuilder {
 
     public MutateVisitor build() {
         return new MutateVisitor(eventAttacherDetectors, timerEventDetectors,
-                domCreationDetectors, attributeModificationDetectors,
-                domAppendingDetectors, domCloningDetectors, domRemovalDetectors,
-                domSelectionDetectors, requestDetectors);
+                domCreationDetectors, attributeModificationDetectors, domAppendingDetectors,
+                domCloningDetectors, domNormalizationDetectors, domReplacementDetectors,
+                domRemovalDetectors, domSelectionDetectors, requestDetectors);
     }
 
     public void setEventAttacherDetectors(
@@ -67,6 +71,16 @@ public class MutateVisitorBuilder {
     public void setDomCloningDetectors(
             Set<? extends AbstractDetector<DOMCloning>> domCloningDetectors) {
         this.domCloningDetectors = domCloningDetectors;
+    }
+
+    public void setDomNormalizationDetectors(
+            Set<? extends AbstractDetector<DOMNormalization>> domNormalizationDetectors) {
+        this.domNormalizationDetectors = domNormalizationDetectors;
+    }
+
+    public void setDomReplacementDetectors(
+            Set<? extends AbstractDetector<DOMReplacement>> domReplacementDetectors) {
+        this.domReplacementDetectors = domReplacementDetectors;
     }
 
     public void setDomRemovalDetectors(
