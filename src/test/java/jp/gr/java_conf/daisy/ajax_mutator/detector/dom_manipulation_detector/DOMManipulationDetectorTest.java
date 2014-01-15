@@ -89,4 +89,13 @@ public class DOMManipulationDetectorTest {
         assertEquals("foo", ((Name) result.getReplacedNode()).getIdentifier());
         assertEquals("elm.childNodes[0]", result.getReplacingNode().toSource());
     }
+
+    @Test
+    public void normalizationDetectorTest() {
+        DOMNormalizationDetector detector = new DOMNormalizationDetector();
+        DOMNormalization result
+                = detector.detect(parseAsFunctionCall("document.findElementById('foo').normalize()"));
+        assertTrue(result != null);
+        assertEquals("document.findElementById('foo')", result.getTarget().toSource());
+    }
 }
