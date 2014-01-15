@@ -175,6 +175,9 @@ public class MutationTestConductor {
         generateMutationFiles(visitor.getDomSelections(), mutators);
         generateMutationFiles(visitor.getDomRemovals(), mutators);
         generateMutationFiles(visitor.getAttributeModifications(), mutators);
+        generateMutationFiles(visitor.getDomClonings(), mutators);
+        generateMutationFiles(visitor.getDomNormalizations(), mutators);
+        generateMutationFiles(visitor.getDomReplacements(), mutators);
 
         LOGGER.debug("Random values used for generating mutations: "
                 + Arrays.toString(Randomizer.getReturnedValues()));
